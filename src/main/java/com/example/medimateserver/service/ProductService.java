@@ -12,7 +12,6 @@ public interface ProductService {
     List<Product> findAll();
 
     Product findById(Integer id);
-    Product findByEmail(String email);
 
     Product save(Product product);
 

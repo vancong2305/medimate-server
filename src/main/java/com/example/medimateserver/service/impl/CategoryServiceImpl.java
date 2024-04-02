@@ -4,14 +4,16 @@ import com.example.medimateserver.model.Category;
 import com.example.medimateserver.repository.CategoryRepository;
 import com.example.medimateserver.service.CategoryService;
 import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 @Service
 public class CategoryServiceImpl implements CategoryService {
-    Gson gson = new Gson();
+
+    @Autowired
     CategoryRepository categoryRepository;
+
     @Override
     public List<Category> findAll() {
         return categoryRepository.findAll();
@@ -19,9 +21,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category findById(Integer id) {
-        return null;
+        return categoryRepository.findById(id).orElse(null);
     }
-
 
 
     @Override

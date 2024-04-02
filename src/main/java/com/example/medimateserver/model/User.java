@@ -26,6 +26,7 @@ public class User {
 
     @Column(name = "point")
     private Integer point;
+
     @Column(name = "status")
     private Integer status;
 

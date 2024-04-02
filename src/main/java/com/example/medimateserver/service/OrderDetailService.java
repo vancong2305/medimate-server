@@ -10,7 +10,6 @@ public interface OrderDetailService {
     List<OrderDetail> findAll();
 
     OrderDetail findById(Integer id);
-    OrderDetail findByEmail(String email);
 
     OrderDetail save(OrderDetail orderDetail);
 

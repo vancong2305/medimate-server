@@ -17,7 +17,6 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private static Gson gson = new Gson();
     @Autowired
     private UserRepository userRepository; // Sử dụng private cho đúng nguyên tắc
 
@@ -60,12 +59,5 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    public static UserDto convertToObject(String jsonString) throws Exception {
-        return gson.fromJson(jsonString, UserDto.class);
-    }
-
-    public static String convertToJson(User user) throws Exception {
-        return gson.toJson(user);
-    }
 
 }

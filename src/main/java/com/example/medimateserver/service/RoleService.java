@@ -10,7 +10,6 @@ public interface RoleService {
     List<Role> findAll();
 
     Role findById(Integer id);
-    Role findByEmail(String email);
 
     Role save(Role role);
 

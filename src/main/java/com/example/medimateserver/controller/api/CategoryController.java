@@ -3,6 +3,7 @@ package com.example.medimateserver.controller.api;
 import com.example.medimateserver.config.jwt.JwtProvider;
 import com.example.medimateserver.fillter.Pagination;
 import com.example.medimateserver.model.Category;
+import com.example.medimateserver.model.Gcustome;
 import com.example.medimateserver.model.User;
 import com.example.medimateserver.service.CategoryService;
 import com.example.medimateserver.service.UserService;
@@ -37,35 +38,33 @@ public class CategoryController {
     // Get category by ID
     @GetMapping("/{id}")
     public ResponseEntity<String> getCategoryById(@PathVariable Integer id, HttpServletRequest request) {
-        String pageInformation = request.getHeader("Pagination");
-        String tokenInformation = request.getHeader("Token");
-        System.out.println("Lấy thông tin phân trang " + pageInformation);
+//        String pageInformation = request.getHeader("Pagination");
+//        String tokenInformation = request.getHeader("Token");
+//        System.out.println("Lấy thông tin phân trang " + pageInformation);
+//
+//        //Lấy thông tin người dùng qua id và so sánh với token
+//        User user = userService.findById(id);
+//
+//        System.out.println("User from token: " + JwtProvider.getUsernameFromToken(tokenInformation));
+//
+//        // Chuyển JSON sang object
+//        Pagination studentFromJson = Gcustome.getInstance().fromJson(pageInformation, Pagination.class);
+//        String json = Gcustome.getInstance().toJson(studentFromJson);
+//
+//        String filterValue = studentFromJson.getFillter();
+//        if (filterValue == null) {
+//            System.out.println("null");
+//        } else {
+//            System.out.println("1");
+//        }
+//        List<User> userList = userService.findAll();
+//        String jsonUser = Gcustome.getInstance().toJson(userList);
 
-        //Lấy thông tin người dùng qua id và so sánh với token
-        User user = userService.findById(id);
-        System.out.println(user.getEmail());
-
-        System.out.println("User from token: " + JwtProvider.getUsernameFromToken(tokenInformation));
-
-        // Chuyển object sang JSON
-        Gson gson = new Gson();
-
-        // Chuyển JSON sang object
-        Pagination studentFromJson = gson.fromJson(pageInformation, Pagination.class);
-        String json = gson.toJson(studentFromJson);
-
-        String filterValue = studentFromJson.getFillter();
-        if (filterValue == null) {
-            System.out.println("null");
-        } else {
-            System.out.println("1");
-        }
-
-        // In ra JSON
-        System.out.println(json);
+        List<Category> categoryList = categoryService.findAll();
+        String jsons = Gcustome.getInstance().toJson(categoryList);
 
         return new ResponseEntity<>(
-                json,
+                jsons,
                 HttpStatus.OK
         );
     }

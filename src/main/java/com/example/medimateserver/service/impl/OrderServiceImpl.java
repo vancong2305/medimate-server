@@ -2,31 +2,32 @@ package com.example.medimateserver.service.impl;
 
 import com.example.medimateserver.model.Order;
 import com.example.medimateserver.model.User;
+import com.example.medimateserver.repository.OrderRepository;
 import com.example.medimateserver.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    @Autowired
+    OrderRepository orderRepository;
+
     @Override
     public List<Order> findAll() {
-        return null;
+        return orderRepository.findAll();
     }
 
     @Override
     public Order findById(Integer id) {
-        return null;
-    }
-
-    @Override
-    public Order findByEmail(String email) {
-        return null;
+        return orderRepository.findById(id).orElse(null);
     }
 
     @Override
     public Order save(Order order) {
-        return null;
+        return orderRepository.save(order);
     }
 
     @Override

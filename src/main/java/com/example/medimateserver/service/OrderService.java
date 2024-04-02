@@ -10,7 +10,6 @@ public interface OrderService {
     List<Order> findAll();
 
     Order findById(Integer id);
-    Order findByEmail(String email);
 
     Order save(Order order);
 
