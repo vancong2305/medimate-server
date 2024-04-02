@@ -20,7 +20,8 @@ public class JwtProvider {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 1 day
+                .setExpiration(new Date(System.currentTimeMillis() + 10000)) // 1 day
+//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 1 day
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
@@ -39,6 +40,23 @@ public class JwtProvider {
     }
 
     public static boolean validateToken(String token, UserDetails userDetails) {
+        try {
+            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException ex) {
+            MLogger.LOGGER.severe("Invalid JWT signature: {}" + ex.getMessage());
+        } catch (MalformedJwtException ex) {
+            logger.error("Invalid JWT token: {}", ex.getMessage());
+        } catch (ExpiredJwtException ex) {
+            logger.error("Expired JWT token: {}", ex.getMessage());
+        } catch (UnsupportedJwtException ex) {
+            logger.error("Unsupported JWT token: {}", ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            logger.error("JWT claims string is empty: {}", ex.getMessage());
+        }
+        return false;
+    }
+    public static boolean validateTokenTest(String token) {
         try {
             Jwts.parser().setSigningKey(key).parseClaimsJws(token);
             return true;

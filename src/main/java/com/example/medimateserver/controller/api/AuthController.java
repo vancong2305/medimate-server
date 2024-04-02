@@ -35,11 +35,9 @@ public class AuthController {
             User user = userService.findByEmail(userPL.getEmail());
             if (userPL.getPassword().toString().compareTo(user.getPassword().toString()) == 0) {
                 String token = JwtProvider.generateToken(userPL.getEmail());
-                /*
-                    System.out.println("Email has been received: " + userPL.getEmail());
-                    System.out.println("Token after generated: " + token);
-                    System.out.println("User from token: " + JwtUtil.getUsernameFromToken(token));
-                */
+                System.out.println("Email has been received: " + userPL.getEmail());
+                System.out.println("Token after generated: " + token);
+                System.out.println("User from token: " + JwtProvider.getUsernameFromToken(token));
                 Map<String, String> inforMap = Collections.singletonMap("infor", "good");
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.putAll(Collections.singletonMap("token", token));

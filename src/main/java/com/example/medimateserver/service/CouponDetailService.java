@@ -10,7 +10,6 @@ public interface CouponDetailService {
     List<CouponDetail> findAll();
 
     CouponDetail findById(Integer id);
-    CouponDetail findByEmail(String email);
 
     CouponDetail save(CouponDetail couponDetail);
 

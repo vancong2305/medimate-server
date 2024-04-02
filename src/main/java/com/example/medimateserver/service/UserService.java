@@ -1,23 +1,22 @@
 package com.example.medimateserver.service;
 
 import com.example.medimateserver.model.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface UserService {
 
     List<User> findAll();
     List<User> findWithPageAndSize(int page, int size);
-    User findById(BigInteger id);
+    User findById(Integer id);
     User findByEmail(String email);
 
     User save(User user);
 
-    User update(BigInteger id, User user);
+    User update(Integer id, User user);
 
-    void deleteById(BigInteger id);
+    void deleteById(Integer id);
 }

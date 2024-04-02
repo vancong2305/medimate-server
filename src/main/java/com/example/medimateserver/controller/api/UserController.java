@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -24,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable BigInteger id) {
+    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         User user = userService.findById(id);
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -39,7 +38,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable BigInteger id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user) {
         User updatedUser = userService.update(id, user);
         if (updatedUser == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -48,7 +47,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable BigInteger id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         userService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -14,6 +14,10 @@ public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name = "code")
+    private String code;
+    @Column(name = "expiration_time")
+    private String expirationTime;
     @Column(name = "necessary_points")
     private Integer necessaryPoints;
     @Column(name = "percent_decrease")

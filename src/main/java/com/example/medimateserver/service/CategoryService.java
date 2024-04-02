@@ -10,7 +10,6 @@ public interface CategoryService {
     List<Category> findAll();
 
     Category findById(Integer id);
-    Category findByEmail(String email);
 
     Category save(Category category);
 

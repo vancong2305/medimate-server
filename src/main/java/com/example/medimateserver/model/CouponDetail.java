@@ -18,8 +18,6 @@ public class CouponDetail {
     private Integer idUser;
     @Column(name = "id_coupon")
     private Integer idPromoRule;
-    @Column(name = "code")
-    private String code;
     @Column(name = "time_start")
     private Date timeStart;
     @Column(name = "time_end")

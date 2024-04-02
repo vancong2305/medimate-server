@@ -8,6 +8,6 @@ import com.example.medimateserver.model.User;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Integer> {
     User findByEmail(String email);
 }

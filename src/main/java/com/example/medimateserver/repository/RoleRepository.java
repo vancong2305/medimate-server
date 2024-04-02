@@ -1,5 +1,11 @@
 package com.example.medimateserver.repository;
 
-public interface RoleRepository {
+import com.example.medimateserver.model.Role;
+import com.example.medimateserver.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 
 }

@@ -1,20 +1,23 @@
 package com.example.medimateserver.service.impl;
 
+import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.fillter.Pagination;
 import com.example.medimateserver.model.User;
 import com.example.medimateserver.repository.UserRepository;
 import com.example.medimateserver.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static Gson gson = new Gson();
     @Autowired
     private UserRepository userRepository; // Sử dụng private cho đúng nguyên tắc
 
@@ -32,7 +35,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(BigInteger id) {return null;}
+    public User findById(Integer id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
 
     @Override
     public User findByEmail(String email) {
@@ -45,22 +51,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(BigInteger id, User user) {
+    public User update(Integer id, User user) {
         return null;
     }
 
     @Override
-    public void deleteById(BigInteger id) {
+    public void deleteById(Integer id) {
 
     }
-    public static User convertToObject(String jsonString) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonString, User.class);
+
+    public static UserDto convertToObject(String jsonString) throws Exception {
+        return gson.fromJson(jsonString, UserDto.class);
     }
 
     public static String convertToJson(User user) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(user);
+        return gson.toJson(user);
     }
 
 }
