@@ -1,6 +1,7 @@
 package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
+import com.example.medimateserver.dto.UserDto;
 import com.example.medimateserver.model.User;
 import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.config.util.MLogger;
@@ -12,12 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     UserService userService;
@@ -68,6 +70,9 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User userPL) {
         try {
+            userPL.setIdRole(1);
+            userPL.setStatus(1);
+            userPL.setPoint(0);
             userService.save(userPL);
             return new ResponseEntity<>(
                     "Register Success!",

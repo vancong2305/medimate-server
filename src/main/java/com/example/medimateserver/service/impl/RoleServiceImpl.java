@@ -4,7 +4,6 @@ import com.example.medimateserver.model.Role;
 import com.example.medimateserver.service.RoleService;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -14,7 +13,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role findById(BigInteger id) {
+    public Role findById(Integer id) {
         return null;
     }
 
@@ -29,11 +28,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role update(BigInteger id, Role role) {
+    public Role update(Integer id, Role role) {
         return null;
     }
 
     @Override
-    public void deleteById(BigInteger id) {}
+    public void deleteById(Integer id) {}
 
 }

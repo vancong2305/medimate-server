@@ -4,7 +4,6 @@ import com.example.medimateserver.model.CouponDetail;
 import com.example.medimateserver.service.CouponDetailService;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 @Service
 public class CouponDetailServiceImpl implements CouponDetailService {
@@ -14,7 +13,7 @@ public class CouponDetailServiceImpl implements CouponDetailService {
     }
 
     @Override
-    public CouponDetail findById(BigInteger id) {
+    public CouponDetail findById(Integer id) {
         return null;
     }
 
@@ -29,12 +28,12 @@ public class CouponDetailServiceImpl implements CouponDetailService {
     }
 
     @Override
-    public CouponDetail update(BigInteger id, CouponDetail couponDetail) {
+    public CouponDetail update(Integer id, CouponDetail couponDetail) {
         return null;
     }
 
     @Override
-    public void deleteById(BigInteger id) {
+    public void deleteById(Integer id) {
 
     }
 }

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 
 @Entity
 @Table(name = "category")
@@ -13,7 +12,7 @@ import java.math.BigInteger;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
     @Column(name = "name")
     private String name;
     @Column(name = "status")

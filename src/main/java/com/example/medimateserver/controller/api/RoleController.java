@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -23,7 +22,7 @@ public class RoleController {
     }
 
     @GetMapping("/{roleId}")
-    public ResponseEntity<Role> getRoleById(@PathVariable BigInteger roleId) {
+    public ResponseEntity<Role> getRoleById(@PathVariable Integer roleId) {
         Role role = roleService.findById(roleId);
         if (role != null) {
             return ResponseEntity.ok(role);
@@ -39,12 +38,12 @@ public class RoleController {
     }
 
     @PutMapping("/{roleId}")
-    public ResponseEntity<String> updateRole(@PathVariable Long roleId, @RequestBody Role roleDetails) {
+    public ResponseEntity<String> updateRole(@PathVariable Integer roleId, @RequestBody Role roleDetails) {
         return ResponseEntity.ok("updatedRole");
     }
 
     @DeleteMapping("/{roleId}")
-    public ResponseEntity<Void> deleteRole(@PathVariable BigInteger roleId) {
+    public ResponseEntity<Void> deleteRole(@PathVariable Integer roleId) {
         // ... (Implement delete logic with RoleService)
         return ResponseEntity.noContent().build();
     }

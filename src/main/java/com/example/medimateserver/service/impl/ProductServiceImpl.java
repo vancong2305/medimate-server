@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -17,7 +16,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product findById(BigInteger id) {
+    public Product findById(Integer id) {
         return null;
     }
 
@@ -32,12 +31,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(BigInteger id, Product product) {
+    public Product update(Integer id, Product product) {
         return null;
     }
 
     @Override
-    public void deleteById(BigInteger id) {
+    public void deleteById(Integer id) {
 
     }
 

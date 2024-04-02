@@ -3,7 +3,10 @@ package com.example.medimateserver.service.impl;
 import com.example.medimateserver.model.User;
 import com.example.medimateserver.repository.UserRepository;
 import com.example.medimateserver.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -20,12 +23,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(); // Trả về List trống nếu không có dữ liệu
     }
 
-    @Override
-    public User findById(BigInteger id) {
-        return null;
+    public List<User> findWithPageAndSize(int page, int size) {
+        // Tạo Pageable object
+        Pageable pageable = PageRequest.of(page, size);
+        // Truy vấn dữ liệu
+        List<User> users = (List<User>) userRepository.findAll(pageable);
+        return users;
     }
 
-
+    @Override
+    public User findById(BigInteger id) {return null;}
 
     @Override
     public User findByEmail(String email) {
@@ -46,6 +53,14 @@ public class UserServiceImpl implements UserService {
     public void deleteById(BigInteger id) {
 
     }
+    public static User convertToObject(String jsonString) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(jsonString, User.class);
+    }
 
+    public static String convertToJson(User user) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(user);
+    }
 
 }

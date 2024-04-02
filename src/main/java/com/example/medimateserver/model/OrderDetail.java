@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 @Entity
 @Table(name = "order_detail")
@@ -34,7 +33,7 @@ public class OrderDetail {
     @NoArgsConstructor
     public static class OrderDetailId implements Serializable {
 
-        private BigInteger idOrder;
-        private BigInteger idProduct;
+        private Integer idOrder;
+        private Integer idProduct;
     }
 }

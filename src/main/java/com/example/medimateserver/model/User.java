@@ -1,7 +1,7 @@
 package com.example.medimateserver.model;
 
 import jakarta.persistence.*;
-import java.math.BigInteger;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +13,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
 
     @Column(name = "password")
     private String password;
@@ -22,10 +22,10 @@ public class User {
     private String email;
 
     @Column(name = "id_role")
-    private BigInteger idRole;
+    private Integer idRole;
 
     @Column(name = "point")
-    private BigInteger point;
+    private Integer point;
     @Column(name = "status")
     private Integer status;
 

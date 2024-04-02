@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
 
 @Entity
 @Table(name = "product")
@@ -15,9 +14,9 @@ import java.math.BigInteger;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
     @Column(name = "id_category")
-    private BigInteger idCategory;
+    private Integer idCategory;
     @Column(name = "name")
     private String name;
     @Column(name = "description")

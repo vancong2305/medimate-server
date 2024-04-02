@@ -11,7 +11,7 @@ import java.util.List;
 public interface UserService {
 
     List<User> findAll();
-
+    List<User> findWithPageAndSize(int page, int size);
     User findById(BigInteger id);
     User findByEmail(String email);
 

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 @Entity
@@ -14,11 +13,11 @@ import java.util.Date;
 public class CouponDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
     @Column(name = "id_user")
-    private BigInteger idUser;
+    private Integer idUser;
     @Column(name = "id_coupon")
-    private BigInteger idPromoRule;
+    private Integer idPromoRule;
     @Column(name = "code")
     private String code;
     @Column(name = "time_start")

@@ -1,10 +1,11 @@
 package com.example.medimateserver.service.impl;
 
 import com.example.medimateserver.model.Order;
+import com.example.medimateserver.model.User;
 import com.example.medimateserver.service.OrderService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -14,7 +15,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findById(BigInteger id) {
+    public Order findById(Integer id) {
         return null;
     }
 
@@ -29,13 +30,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order update(BigInteger id, Order order) {
+    public Order update(Integer id, Order order) {
         return null;
     }
 
     @Override
-    public void deleteById(BigInteger id) {
+    public void deleteById(Integer id) {
 
+    }
+
+    public static Order convertToObject(String jsonString) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(jsonString, Order.class);
+    }
+
+    public static String convertToJson(Order order) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(order);
     }
 
 

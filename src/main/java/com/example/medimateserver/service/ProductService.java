@@ -5,19 +5,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 @Service
 public interface ProductService {
 
     List<Product> findAll();
 
-    Product findById(BigInteger id);
+    Product findById(Integer id);
     Product findByEmail(String email);
 
     Product save(Product product);
 
-    Product update(BigInteger id, Product product);
+    Product update(Integer id, Product product);
 
-    void deleteById(BigInteger id);
+    void deleteById(Integer id);
 }

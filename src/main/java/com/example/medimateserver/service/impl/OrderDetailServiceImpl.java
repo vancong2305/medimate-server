@@ -5,7 +5,6 @@ import com.example.medimateserver.service.OrderDetailService;
 import com.example.medimateserver.service.OrderService;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.List;
 @Service
 public class OrderDetailServiceImpl implements OrderDetailService {
@@ -15,7 +14,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public OrderDetail findById(BigInteger id) {
+    public OrderDetail findById(Integer id) {
         return null;
     }
 
@@ -31,12 +30,12 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public OrderDetail update(BigInteger id, OrderDetail orderDetail) {
+    public OrderDetail update(Integer id, OrderDetail orderDetail) {
         return null;
     }
 
     @Override
-    public void deleteById(BigInteger id) {
+    public void deleteById(Integer id) {
 
     }
 

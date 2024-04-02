@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping(value = "/api/category", produces = "application/json")
 public class CategoryController {
 
     @Autowired
@@ -25,13 +27,12 @@ public class CategoryController {
 
     // Get category by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable BigInteger id) {
-        Category category = categoryService.findById(id);
-        if (category != null) {
-            return ResponseEntity.ok(category);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<String> getCategoryById(@PathVariable Long id) {
+        System.out.println("Vào đây rồi nè"); // Dùng để gỡ lỗi
+        return new ResponseEntity<>(
+                "Success",
+                HttpStatus.OK
+        );
     }
 
     // Create a new category
@@ -43,15 +44,24 @@ public class CategoryController {
 
     // Update a category
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable BigInteger id, @RequestBody Category category) {
-        // ... (Implement update logic with CategoryService)
+    public ResponseEntity<String> updateCategory(@PathVariable Integer id, @RequestBody Category category) {
         return ResponseEntity.ok("");
     }
 
     // Delete a category
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable BigInteger id) {
-        // ... (Implement delete logic with CategoryService)
+    public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
+        try {
+            Category category = categoryService.findById(id);
+            category.setStatus(0);
+            categoryService.save(category);
+            return new ResponseEntity<>(
+                    "Success",
+                    HttpStatus.OK
+            );
+        } catch (Exception ex) {
+
+        }
         return ResponseEntity.noContent().build();
     }
 }

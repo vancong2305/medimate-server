@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
 import java.util.Date;
 @Entity
 @Table(name = "role")
@@ -15,7 +14,7 @@ import java.util.Date;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
     @Column(name = "name")
     private String name;
     @Column(name = "status")

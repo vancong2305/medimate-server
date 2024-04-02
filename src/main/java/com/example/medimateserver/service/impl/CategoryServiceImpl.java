@@ -14,9 +14,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category findById(BigInteger id) {
+    public Category findById(Integer id) {
         return null;
     }
+
 
     @Override
     public Category findByEmail(String email) {
@@ -29,12 +30,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category update(BigInteger id, Category category) {
+    public Category update(Integer id, Category category) {
         return null;
     }
 
     @Override
-    public void deleteById(BigInteger id) {
+    public void deleteById(Integer id) {
 
     }
+
 }

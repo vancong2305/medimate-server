@@ -1,14 +1,21 @@
 package com.example.medimateserver.dto;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 
+
+@Data
+@NoArgsConstructor // Thêm constructor không tham số
 public class UserDto {
-    private BigInteger id;
+    private Integer id;
     private String password;
     private String email;
-    private BigInteger idRole;
-    private BigInteger point;
+    private Integer idRole;
+    private Integer point;
     private Integer status;
+
 }

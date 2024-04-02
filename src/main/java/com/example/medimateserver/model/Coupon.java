@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 @Entity
@@ -14,9 +13,9 @@ import java.util.Date;
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Integer id;
     @Column(name = "necessary_points")
-    private BigInteger necessaryPoints;
+    private Integer necessaryPoints;
     @Column(name = "percent_decrease")
     private Integer percentDecrease;
     @Column(name = "status")
