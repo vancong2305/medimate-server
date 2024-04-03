@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 27, 2024 lúc 06:08 AM
+-- Thời gian đã tạo: Th4 03, 2024 lúc 09:51 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -33,6 +33,14 @@ CREATE TABLE `category` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `category`
+--
+
+INSERT INTO `category` (`id`, `name`, `status`) VALUES
+(1, 'Thuốc da liễu', 1),
+(2, 'Thuốc tiêu hoá', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -47,6 +55,13 @@ CREATE TABLE `coupon` (
   `percent_decrease` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `coupon`
+--
+
+INSERT INTO `coupon` (`id`, `code`, `expiration_time`, `necessary_points`, `percent_decrease`, `status`) VALUES
+(0, 'QAZQAV', 1, 100, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -63,6 +78,13 @@ CREATE TABLE `coupon_detail` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `coupon_detail`
+--
+
+INSERT INTO `coupon_detail` (`id`, `id_user`, `id_coupon`, `time_start`, `time_end`, `status`) VALUES
+(1, 2, 0, '2024-04-01', '2024-04-03', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -72,10 +94,17 @@ CREATE TABLE `coupon_detail` (
 CREATE TABLE `order` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
-  `id_coupon_detail` int(11) NOT NULL,
+  `id_coupon_detail` int(11) DEFAULT NULL,
   `payment_method` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order`
+--
+
+INSERT INTO `order` (`id`, `id_user`, `id_coupon_detail`, `payment_method`, `status`) VALUES
+(1, 2, NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -88,6 +117,13 @@ CREATE TABLE `order_detail` (
   `id_product` int(11) NOT NULL,
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order_detail`
+--
+
+INSERT INTO `order_detail` (`id_oder`, `id_product`, `quantity`) VALUES
+(1, 1, 100000);
 
 -- --------------------------------------------------------
 
@@ -103,6 +139,13 @@ CREATE TABLE `product` (
   `default_percent_decrease` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `product`
+--
+
+INSERT INTO `product` (`id`, `id_category`, `name`, `description`, `default_percent_decrease`, `status`) VALUES
+(1, 1, 'Selenium', 'Delete a ...', 12, 2);
 
 -- --------------------------------------------------------
 
@@ -136,6 +179,14 @@ CREATE TABLE `unit` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `unit`
+--
+
+INSERT INTO `unit` (`id`, `name`, `status`) VALUES
+(1, 'Viên', 1),
+(2, 'Vỉ', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -146,8 +197,9 @@ CREATE TABLE `unit_detail` (
   `id` int(11) NOT NULL,
   `id_unit` int(11) NOT NULL,
   `id_product` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `id_convert_unit` int(11) DEFAULT NULL,
   `conversion_point` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -165,6 +217,14 @@ CREATE TABLE `user` (
   `point` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `user`
+--
+
+INSERT INTO `user` (`id`, `id_role`, `email`, `password`, `point`, `status`) VALUES
+(1, 1, 'your_email@example.com', 'your_password', 0, 1),
+(2, 1, 'your_email1@example.com', 'your_password1', 0, 1);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -188,23 +248,23 @@ ALTER TABLE `coupon`
 --
 ALTER TABLE `coupon_detail`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_coupon_detail_user` (`id_user`),
-  ADD KEY `fk_coupon_detail_coupon` (`id_coupon`);
+  ADD KEY `fk_coupon_detail_user` (`id_coupon`),
+  ADD KEY `fk_coupont_detail_user` (`id_user`);
 
 --
 -- Chỉ mục cho bảng `order`
 --
 ALTER TABLE `order`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_order_user` (`id_user`) USING BTREE,
-  ADD KEY `fk_order_promo` (`id_coupon_detail`) USING BTREE;
+  ADD KEY `fk_order_promo` (`id_coupon_detail`) USING BTREE,
+  ADD KEY `fk_order_user` (`id_user`);
 
 --
 -- Chỉ mục cho bảng `order_detail`
 --
 ALTER TABLE `order_detail`
-  ADD KEY `fk_order_detail_order` (`id_oder`) USING BTREE,
-  ADD KEY `fk_order_detail_product` (`id_product`) USING BTREE;
+  ADD KEY `fk_order_detail_order` (`id_oder`),
+  ADD KEY `fk_order_product` (`id_product`);
 
 --
 -- Chỉ mục cho bảng `product`
@@ -231,7 +291,8 @@ ALTER TABLE `unit`
 ALTER TABLE `unit_detail`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_unit_detail_unit` (`id_unit`),
-  ADD KEY `fk_unit_detail_product` (`id_product`);
+  ADD KEY `fk_unit_detail_product` (`id_product`),
+  ADD KEY `fk_unit_detail_unit_detail` (`id_convert_unit`);
 
 --
 -- Chỉ mục cho bảng `user`
@@ -249,25 +310,25 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT cho bảng `category`
 --
 ALTER TABLE `category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `coupon_detail`
 --
 ALTER TABLE `coupon_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `order`
 --
 ALTER TABLE `order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `role`
@@ -279,7 +340,7 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT cho bảng `unit`
 --
 ALTER TABLE `unit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `unit_detail`
@@ -291,7 +352,7 @@ ALTER TABLE `unit_detail`
 -- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -302,7 +363,20 @@ ALTER TABLE `user`
 --
 ALTER TABLE `coupon_detail`
   ADD CONSTRAINT `fk_coupon_detail_coupon` FOREIGN KEY (`id_coupon`) REFERENCES `coupon` (`id`),
-  ADD CONSTRAINT `fk_coupon_detail_user` FOREIGN KEY (`id_user`) REFERENCES `coupon_detail` (`id`);
+  ADD CONSTRAINT `fk_coupont_detail_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
+
+--
+-- Các ràng buộc cho bảng `order`
+--
+ALTER TABLE `order`
+  ADD CONSTRAINT `fk_order_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
+
+--
+-- Các ràng buộc cho bảng `order_detail`
+--
+ALTER TABLE `order_detail`
+  ADD CONSTRAINT `fk_order_detail_order` FOREIGN KEY (`id_oder`) REFERENCES `order` (`id`),
+  ADD CONSTRAINT `fk_order_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`);
 
 --
 -- Các ràng buộc cho bảng `product`
@@ -315,7 +389,8 @@ ALTER TABLE `product`
 --
 ALTER TABLE `unit_detail`
   ADD CONSTRAINT `fk_unit_detail_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`),
-  ADD CONSTRAINT `fk_unit_detail_unit` FOREIGN KEY (`id_unit`) REFERENCES `unit` (`id`);
+  ADD CONSTRAINT `fk_unit_detail_unit` FOREIGN KEY (`id_unit`) REFERENCES `unit` (`id`),
+  ADD CONSTRAINT `fk_unit_detail_unit_detail` FOREIGN KEY (`id_convert_unit`) REFERENCES `unit_detail` (`id`);
 
 --
 -- Các ràng buộc cho bảng `user`
