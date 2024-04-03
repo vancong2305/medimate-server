@@ -1,5 +1,6 @@
 package com.example.medimateserver.service;
 
+import com.example.medimateserver.dto.OrderDetailDto;
 import com.example.medimateserver.entity.OrderDetail;
 import org.springframework.stereotype.Service;
 
@@ -7,13 +8,13 @@ import java.util.List;
 @Service
 public interface OrderDetailService {
 
-    List<OrderDetail> findAll();
+    List<OrderDetailDto> findAll();
 
-    OrderDetail findById(Integer id);
+    OrderDetailDto findById(Integer id);
 
-    OrderDetail save(OrderDetail orderDetail);
+    OrderDetailDto save(OrderDetailDto orderDetail);
 
-    OrderDetail update(Integer id, OrderDetail orderDetail);
+    OrderDetailDto update(Integer id, OrderDetailDto orderDetail);
 
     void deleteById(Integer id);
 }

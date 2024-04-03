@@ -1,5 +1,6 @@
 package com.example.medimateserver.controller.api;
 
+import com.example.medimateserver.dto.OrderDto;
 import com.example.medimateserver.entity.Order;
 import com.example.medimateserver.service.OrderService;
 import com.example.medimateserver.util.GsonUtil;
@@ -24,7 +25,7 @@ public class OrderController {
     public ResponseEntity<String> getCategoryById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
 //        String pageInformation = request.getHeader("Pagination");
 //        String tokenInformation = request.getHeader("Token");
-        List<Order> orderList = orderService.findAll();
+        List<OrderDto> orderList = orderService.findAll();
         String jsons = GsonUtil.gI().toJson(orderList);
 
         return new ResponseEntity<>(

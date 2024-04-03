@@ -1,5 +1,6 @@
 package com.example.medimateserver.controller.api;
 
+import com.example.medimateserver.dto.UserDto;
 import com.example.medimateserver.entity.User;
 import com.example.medimateserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.save(user);
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+        UserDto createdUser = userService.save(userDto);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 

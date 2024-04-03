@@ -1,6 +1,8 @@
 package com.example.medimateserver.service.impl;
 
+import com.example.medimateserver.dto.RoleDto;
 import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.entity.Role;
 import com.example.medimateserver.entity.User;
 import com.example.medimateserver.repository.UserRepository;
 import com.example.medimateserver.service.UserService;
@@ -45,8 +47,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserDto save(UserDto userDto) {
+        User user = ConvertUtil.gI().toEntity(userDto, User.class);
+        user = userRepository.save(user);
+        return ConvertUtil.gI().toDto(user, UserDto.class);
     }
 
     @Override

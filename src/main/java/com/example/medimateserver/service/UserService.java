@@ -16,7 +16,7 @@ public interface UserService {
     User findById(Integer id);
     UserDto findByEmail(String email);
 
-    User save(User user);
+    UserDto save(UserDto user);
 
     User update(Integer id, User user);
 

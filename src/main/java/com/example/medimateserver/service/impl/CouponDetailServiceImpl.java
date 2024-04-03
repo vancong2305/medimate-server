@@ -17,6 +17,7 @@ public class CouponDetailServiceImpl implements CouponDetailService {
 
     @Override
     public List<CouponDetail> findAll() {
+        List<CouponDetail> couponDetailList = couponDetailRepository.findAll();
         return couponDetailRepository.findAll();
     }
 

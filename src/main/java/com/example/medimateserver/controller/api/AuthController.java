@@ -66,7 +66,7 @@ public class AuthController {
         We set email is the only field by command <ALTER TABLE `user` ADD UNIQUE(`email`)>
     */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User userPL) {
+    public ResponseEntity<?> register(@RequestBody UserDto userPL) {
         try {
             userPL.setIdRole(1);
             userPL.setStatus(1);

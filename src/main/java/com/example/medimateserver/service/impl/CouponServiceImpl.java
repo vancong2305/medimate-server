@@ -1,12 +1,18 @@
 package com.example.medimateserver.service.impl;
 
+import com.example.medimateserver.dto.CategoryDto;
+import com.example.medimateserver.dto.CouponDto;
+import com.example.medimateserver.entity.Category;
 import com.example.medimateserver.entity.Coupon;
 import com.example.medimateserver.repository.CouponRepository;
 import com.example.medimateserver.service.CouponService;
+import com.example.medimateserver.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CouponServiceImpl implements CouponService {
 
@@ -14,23 +20,29 @@ public class CouponServiceImpl implements CouponService {
     CouponRepository couponRepository;
 
     @Override
-    public List<Coupon> findAll() {
-        return couponRepository.findAll();
+    public List<CouponDto> findAll() {
+        List<Coupon> couponList = couponRepository.findAll();
+        return couponList.stream()
+                .map(coupon -> ConvertUtil.gI().toDto(coupon, CouponDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Coupon findById(Integer id) {
-        return couponRepository.findById(id).orElse(null);
-    }
-
-
-    @Override
-    public Coupon save(Coupon coupon) {
-        return couponRepository.save(coupon);
+    public CouponDto findById(Integer id) {
+        return couponRepository.findById(id)
+                .map(coupon -> ConvertUtil.gI().toDto(coupon, CouponDto.class))
+                .orElse(null);
     }
 
     @Override
-    public Coupon update(Integer id, Coupon coupon) {
+    public CouponDto save(CouponDto couponDto) {
+        Coupon coupon = ConvertUtil.gI().toEntity(couponDto, Coupon.class);
+        coupon = couponRepository.save(coupon);
+        return ConvertUtil.gI().toDto(coupon, CouponDto.class);
+    }
+
+    @Override
+    public CouponDto update(Integer id, CouponDto coupon) {
         return null;
     }
 
@@ -40,7 +52,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public Coupon findByCode(String code) {
+    public CouponDto findByCode(String code) {
         return null;
     }
 

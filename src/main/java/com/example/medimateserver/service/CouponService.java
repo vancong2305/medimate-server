@@ -1,5 +1,6 @@
 package com.example.medimateserver.service;
 
+import com.example.medimateserver.dto.CouponDto;
 import com.example.medimateserver.entity.Coupon;
 import org.springframework.stereotype.Service;
 
@@ -8,15 +9,15 @@ import java.util.List;
 @Service
 public interface CouponService {
 
-    List<Coupon> findAll();
+    List<CouponDto> findAll();
 
-    Coupon findById(Integer id);
+    CouponDto findById(Integer id);
 
-    Coupon save(Coupon Coupon);
+    CouponDto save(CouponDto couponDto);
 
-    Coupon update(Integer id, Coupon coupon);
+    CouponDto update(Integer id, CouponDto couponDto);
 
     void deleteById(Integer id);
 
-    Coupon findByCode(String code);
+    CouponDto findByCode(String code);
 }

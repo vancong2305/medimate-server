@@ -4,25 +4,17 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-
 @Entity
-@Table(name = "category")
+@Table(name = "unit")
 @Data
 @NoArgsConstructor // Thêm constructor không tham số
-public class Category {
-
+public class Unit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @Column(name = "name")
-    private String name;
-
+    private Integer name;
     @Column(name = "status")
     private Integer status;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Product> posts;
 }

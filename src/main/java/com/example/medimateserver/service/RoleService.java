@@ -1,5 +1,6 @@
 package com.example.medimateserver.service;
 
+import com.example.medimateserver.dto.RoleDto;
 import com.example.medimateserver.entity.Role;
 import org.springframework.stereotype.Service;
 
@@ -7,13 +8,13 @@ import java.util.List;
 @Service
 public interface RoleService {
 
-    List<Role> findAll();
+    List<RoleDto> findAll();
 
-    Role findById(Integer id);
+    RoleDto findById(Integer id);
 
-    Role save(Role role);
+    RoleDto save(RoleDto role);
 
-    Role update(Integer id, Role role);
+    RoleDto update(Integer id, RoleDto role);
 
     void deleteById(Integer id);
 }

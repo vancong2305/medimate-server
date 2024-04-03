@@ -1,5 +1,6 @@
 package com.example.medimateserver.controller.api;
 
+import com.example.medimateserver.dto.RoleDto;
 import com.example.medimateserver.entity.Role; // Assuming you have a Role model
 import com.example.medimateserver.service.RoleService; // Assuming you have a RoleService
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,32 +18,32 @@ public class RoleController {
     private RoleService roleService;
 
     @GetMapping
-    public List<Role> getAllRoles() {
+    public List<RoleDto> getAllRoles() {
         return roleService.findAll();
     }
 
-    @GetMapping("/{roleId}")
-    public ResponseEntity<Role> getRoleById(@PathVariable Integer roleId) {
-        Role role = roleService.findById(roleId);
-        if (role != null) {
-            return ResponseEntity.ok(role);
+    @GetMapping("/{id}")
+    public ResponseEntity<RoleDto> getRoleById(@PathVariable Integer roleId) {
+        RoleDto roleDto = roleService.findById(roleId);
+        if (roleDto != null) {
+            return ResponseEntity.ok(roleDto);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping
-    public ResponseEntity<Role> createRole(@RequestBody Role role) {
-        Role newRole = roleService.save(role);
+    public ResponseEntity<RoleDto> createRole(@RequestBody RoleDto role) {
+        RoleDto newRole = roleService.save(role);
         return ResponseEntity.status(HttpStatus.CREATED).body(newRole);
     }
 
-    @PutMapping("/{roleId}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateRole(@PathVariable Integer roleId, @RequestBody Role roleDetails) {
         return ResponseEntity.ok("updatedRole");
     }
 
-    @DeleteMapping("/{roleId}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRole(@PathVariable Integer roleId) {
         // ... (Implement delete logic with RoleService)
         return ResponseEntity.noContent().build();

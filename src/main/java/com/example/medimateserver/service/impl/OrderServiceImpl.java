@@ -1,13 +1,19 @@
 package com.example.medimateserver.service.impl;
 
+import com.example.medimateserver.dto.CategoryDto;
+import com.example.medimateserver.dto.OrderDto;
+import com.example.medimateserver.entity.Category;
 import com.example.medimateserver.entity.Order;
 import com.example.medimateserver.repository.OrderRepository;
 import com.example.medimateserver.service.OrderService;
+import com.example.medimateserver.util.ConvertUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -15,23 +21,30 @@ public class OrderServiceImpl implements OrderService {
     OrderRepository orderRepository;
 
     @Override
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    public List<OrderDto> findAll() {
+        List<Order> orderList = orderRepository.findAll();
+        return orderList.stream()
+                .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Order findById(Integer id) {
+    public OrderDto findById(Integer id) {
 
-        return orderRepository.findById(id).orElse(null);
+        return orderRepository.findById(id)
+                .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))
+                .orElse(null);
     }
 
     @Override
-    public Order save(Order order) {
-        return orderRepository.save(order);
+    public OrderDto save(OrderDto orderDto) {
+        Order order = ConvertUtil.gI().toEntity(orderDto, Order.class);
+        order = orderRepository.save(order);
+        return ConvertUtil.gI().toDto(order, OrderDto.class);
     }
 
     @Override
-    public Order update(Integer id, Order order) {
+    public OrderDto update(Integer id, OrderDto orderDto) {
         return null;
     }
 
@@ -39,16 +52,5 @@ public class OrderServiceImpl implements OrderService {
     public void deleteById(Integer id) {
 
     }
-
-    public static Order convertToObject(String jsonString) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonString, Order.class);
-    }
-
-    public static String convertToJson(Order order) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(order);
-    }
-
 
 }
