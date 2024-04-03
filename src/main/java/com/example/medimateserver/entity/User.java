@@ -1,9 +1,9 @@
-package com.example.medimateserver.model;
+package com.example.medimateserver.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.el.stream.Optional;
 
 @Entity
 @Table(name = "user")

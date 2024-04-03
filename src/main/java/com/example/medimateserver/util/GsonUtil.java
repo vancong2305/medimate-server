@@ -1,16 +1,11 @@
-package com.example.medimateserver.model;
+package com.example.medimateserver.util;
 
 import com.google.gson.Gson;
 
-public class Gcustome {
+public class GsonUtil {
     private static Gson gson;
 
-    private Gcustome() {
-        // Khởi tạo Gson
-        gson = new Gson();
-    }
-
-    public static Gson getInstance() {
+    public static Gson gI() {
         // Trả về thể hiện duy nhất của lớp
         if (gson == null) {
             gson = new Gson();

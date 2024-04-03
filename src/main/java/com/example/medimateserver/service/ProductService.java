@@ -1,21 +1,20 @@
 package com.example.medimateserver.service;
 
-import com.example.medimateserver.model.Product;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.example.medimateserver.dto.ProductDto;
+import com.example.medimateserver.entity.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
 public interface ProductService {
 
-    List<Product> findAll();
+    List<ProductDto> findAll();
 
-    Product findById(Integer id);
+    ProductDto findById(Integer id);
 
-    Product save(Product product);
+    ProductDto save(ProductDto productDto);
 
-    Product update(Integer id, Product product);
+    ProductDto update(Integer id, ProductDto productDto);
 
     void deleteById(Integer id);
 }

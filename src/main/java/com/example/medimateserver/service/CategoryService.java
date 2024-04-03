@@ -1,19 +1,20 @@
 package com.example.medimateserver.service;
 
-import com.example.medimateserver.model.Category;
+import com.example.medimateserver.dto.CategoryDto;
+import com.example.medimateserver.entity.Category;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
 public interface CategoryService {
 
-    List<Category> findAll();
+    List<CategoryDto> findAll();
 
-    Category findById(Integer id);
+    CategoryDto findById(Integer id);
 
-    Category save(Category category);
+    CategoryDto save(CategoryDto categoryDto);
 
-    Category update(Integer id, Category category);
+    CategoryDto update(Integer id, CategoryDto categoryDto);
 
     void deleteById(Integer id);
 }

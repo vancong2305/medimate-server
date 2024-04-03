@@ -1,14 +1,19 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.model.Product;
+import com.example.medimateserver.dto.CategoryDto;
+import com.example.medimateserver.dto.ProductDto;
+import com.example.medimateserver.entity.Category;
+import com.example.medimateserver.entity.Product;
 import com.example.medimateserver.repository.ProductRepository;
 import com.example.medimateserver.service.ProductService;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.example.medimateserver.util.ConvertUtil;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -16,21 +21,39 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
 
     @Override
-    public List<Product> findAll() { return productRepository.findAll(); }
-
-    @Override
-    public Product findById(Integer id) {
-        return productRepository.findById(id).orElse(null);
+    public List<ProductDto> findAll() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Product save(Product product) {
-        return productRepository.save(product);
+    public ProductDto findById(Integer id) {
+
+        return productRepository.findById(id)
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .orElse(null);
     }
 
     @Override
-    public Product update(Integer id, Product product) {
-        return null;
+    public ProductDto save(ProductDto productDto) {
+        Product product = ConvertUtil.gI().toEntity(productDto, Product.class);
+        product = productRepository.save(product);
+        return ConvertUtil.gI().toDto(product, ProductDto.class);
+    }
+
+    @Override
+    public ProductDto update(Integer id, ProductDto product) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
+
+        // Cập nhật các thuộc tính từ categoryDto sang existingCategory
+        existingProduct.setName(product.getName()); // Ví dụ, gán name mới
+        // Cập nhật các thuộc tính khác nếu cần
+
+        Product updatedCategory = productRepository.save(existingProduct);
+        return ConvertUtil.gI().toDto(updatedCategory, ProductDto.class);
     }
 
     @Override

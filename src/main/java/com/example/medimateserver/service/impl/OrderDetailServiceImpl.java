@@ -1,9 +1,8 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.model.OrderDetail;
+import com.example.medimateserver.entity.OrderDetail;
 import com.example.medimateserver.repository.OrderDetailRepository;
 import com.example.medimateserver.service.OrderDetailService;
-import com.example.medimateserver.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

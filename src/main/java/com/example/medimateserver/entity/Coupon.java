@@ -1,10 +1,8 @@
-package com.example.medimateserver.model;
+package com.example.medimateserver.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Entity
 @Table(name = "promo")

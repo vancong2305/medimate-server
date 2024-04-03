@@ -1,6 +1,6 @@
 package com.example.medimateserver.controller.api;
 
-import com.example.medimateserver.model.User;
+import com.example.medimateserver.entity.User;
 import com.example.medimateserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

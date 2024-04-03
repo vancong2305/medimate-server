@@ -1,7 +1,6 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.model.Order;
-import com.example.medimateserver.model.User;
+import com.example.medimateserver.entity.Order;
 import com.example.medimateserver.repository.OrderRepository;
 import com.example.medimateserver.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +21,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findById(Integer id) {
+
         return orderRepository.findById(id).orElse(null);
     }
 

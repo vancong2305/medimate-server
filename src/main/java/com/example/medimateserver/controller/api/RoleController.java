@@ -1,6 +1,6 @@
 package com.example.medimateserver.controller.api;
 
-import com.example.medimateserver.model.Role; // Assuming you have a Role model
+import com.example.medimateserver.entity.Role; // Assuming you have a Role model
 import com.example.medimateserver.service.RoleService; // Assuming you have a RoleService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

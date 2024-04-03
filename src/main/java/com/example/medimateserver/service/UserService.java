@@ -1,6 +1,8 @@
 package com.example.medimateserver.service;
 
-import com.example.medimateserver.model.User;
+
+import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +14,7 @@ public interface UserService {
     List<User> findAll();
     List<User> findWithPageAndSize(int page, int size);
     User findById(Integer id);
-    User findByEmail(String email);
+    UserDto findByEmail(String email);
 
     User save(User user);
 

@@ -1,6 +1,6 @@
 package com.example.medimateserver.config.jwt;
 
-import com.example.medimateserver.config.util.MLogger;
+import com.example.medimateserver.util.MLogger;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;

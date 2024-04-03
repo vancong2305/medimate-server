@@ -1,6 +1,6 @@
 package com.example.medimateserver.service;
 
-import com.example.medimateserver.model.OrderDetail;
+import com.example.medimateserver.entity.OrderDetail;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

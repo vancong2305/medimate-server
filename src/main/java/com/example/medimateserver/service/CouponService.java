@@ -1,7 +1,6 @@
 package com.example.medimateserver.service;
 
-import com.example.medimateserver.model.Coupon;
-import com.example.medimateserver.model.Coupon;
+import com.example.medimateserver.entity.Coupon;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

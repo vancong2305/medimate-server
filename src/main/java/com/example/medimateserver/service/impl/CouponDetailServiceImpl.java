@@ -1,6 +1,6 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.model.CouponDetail;
+import com.example.medimateserver.entity.CouponDetail;
 import com.example.medimateserver.repository.CouponDetailRepository; // Giả sử bạn đã tạo Repository này
 import com.example.medimateserver.service.CouponDetailService;
 import org.springframework.beans.factory.annotation.Autowired;

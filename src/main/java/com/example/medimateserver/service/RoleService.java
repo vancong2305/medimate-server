@@ -1,6 +1,6 @@
 package com.example.medimateserver.service;
 
-import com.example.medimateserver.model.Role;
+import com.example.medimateserver.entity.Role;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

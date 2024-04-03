@@ -1,4 +1,4 @@
-package com.example.medimateserver.config.util;
+package com.example.medimateserver.util;
 
 import java.util.logging.Logger;
 

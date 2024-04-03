@@ -1,6 +1,6 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.model.Coupon;
+import com.example.medimateserver.entity.Coupon;
 import com.example.medimateserver.repository.CouponRepository;
 import com.example.medimateserver.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;

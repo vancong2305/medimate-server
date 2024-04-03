@@ -1,6 +1,6 @@
 package com.example.medimateserver.controller.api;
 
-import com.example.medimateserver.model.CouponDetail;
+import com.example.medimateserver.entity.CouponDetail;
 import com.example.medimateserver.service.CouponDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/promo-rules")
+@RequestMapping("/api/coupon_detail")
 public class CouponDetailController {
 
     @Autowired

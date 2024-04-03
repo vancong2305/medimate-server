@@ -1,19 +1,17 @@
 package com.example.medimateserver.service.impl;
 
 import com.example.medimateserver.dto.UserDto;
-import com.example.medimateserver.fillter.Pagination;
-import com.example.medimateserver.model.User;
+import com.example.medimateserver.entity.User;
 import com.example.medimateserver.repository.UserRepository;
 import com.example.medimateserver.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.example.medimateserver.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -40,8 +38,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public UserDto findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(user -> ConvertUtil.gI().toDto(user, UserDto.class))
+                .orElse(null); // Trả về null nếu không tìm thấy optional
     }
 
     @Override

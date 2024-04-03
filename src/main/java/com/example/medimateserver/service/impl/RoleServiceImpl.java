@@ -1,6 +1,6 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.model.Role;
+import com.example.medimateserver.entity.Role;
 import com.example.medimateserver.repository.RoleRepository;
 import com.example.medimateserver.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;

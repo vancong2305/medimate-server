@@ -1,4 +1,4 @@
-package com.example.medimateserver.model;
+package com.example.medimateserver.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

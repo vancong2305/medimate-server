@@ -1,6 +1,6 @@
 package com.example.medimateserver.repository;
 
-import com.example.medimateserver.model.CouponDetail;
+import com.example.medimateserver.entity.CouponDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

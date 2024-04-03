@@ -1,6 +1,6 @@
 package com.example.medimateserver.controller.api;
 
-import com.example.medimateserver.model.Coupon;
+import com.example.medimateserver.entity.Coupon;
 import com.example.medimateserver.service.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class CouponController {
         return CouponService.findAll();
     }
 
-    @GetMapping("/{code}")
+    @GetMapping("/{id}")
     public ResponseEntity<Coupon> getCouponByCode(@PathVariable String code) {
         Coupon Coupon = CouponService.findByCode(code);
         if (Coupon != null) {
@@ -37,12 +37,12 @@ public class CouponController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCoupon);
     }
 
-    @PutMapping("/{code}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateCoupon(@PathVariable String code, @RequestBody Coupon Coupon) {
         return ResponseEntity.ok("updatedCoupon");
     }
 
-    @DeleteMapping("/{code}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCoupon(@PathVariable String code) {
         // ... (Implement delete logic with CouponService)
         return ResponseEntity.noContent().build();
