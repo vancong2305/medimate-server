@@ -23,6 +23,4 @@ public class Category {
     @Column(name = "status")
     private Integer status;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<Product> posts;
 }
