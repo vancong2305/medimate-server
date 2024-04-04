@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Component
@@ -16,22 +17,17 @@ public class JwtProvider {
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Sử dụng khóa mới tạo
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
     public static String generateToken(String username) {
-        System.out.println("Token: " + key);
+        System.out.println(key);
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 10000)) // 10s
-//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 1 day
+//                .setExpiration(new Date(System.currentTimeMillis() + 10000)) // 10s
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 1 day
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
 
     public static String getUsernameFromToken(String token) {
-        System.out.println("Token is: " + Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject().toString());
         return Jwts.parser()
                 .setSigningKey(key)
                 .parseClaimsJws(token)
@@ -55,5 +51,43 @@ public class JwtProvider {
             logger.error("JWT claims string is empty: {}", ex.getMessage());
         }
         return false;
+    }
+    public static boolean verifyToken(String tokenString) {
+        System.out.println("At verify" + tokenString);
+        try {
+            // Giải mã token
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(tokenString)
+                    .getBody();
+
+            // Lấy thông tin từ token
+            String username = claims.getSubject();
+            Date issuedAtDate = claims.getIssuedAt();
+            Date expirationDate = claims.getExpiration();
+
+            // Định dạng ngày tháng
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String issuedAt = dateFormat.format(issuedAtDate);
+            String expiration = dateFormat.format(expirationDate);
+
+            // In kết quả
+            System.out.println("Username: " + username);
+            System.out.println("Ngày khởi tạo: " + issuedAt);
+            System.out.println("Ngày hết hạn: " + expiration);
+
+            // Kiểm tra thời gian hết hạn
+            if (expirationDate.before(new Date())) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } catch (ExpiredJwtException e) {
+            return false;
+        } catch (JwtException e) {
+            System.out.println("Lỗi giải mã token: " + e.getMessage());
+            return false;
+        }
     }
 }
