@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 03, 2024 lúc 09:51 AM
+-- Thời gian đã tạo: Th4 04, 2024 lúc 01:11 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -170,6 +170,25 @@ INSERT INTO `role` (`id`, `name`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `token`
+--
+
+CREATE TABLE `token` (
+  `id_user` int(11) NOT NULL,
+  `access_token` text NOT NULL,
+  `refresh_token` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `token`
+--
+
+INSERT INTO `token` (`id_user`, `access_token`, `refresh_token`) VALUES
+(1, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJwYXNzd29yZFwiOlwieW91cl9wYXNzd29yZFwiLFwiZW1haWxcIjpcInlvdXJfZW1haWxAZXhhbXBsZS5jb21cIixcImlkUm9sZVwiOjEsXCJwb2ludFwiOjAsXCJzdGF0dXNcIjoxfSIsImlhdCI6MTcxMjIyNzA4MCwiZXhwIjoxNzEyMzEzNDgwfQ.5_O_T018SCBINKat2BTWqmjA26uGEmNHooB3Wzc9U2U', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJwYXNzd29yZFwiOlwieW91cl9wYXNzd29yZFwiLFwiZW1haWxcIjpcInlvdXJfZW1haWxAZXhhbXBsZS5jb21cIixcImlkUm9sZVwiOjEsXCJwb2ludFwiOjAsXCJzdGF0dXNcIjoxfSIsImlhdCI6MTcxMjIyNzA4MSwiZXhwIjoxNzEyODMxODgxfQ.O3VavlOUGHCOWtyJAa4N3PSly7V4CVfk5ojo7Ty0pXM');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `unit`
 --
 
@@ -223,8 +242,12 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `id_role`, `email`, `password`, `point`, `status`) VALUES
-(1, 1, 'your_email@example.com', 'your_password', 0, 1),
-(2, 1, 'your_email1@example.com', 'your_password1', 0, 1);
+(1, 1, 'a', '1', 0, 1),
+(2, 1, 'your_email1@example.com', 'your_password1', 0, 1),
+(3, 1, 'your_email123@example.com', 'your_password123', 0, 1),
+(5, 1, '1', '1', 0, 1),
+(7, 1, '122', '1', 0, 1),
+(8, 1, 'vancong23236@gmail.com', '1232323A@a', 0, 1);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -278,6 +301,12 @@ ALTER TABLE `product`
 --
 ALTER TABLE `role`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `token`
+--
+ALTER TABLE `token`
+  ADD KEY `fk_token_user` (`id_user`);
 
 --
 -- Chỉ mục cho bảng `unit`
@@ -352,7 +381,7 @@ ALTER TABLE `unit_detail`
 -- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -383,6 +412,12 @@ ALTER TABLE `order_detail`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `fk_product_category` FOREIGN KEY (`id_category`) REFERENCES `category` (`id`);
+
+--
+-- Các ràng buộc cho bảng `token`
+--
+ALTER TABLE `token`
+  ADD CONSTRAINT `fk_token_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
 -- Các ràng buộc cho bảng `unit_detail`

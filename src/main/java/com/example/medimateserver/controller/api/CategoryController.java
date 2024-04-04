@@ -26,8 +26,8 @@ public class CategoryController {
 
     @Autowired
     private TokenService tokenService;
+    @Autowired
     private CategoryService categoryService;
-
     @Autowired
     private UserService userService;
 
@@ -36,8 +36,6 @@ public class CategoryController {
     // Get category by ID
     @GetMapping("/{id}")
     public ResponseEntity<String> getCategoryById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
-        String pageInformation = request.getHeader("Pagination");
-        String tokenInformation = request.getHeader("Token");
 //        System.out.println("Lấy thông tin phân trang " + pageInformation);
 //
 //        //Lấy thông tin người dùng qua id và so sánh với token
@@ -56,20 +54,33 @@ public class CategoryController {
 //        }
 //        List<User> userList = userService.findAll();
 //        String jsonUser = GsonUtil.getInstance().toJson(userList);
-        TokenDto tokenDto = tokenService.findById(id);
 
-        if (CheckAuthUtil.gI().check(tokenInformation,tokenDto.getAccessToken(), id)) {
-            List<CategoryDto> categoryList = categoryService.findAll();
-            String jsons = GsonUtil.gI().toJson(categoryList);
+        try {
+            String pageInformation = request.getHeader("Pagination");
+            String tokenInformation = request.getHeader("Token");
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            boolean check = JwtProvider.verifyToken(tokenInformation, tokenDto);
+
+            if (check) {
+                List<CategoryDto> categoryList = categoryService.findAll();
+                String jsons = GsonUtil.gI().toJson(categoryList);
+                return new ResponseEntity<>(
+                        jsons,
+                        HttpStatus.OK
+                );
+            }
             return new ResponseEntity<>(
-                    jsons,
-                    HttpStatus.OK
+                    "Không có quyền truy cập",
+                    HttpStatus.NOT_FOUND
+            );
+        } catch (Exception ex) {
+            return new ResponseEntity<>(
+                    "badRequest",
+                    HttpStatus.BAD_REQUEST
             );
         }
-        return new ResponseEntity<>(
-                "badRequest",
-                HttpStatus.BAD_REQUEST
-        );
+
     }
 
     // Create a new category
