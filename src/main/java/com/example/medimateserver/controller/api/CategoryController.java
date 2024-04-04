@@ -56,13 +56,10 @@ public class CategoryController {
 //        String jsonUser = GsonUtil.getInstance().toJson(userList);
 
         try {
-            String pageInformation = request.getHeader("Pagination");
             String tokenInformation = request.getHeader("Token");
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
-            boolean check = JwtProvider.verifyToken(tokenInformation, tokenDto);
-
-            if (check) {
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
                 List<CategoryDto> categoryList = categoryService.findAll();
                 String jsons = GsonUtil.gI().toJson(categoryList);
                 return new ResponseEntity<>(

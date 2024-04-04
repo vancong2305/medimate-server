@@ -53,6 +53,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void deleteById(Integer id) {
-
+        tokenRepository.deleteById(id);
     }
 }

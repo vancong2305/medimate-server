@@ -46,7 +46,6 @@ public class AuthController {
 //                System.out.println("Email has been received: " + userDto.getEmail());
 //                System.out.println("Token after generated: " + token);
 //                System.out.println("User from token: " + JwtProvider.getUsernameFromToken(token));
-
                 TokenDto tokenDto = new TokenDto();
                 tokenDto.setAccessToken(token);
                 tokenDto.setRefreshToken(refreshToken);
@@ -90,6 +89,23 @@ public class AuthController {
             MLogger.LOGGER.severe("Error: " + ex.getMessage());
             return new ResponseEntity<>(
                     "Error Or User Already Exists!" + ex.toString(),
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody UserDto userDto) {
+        try {
+            UserDto userDto1 = userService.findByEmail(userDto.getEmail());
+            tokenService.deleteById(userDto1.getId());
+            return new ResponseEntity<>(
+                    "Delete success!",
+                    HttpStatus.OK
+            );
+        } catch (Exception ex) {
+            MLogger.LOGGER.severe("Error: " + ex.getMessage());
+            return new ResponseEntity<>(
+                    "Error: " + ex.toString(),
                     HttpStatus.BAD_REQUEST
             );
         }
