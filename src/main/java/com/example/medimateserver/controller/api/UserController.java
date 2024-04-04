@@ -3,7 +3,11 @@ package com.example.medimateserver.controller.api;
 import com.example.medimateserver.dto.UserDto;
 import com.example.medimateserver.entity.User;
 import com.example.medimateserver.service.UserService;
+import com.example.medimateserver.util.HashUtil;
+import com.example.medimateserver.util.MLogger;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
@@ -26,6 +30,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Integer id) {
         UserDto user = userService.findById(id);
+        user.setPassword(HashUtil.gI().encode(user.getPassword()));
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -33,10 +38,29 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        UserDto createdUser = userService.save(userDto);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+        userDto.setIdRole(1);
+        userDto.setStatus(1);
+        userDto.setPoint(0);
+
+        try {
+            UserDto createdUser = userService.save(userDto);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+
+        } catch (DataIntegrityViolationException e) {
+            // Giả sử lỗi này xảy ra khi trùng tên người dùng hoặc email
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+
+        } catch (IllegalArgumentException e) {
+            // Lỗi do dữ liệu đầu vào không hợp lệ (validation)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        } catch (Exception e) {
+            // Lỗi chung không đoán trước được
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody UserDto userDto) {
