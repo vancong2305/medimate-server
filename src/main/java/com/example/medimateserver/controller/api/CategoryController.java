@@ -2,10 +2,12 @@ package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
 import com.example.medimateserver.dto.CategoryDto;
+import com.example.medimateserver.dto.TokenDto;
 import com.example.medimateserver.dto.UserDto;
 import com.example.medimateserver.entity.User;
 import com.example.medimateserver.fillter.Pagination;
 import com.example.medimateserver.service.CategoryService;
+import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.CheckAuthUtil;
 import com.example.medimateserver.util.GsonUtil;
@@ -23,6 +25,7 @@ import java.util.List;
 public class CategoryController {
 
     @Autowired
+    private TokenService tokenService;
     private CategoryService categoryService;
 
     @Autowired
@@ -53,8 +56,9 @@ public class CategoryController {
 //        }
 //        List<User> userList = userService.findAll();
 //        String jsonUser = GsonUtil.getInstance().toJson(userList);
+        TokenDto tokenDto = tokenService.findById(id);
 
-        if (CheckAuthUtil.gI().check(tokenInformation, id)) {
+        if (CheckAuthUtil.gI().check(tokenInformation,tokenDto.getAccessToken(), id)) {
             List<CategoryDto> categoryList = categoryService.findAll();
             String jsons = GsonUtil.gI().toJson(categoryList);
             return new ResponseEntity<>(

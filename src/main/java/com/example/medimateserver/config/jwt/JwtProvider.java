@@ -1,8 +1,13 @@
 package com.example.medimateserver.config.jwt;
 
+import com.example.medimateserver.dto.TokenDto;
+import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.service.TokenService;
+import com.example.medimateserver.util.GsonUtil;
 import com.example.medimateserver.util.MLogger;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +19,7 @@ import java.util.Date;
 
 @Component
 public class JwtProvider {
+
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Sử dụng khóa mới tạo
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
     public static String generateToken(String username) {
@@ -61,13 +67,17 @@ public class JwtProvider {
         }
         return false;
     }
-    public static boolean verifyToken(String tokenString) {
-        System.out.println("At verify" + tokenString);
+    public static boolean verifyToken(String accessToken,TokenDto tokenDto) {
+        System.out.println("At verify" + accessToken);
         try {
-            // Giải mã token
+            System.out.println("Token at database: " + tokenDto.getAccessToken());
+            System.out.println("Token at post: " + accessToken);
+            if (!tokenDto.getAccessToken().equals(accessToken)) {
+                return false;
+            }
             Claims claims = Jwts.parser()
                     .setSigningKey(key)
-                    .parseClaimsJws(tokenString)
+                    .parseClaimsJws(accessToken)
                     .getBody();
 
             // Lấy thông tin từ token

@@ -12,10 +12,11 @@ public class CheckAuthUtil {
         }
         return checkAuthUtil;
     }
-    public boolean check(String token, Integer id) {
+    public boolean check(String token, String databaseToken, Integer id) {
+        String oldToken = token;
         token = JwtProvider.getUsernameFromToken(token);
         UserDto user = GsonUtil.gI().fromJson(token, UserDto.class);
-        if (user.getId() == id) {
+        if (user.getId() == id && oldToken.equals(databaseToken)) {
             return true;
         }
         return false;
