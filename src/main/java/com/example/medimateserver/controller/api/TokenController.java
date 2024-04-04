@@ -12,11 +12,11 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api/token")
 public class TokenController {
-    @GetMapping("/check")
+    @PostMapping("/check")
     public ResponseEntity<Boolean> checkToken(@RequestBody TokenDto token) {
         try {
             // Giải mã token và lấy thông tin
-            boolean check = JwtProvider.verifyToken(token.getToken());
+            boolean check = JwtProvider.verifyToken(token.getAccessToken());
             System.out.println("Token is: " + token);
             if (check) {
                 return new ResponseEntity<>(true, HttpStatus.OK);

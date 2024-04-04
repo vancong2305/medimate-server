@@ -1,11 +1,15 @@
 package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
+import com.example.medimateserver.dto.TokenDto;
 import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.entity.Token;
 import com.example.medimateserver.entity.User;
+import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.GsonUtil;
 import com.example.medimateserver.util.MLogger;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +23,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(value = "/api/auth", produces = "application/json")
 public class AuthController {
     @Autowired
     UserService userService;
+
+    @Autowired
+    TokenService tokenService;
 
     /*
         First, users provide the server with their information. Could be email, password...
@@ -30,7 +37,7 @@ public class AuthController {
         Finally, based on the condition return the token or return an invalid request to the user.
     */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDto userDto) {
+    public ResponseEntity<String> login(@RequestBody UserDto userDto) throws JsonProcessingException {
         try {
             UserDto user = userService.findByEmail(userDto.getEmail());
             if (userDto.getPassword().toString().compareTo(user.getPassword().toString()) == 0) {
@@ -38,23 +45,23 @@ public class AuthController {
                 System.out.println("Email has been received: " + userDto.getEmail());
                 System.out.println("Token after generated: " + token);
                 System.out.println("User from token: " + JwtProvider.getUsernameFromToken(token));
-
-                Map<String, Object> responseMap = new HashMap<>();
-                responseMap.putAll(Collections.singletonMap("token", token));
-
-
+                TokenDto tokenDto = new TokenDto();
+                tokenDto.setAccessToken(token);
+                String jsons = GsonUtil.gI().toJson(tokenDto);
+                tokenDto.setId(userDto.getId());
+                tokenService.save(tokenDto);
                 return new ResponseEntity<>(
-                        responseMap,
+                        jsons,
                         HttpStatus.OK
                 );
             }
             return new ResponseEntity<>(
-                    "Invalid data. Password Error!",
+                    "Password Error!",
                     HttpStatus.BAD_REQUEST
             );
         } catch (Exception ex) {
             return new ResponseEntity<>(
-                    "Invalid data. Email Error!",
+                    ex.getMessage(),
                     HttpStatus.BAD_REQUEST
             );
         }
