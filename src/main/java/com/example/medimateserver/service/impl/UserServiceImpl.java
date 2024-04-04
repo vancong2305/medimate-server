@@ -1,18 +1,22 @@
 package com.example.medimateserver.service.impl;
 
+import com.example.medimateserver.dto.CategoryDto;
 import com.example.medimateserver.dto.RoleDto;
 import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.entity.Category;
 import com.example.medimateserver.entity.Role;
 import com.example.medimateserver.entity.User;
 import com.example.medimateserver.repository.UserRepository;
 import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.ConvertUtil;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -21,21 +25,31 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository; // Sử dụng private cho đúng nguyên tắc
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll(); // Trả về List trống nếu không có dữ liệu
+    public List<UserDto> findAll() {
+        List<User> userList = userRepository.findAll();
+        return userList
+                .stream()
+                .map(user -> ConvertUtil.gI().toDto(user, UserDto.class))
+                .collect(Collectors.toList());
     }
 
-    public List<User> findWithPageAndSize(int page, int size) {
+    public List<UserDto> findWithPageAndSize(int page, int size) {
         // Tạo Pageable object
         Pageable pageable = PageRequest.of(page, size);
         // Truy vấn dữ liệu
         List<User> users = (List<User>) userRepository.findAll(pageable);
-        return users;
+        return users
+                .stream()
+                .map(user -> ConvertUtil.gI().toDto(user, UserDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public User findById(Integer id) {
-        return userRepository.findById(id).orElse(null);
+    public UserDto findById(Integer id) {
+
+        return userRepository.findById(id)
+                .map(user -> ConvertUtil.gI().toDto(user, UserDto.class))
+                .orElse(null);
     }
 
 
@@ -54,8 +68,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Integer id, User user) {
-        return null;
+    public UserDto update(Integer id, UserDto userDto) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
+
+        existingUser.setEmail(userDto.getEmail());
+        existingUser.setStatus(userDto.getStatus());
+        existingUser.setPassword(userDto.getPassword());
+        existingUser.setPoint(userDto.getPoint());
+        User updatedCategory = userRepository.save(existingUser);
+        return ConvertUtil.gI().toDto(updatedCategory, UserDto.class);
     }
 
     @Override

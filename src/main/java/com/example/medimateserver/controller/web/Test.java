@@ -14,9 +14,7 @@ public class Test {
     UserService userService;
     @GetMapping("/test")
     public String test() {
-        System.out.println("Dm est cả tối");
-        List<User> listUsers = userService.findAll();
-        String hello = "List length is " + listUsers.size();
-        return hello;
+        System.out.println("Test cả tối");
+        return "Test cả tối";
     }
 }

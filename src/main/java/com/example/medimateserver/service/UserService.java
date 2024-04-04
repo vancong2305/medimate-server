@@ -2,7 +2,6 @@ package com.example.medimateserver.service;
 
 
 import com.example.medimateserver.dto.UserDto;
-import com.example.medimateserver.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,14 +10,14 @@ import java.util.Optional;
 @Service
 public interface UserService {
 
-    List<User> findAll();
-    List<User> findWithPageAndSize(int page, int size);
-    User findById(Integer id);
+    List<UserDto> findAll();
+    List<UserDto> findWithPageAndSize(int page, int size);
+    UserDto findById(Integer id);
     UserDto findByEmail(String email);
 
-    UserDto save(UserDto user);
+    UserDto save(UserDto UserDto);
 
-    User update(Integer id, User user);
+    UserDto update(Integer id, UserDto UserDto);
 
     void deleteById(Integer id);
 }
