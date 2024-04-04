@@ -55,21 +55,34 @@ public class CategoryController {
 //        List<User> userList = userService.findAll();
 //        String jsonUser = GsonUtil.getInstance().toJson(userList);
 
+//        try {
+//            String tokenInformation = request.getHeader("Token");
+//            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+//            TokenDto tokenDto = tokenService.findById(user.getId());
+//            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+//                List<CategoryDto> categoryList = categoryService.findAll();
+//                String jsons = GsonUtil.gI().toJson(categoryList);
+//                return new ResponseEntity<>(
+//                        jsons,
+//                        HttpStatus.OK
+//                );
+//            }
+//            return new ResponseEntity<>(
+//                    "Không có quyền truy cập",
+//                    HttpStatus.NOT_FOUND
+//            );
+//        } catch (Exception ex) {
+//            return new ResponseEntity<>(
+//                    "badRequest",
+//                    HttpStatus.BAD_REQUEST
+//            );
+//        }
         try {
-            String tokenInformation = request.getHeader("Token");
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                List<CategoryDto> categoryList = categoryService.findAll();
-                String jsons = GsonUtil.gI().toJson(categoryList);
-                return new ResponseEntity<>(
-                        jsons,
-                        HttpStatus.OK
-                );
-            }
+            List<CategoryDto> categoryList = categoryService.findAll();
+            String jsons = GsonUtil.gI().toJson(categoryList);
             return new ResponseEntity<>(
-                    "Không có quyền truy cập",
-                    HttpStatus.NOT_FOUND
+                    jsons,
+                    HttpStatus.OK
             );
         } catch (Exception ex) {
             return new ResponseEntity<>(

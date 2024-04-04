@@ -35,7 +35,8 @@ public class UserController {
     public ResponseEntity<?> getUserById(HttpServletRequest request) {
         try {
             // Kiểm tra xem token gửi lên
-            String tokenInformation = request.getHeader("Token");
+            String tokenInformation = request.getHeader("Authorization");
+            tokenInformation = tokenInformation.substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {

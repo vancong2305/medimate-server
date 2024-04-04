@@ -54,20 +54,29 @@ public class ProductController {
 //        }
 //        List<User> userList = userService.findAll();
 //        String jsonUser = GsonUtil.getInstance().toJson(userList);
-        TokenDto tokenDto = tokenService.findById(id);
-
-        if (CheckAuthUtil.gI().check(tokenInformation, tokenDto.getAccessToken(), id)) {
+//        TokenDto tokenDto = tokenService.findById(id);
+//
+//        if (CheckAuthUtil.gI().check(tokenInformation, tokenDto.getAccessToken(), id)) {
+//            List<ProductDto> productList = productService.findAll();
+//            String jsons = GsonUtil.gI().toJson(productList);
+//            return new ResponseEntity<>(
+//                    jsons,
+//                    HttpStatus.OK
+//            );
+//        }
+        try {
             List<ProductDto> productList = productService.findAll();
             String jsons = GsonUtil.gI().toJson(productList);
             return new ResponseEntity<>(
                     jsons,
                     HttpStatus.OK
             );
+        } catch (Exception ex) {
+            return new ResponseEntity<>(
+                    "badRequest",
+                    HttpStatus.BAD_REQUEST
+            );
         }
-        return new ResponseEntity<>(
-                "badRequest",
-                HttpStatus.BAD_REQUEST
-        );
     }
 
     // Create a new category
