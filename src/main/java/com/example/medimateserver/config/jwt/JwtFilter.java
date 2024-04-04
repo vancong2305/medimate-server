@@ -34,6 +34,10 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (request.getServletPath().contains("/api/auth/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String authorizationHeader = request.getHeader("Authorization");
 
