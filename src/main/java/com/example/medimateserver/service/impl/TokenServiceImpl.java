@@ -38,8 +38,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public TokenDto save(TokenDto tokenDto) {
         Token token = ConvertUtil.gI().toEntity(tokenDto, Token.class);
-        System.out.println(tokenDto.getId());
-        token.setId(tokenDto.getId());
+        token.setIdUser(tokenDto.getIdUser());
         token = tokenRepository.save(token);
         return ConvertUtil.gI().toDto(token, TokenDto.class);
     }

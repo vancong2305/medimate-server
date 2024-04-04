@@ -21,8 +21,17 @@ public class JwtProvider {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-//                .setExpiration(new Date(System.currentTimeMillis() + 10000)) // 10s
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 1 day
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+    }
+
+    public static String generateRefreshToken(String username) {
+        System.out.println(key);
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 1 day
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }

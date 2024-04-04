@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // Thêm constructor không tham số
 public class Token {
     @Id
-    @Column(name = "user_id")
-    private Integer id;
+    @Column(name = "id_user")
+    private Integer idUser;
     @Column(name = "access_token")
     private String accessToken;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "refresh_token")
+    private String refreshToken;
 }

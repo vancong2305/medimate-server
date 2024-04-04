@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class TokenDto {
-    private Integer id;
+    private Integer idUser;
     private String accessToken;
+    private String refreshToken;
 }

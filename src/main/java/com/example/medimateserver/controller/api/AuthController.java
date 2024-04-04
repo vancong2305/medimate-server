@@ -42,13 +42,16 @@ public class AuthController {
             UserDto user = userService.findByEmail(userDto.getEmail());
             if (userDto.getPassword().toString().compareTo(user.getPassword().toString()) == 0) {
                 String token = JwtProvider.generateToken(GsonUtil.gI().toJson(user));
-                System.out.println("Email has been received: " + userDto.getEmail());
-                System.out.println("Token after generated: " + token);
-                System.out.println("User from token: " + JwtProvider.getUsernameFromToken(token));
+                String refreshToken = JwtProvider.generateRefreshToken(GsonUtil.gI().toJson(user));
+//                System.out.println("Email has been received: " + userDto.getEmail());
+//                System.out.println("Token after generated: " + token);
+//                System.out.println("User from token: " + JwtProvider.getUsernameFromToken(token));
+
                 TokenDto tokenDto = new TokenDto();
                 tokenDto.setAccessToken(token);
+                tokenDto.setRefreshToken(refreshToken);
                 String jsons = GsonUtil.gI().toJson(tokenDto);
-                tokenDto.setId(userDto.getId());
+                tokenDto.setIdUser(user.getId());
                 tokenService.save(tokenDto);
                 return new ResponseEntity<>(
                         jsons,
