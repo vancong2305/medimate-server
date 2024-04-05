@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,12 +50,18 @@ public class JwtFilter extends OncePerRequestFilter {
             token = authorizationHeader.substring(7);
             try {
                 username = jwtProvider.getUsernameFromToken(token);
-                System.out.println(username);
+                if (username.equals("")) {
+                    response.setStatus(HttpStatus.BAD_REQUEST.value());
+                    response.getWriter().write("JWT token has expired");
+                    return;
+                }
             } catch (ExpiredJwtException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 401 Unauthorized
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.getWriter().write("JWT token has expired");
                 return;
             }
         }
+        System.out.println("Không được vào đây");
 
         // Xác thực nếu có username và token chưa được xác thực trước đó
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -69,7 +76,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-
         filterChain.doFilter(request, response);
     }
 

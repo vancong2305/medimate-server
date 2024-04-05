@@ -54,8 +54,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDto findByEmail(String email) {
-        return userRepository.findByEmail(email)
+    public UserDto findByPhone(String phone) {
+        return userRepository.findByPhone(phone)
                 .map(user -> ConvertUtil.gI().toDto(user, UserDto.class))
                 .orElse(null); // Trả về null nếu không tìm thấy optional
     }
@@ -72,10 +72,10 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
 
-        existingUser.setEmail(userDto.getEmail());
+        existingUser.setPhone(userDto.getPhone());
         existingUser.setStatus(userDto.getStatus());
         existingUser.setPassword(userDto.getPassword());
-        existingUser.setPoint(userDto.getPoint());
+
         User updatedCategory = userRepository.save(existingUser);
         return ConvertUtil.gI().toDto(updatedCategory, UserDto.class);
     }

@@ -10,25 +10,32 @@ import org.apache.el.stream.Optional;
 @Data
 @NoArgsConstructor // Thêm constructor không tham số
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "email")
-    private String email;
-
     @Column(name = "id_role")
     private Integer idRole;
-
+    @Column(name = "id_address")
+    private String idAddress;
+    @Column(name = "phone")
+    private String phone;
+    @Column(name = "password")
+    private String password;
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
+    @Column(name = "rank")
+    private String rank;
     @Column(name = "point")
-    private Integer point;
-
+    private String point;
+    @Column(name = "birthday")
+    private String birthday;
+    @Column(name = "gender")
+    private Integer gender;
+    @Column(name = "image")
+    private String image;
     @Column(name = "status")
     private Integer status;
-
     // Không cần constructor có tham số, Lombok sẽ tự động tạo ra
 }

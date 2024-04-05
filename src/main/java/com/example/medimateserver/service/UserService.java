@@ -13,7 +13,7 @@ public interface UserService {
     List<UserDto> findAll();
     List<UserDto> findWithPageAndSize(int page, int size);
     UserDto findById(Integer id);
-    UserDto findByEmail(String email);
+    UserDto findByPhone(String phone);
 
     UserDto save(UserDto UserDto);
 

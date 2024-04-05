@@ -1,5 +1,9 @@
 package com.example.medimateserver.dto;
 
-public class UnitDto
-{
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class UnitDto {
 }

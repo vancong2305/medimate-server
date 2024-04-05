@@ -9,9 +9,12 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class CouponDto {
-
     private Integer id;
-    private Integer necessaryPoints;
-    private Integer percentDecrease;
+    private String code;
+    private String description;
+    private Integer point;
+    private Integer discountPercent;
+    private Integer expirationTime;
+    private String image;
     private Integer status;
 }

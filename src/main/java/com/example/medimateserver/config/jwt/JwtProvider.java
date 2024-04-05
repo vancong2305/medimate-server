@@ -43,11 +43,18 @@ public class JwtProvider {
     }
 
     public static String getUsernameFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        String result = "";
+        try {
+            result = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception ex) {
+            System.out.println("Token lỗi!");
+            result = "";
+        }
+        return result;
     }
 
     public static boolean validateToken(String token, UserDetails userDetails) {
@@ -67,7 +74,7 @@ public class JwtProvider {
         }
         return false;
     }
-    public static boolean verifyToken(String accessToken,TokenDto tokenDto) {
+    public static boolean verifyToken(String accessToken, TokenDto tokenDto) {
         System.out.println("At verify" + accessToken);
         try {
             System.out.println("Token at database: " + tokenDto.getAccessToken());
@@ -78,6 +85,48 @@ public class JwtProvider {
             Claims claims = Jwts.parser()
                     .setSigningKey(key)
                     .parseClaimsJws(accessToken)
+                    .getBody();
+
+            // Lấy thông tin từ token
+            String username = claims.getSubject();
+            Date issuedAtDate = claims.getIssuedAt();
+            Date expirationDate = claims.getExpiration();
+
+            // Định dạng ngày tháng
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String issuedAt = dateFormat.format(issuedAtDate);
+            String expiration = dateFormat.format(expirationDate);
+
+            // In kết quả
+            System.out.println("Username: " + username);
+            System.out.println("Ngày khởi tạo: " + issuedAt);
+            System.out.println("Ngày hết hạn: " + expiration);
+
+            // Kiểm tra thời gian hết hạn
+            if (expirationDate.before(new Date())) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } catch (ExpiredJwtException e) {
+            return false;
+        } catch (JwtException e) {
+            System.out.println("Lỗi giải mã token: " + e.getMessage());
+            return false;
+        }
+    }
+    public static boolean verifyRefreshToken(String refreshToken, TokenDto tokenDto) {
+        System.out.println("At verify" + refreshToken);
+        try {
+            System.out.println("Token at database: " + tokenDto.getAccessToken());
+            System.out.println("Token at post: " + refreshToken);
+            if (!tokenDto.getRefreshToken().equals(refreshToken)) {
+                return false;
+            }
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(refreshToken)
                     .getBody();
 
             // Lấy thông tin từ token

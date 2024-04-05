@@ -14,17 +14,15 @@ public class OrderDetail {
 
     @EmbeddedId
     private OrderDetailId id;
-
+    @Column(name = "discount_price")
+    private Integer discountPrice;
     @Column(name = "quantity")
     private Integer quantity;
-
     // Constructor với tham số
-
     public OrderDetail(OrderDetailId id, Integer quantity) {
         this.id = id;
         this.quantity = quantity;
     }
-
     // Lớp khóa chính kép với Lombok
     @Embeddable
     @Data
