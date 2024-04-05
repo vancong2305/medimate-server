@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 05, 2024 lúc 07:42 PM
+-- Thời gian đã tạo: Th4 04, 2024 lúc 01:11 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -24,23 +24,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `address`
---
-
-CREATE TABLE `address` (
-  `id` int(11) NOT NULL,
-  `phone` text NOT NULL,
-  `street` text NOT NULL,
-  `district` text NOT NULL,
-  `province` text NOT NULL,
-  `type` text NOT NULL,
-  `is_default` tinyint(1) NOT NULL,
-  `status` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Cấu trúc bảng cho bảng `category`
 --
 
@@ -49,6 +32,14 @@ CREATE TABLE `category` (
   `name` varchar(255) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `category`
+--
+
+INSERT INTO `category` (`id`, `name`, `status`) VALUES
+(1, 'Thuốc da liễu', 1),
+(2, 'Thuốc tiêu hoá', 1);
 
 -- --------------------------------------------------------
 
@@ -59,13 +50,18 @@ CREATE TABLE `category` (
 CREATE TABLE `coupon` (
   `id` int(11) NOT NULL,
   `code` varchar(40) NOT NULL,
-  `description` text NOT NULL,
-  `point` int(11) NOT NULL,
-  `discount_percent` int(11) NOT NULL,
   `expiration_time` int(11) NOT NULL,
-  `image` text NOT NULL,
+  `necessary_points` int(11) NOT NULL,
+  `percent_decrease` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `coupon`
+--
+
+INSERT INTO `coupon` (`id`, `code`, `expiration_time`, `necessary_points`, `percent_decrease`, `status`) VALUES
+(0, 'QAZQAV', 1, 100, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -75,13 +71,19 @@ CREATE TABLE `coupon` (
 
 CREATE TABLE `coupon_detail` (
   `id` int(11) NOT NULL,
-  `id_coupon` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
-  `id_oder` int(11) NOT NULL,
+  `id_coupon` int(11) NOT NULL,
   `time_start` date NOT NULL,
   `time_end` date NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `coupon_detail`
+--
+
+INSERT INTO `coupon_detail` (`id`, `id_user`, `id_coupon`, `time_start`, `time_end`, `status`) VALUES
+(1, 2, 0, '2024-04-01', '2024-04-03', 1);
 
 -- --------------------------------------------------------
 
@@ -92,15 +94,17 @@ CREATE TABLE `coupon_detail` (
 CREATE TABLE `order` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
-  `code` text NOT NULL,
+  `id_coupon_detail` int(11) DEFAULT NULL,
   `payment_method` int(11) NOT NULL,
-  `discount_coupon` int(11) NOT NULL,
-  `delivery_fee` int(11) NOT NULL,
-  `order_time` date NOT NULL,
-  `note` text NOT NULL,
-  `point` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order`
+--
+
+INSERT INTO `order` (`id`, `id_user`, `id_coupon_detail`, `payment_method`, `status`) VALUES
+(1, 2, NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -111,9 +115,15 @@ CREATE TABLE `order` (
 CREATE TABLE `order_detail` (
   `id_oder` int(11) NOT NULL,
   `id_product` int(11) NOT NULL,
-  `discount_price` int(11) NOT NULL,
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `order_detail`
+--
+
+INSERT INTO `order_detail` (`id_oder`, `id_product`, `quantity`) VALUES
+(1, 1, 100000);
 
 -- --------------------------------------------------------
 
@@ -124,15 +134,18 @@ CREATE TABLE `order_detail` (
 CREATE TABLE `product` (
   `id` int(11) NOT NULL,
   `id_category` int(11) NOT NULL,
-  `id_unit` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` varchar(2000) NOT NULL,
-  `discount_percent` int(11) NOT NULL,
-  `price` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `image` text NOT NULL,
+  `default_percent_decrease` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `product`
+--
+
+INSERT INTO `product` (`id`, `id_category`, `name`, `description`, `default_percent_decrease`, `status`) VALUES
+(1, 1, 'Selenium', 'Delete a ...', 12, 2);
 
 -- --------------------------------------------------------
 
@@ -171,7 +184,7 @@ CREATE TABLE `token` (
 --
 
 INSERT INTO `token` (`id_user`, `access_token`, `refresh_token`) VALUES
-(16, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjE2LFwiaWRSb2xlXCI6MSxcInBob25lXCI6XCIwMTkyOTIyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTIzMzgzNTYsImV4cCI6MTcxMjQyNDc1Nn0.kHg6GA6vzjr_RGpKJ0N0Ss1rv0I0rE6mEG1nL03uhic', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjE2LFwiaWRSb2xlXCI6MSxcInBob25lXCI6XCIwMTkyOTIyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTIzMzgzNTYsImV4cCI6MTcxMjk0MzE1Nn0.7mDkDeWkK_DfiY-sCM7uEDRxoeR99mCsnfioxeBN_y4');
+(1, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJwYXNzd29yZFwiOlwieW91cl9wYXNzd29yZFwiLFwiZW1haWxcIjpcInlvdXJfZW1haWxAZXhhbXBsZS5jb21cIixcImlkUm9sZVwiOjEsXCJwb2ludFwiOjAsXCJzdGF0dXNcIjoxfSIsImlhdCI6MTcxMjIyNzA4MCwiZXhwIjoxNzEyMzEzNDgwfQ.5_O_T018SCBINKat2BTWqmjA26uGEmNHooB3Wzc9U2U', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEsXCJwYXNzd29yZFwiOlwieW91cl9wYXNzd29yZFwiLFwiZW1haWxcIjpcInlvdXJfZW1haWxAZXhhbXBsZS5jb21cIixcImlkUm9sZVwiOjEsXCJwb2ludFwiOjAsXCJzdGF0dXNcIjoxfSIsImlhdCI6MTcxMjIyNzA4MSwiZXhwIjoxNzEyODMxODgxfQ.O3VavlOUGHCOWtyJAa4N3PSly7V4CVfk5ojo7Ty0pXM');
 
 -- --------------------------------------------------------
 
@@ -185,6 +198,30 @@ CREATE TABLE `unit` (
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `unit`
+--
+
+INSERT INTO `unit` (`id`, `name`, `status`) VALUES
+(1, 'Viên', 1),
+(2, 'Vỉ', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `unit_detail`
+--
+
+CREATE TABLE `unit_detail` (
+  `id` int(11) NOT NULL,
+  `id_unit` int(11) NOT NULL,
+  `id_product` int(11) NOT NULL,
+  `id_convert_unit` int(11) DEFAULT NULL,
+  `conversion_point` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -193,38 +230,28 @@ CREATE TABLE `unit` (
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
-  `id_address` int(11) DEFAULT NULL,
-  `id_role` int(11) NOT NULL DEFAULT 2,
-  `phone` varchar(255) NOT NULL,
+  `id_role` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `first_name` text DEFAULT NULL,
-  `last_name` text DEFAULT NULL,
-  `rank` text NOT NULL DEFAULT 'Đồng',
-  `point` int(11) NOT NULL DEFAULT 0,
-  `birthday` date DEFAULT NULL,
-  `gender` int(11) DEFAULT NULL,
-  `image` text DEFAULT NULL,
-  `status` int(11) NOT NULL DEFAULT 1
+  `point` int(11) NOT NULL,
+  `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `user`
 --
 
-INSERT INTO `user` (`id`, `id_address`, `id_role`, `phone`, `password`, `first_name`, `last_name`, `rank`, `point`, `birthday`, `gender`, `image`, `status`) VALUES
-(12, NULL, 2, 'a', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
-(14, NULL, 1, '019292', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
-(16, NULL, 1, '0192922', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1);
+INSERT INTO `user` (`id`, `id_role`, `email`, `password`, `point`, `status`) VALUES
+(1, 1, 'a', '1', 0, 1),
+(2, 1, 'your_email1@example.com', 'your_password1', 0, 1),
+(3, 1, 'your_email123@example.com', 'your_password123', 0, 1),
+(5, 1, '1', '1', 0, 1),
+(7, 1, '122', '1', 0, 1),
+(8, 1, 'vancong23236@gmail.com', '1232323A@a', 0, 1);
 
 --
 -- Chỉ mục cho các bảng đã đổ
 --
-
---
--- Chỉ mục cho bảng `address`
---
-ALTER TABLE `address`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Chỉ mục cho bảng `category`
@@ -245,15 +272,14 @@ ALTER TABLE `coupon`
 ALTER TABLE `coupon_detail`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_coupon_detail_user` (`id_coupon`),
-  ADD KEY `fk_coupont_detail_user` (`id_user`),
-  ADD KEY `fk_coupon_detail_order` (`id_oder`);
+  ADD KEY `fk_coupont_detail_user` (`id_user`);
 
 --
 -- Chỉ mục cho bảng `order`
 --
 ALTER TABLE `order`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code` (`code`) USING HASH,
+  ADD KEY `fk_order_promo` (`id_coupon_detail`) USING BTREE,
   ADD KEY `fk_order_user` (`id_user`);
 
 --
@@ -268,8 +294,7 @@ ALTER TABLE `order_detail`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_product_category` (`id_category`),
-  ADD KEY `fk_product_unit` (`id_unit`);
+  ADD KEY `fk_product_category` (`id_category`);
 
 --
 -- Chỉ mục cho bảng `role`
@@ -290,13 +315,21 @@ ALTER TABLE `unit`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `unit_detail`
+--
+ALTER TABLE `unit_detail`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_unit_detail_unit` (`id_unit`),
+  ADD KEY `fk_unit_detail_product` (`id_product`),
+  ADD KEY `fk_unit_detail_unit_detail` (`id_convert_unit`);
+
+--
 -- Chỉ mục cho bảng `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `phone` (`phone`),
-  ADD KEY `fk_user_role` (`id_role`),
-  ADD KEY `fk_user_address` (`id_address`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `fk_user_role` (`id_role`);
 
 --
 -- AUTO_INCREMENT cho các bảng đã đổ
@@ -339,10 +372,16 @@ ALTER TABLE `unit`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT cho bảng `unit_detail`
+--
+ALTER TABLE `unit_detail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -353,8 +392,7 @@ ALTER TABLE `user`
 --
 ALTER TABLE `coupon_detail`
   ADD CONSTRAINT `fk_coupon_detail_coupon` FOREIGN KEY (`id_coupon`) REFERENCES `coupon` (`id`),
-  ADD CONSTRAINT `fk_coupon_detail_order` FOREIGN KEY (`id_oder`) REFERENCES `order` (`id`),
-  ADD CONSTRAINT `fk_coupon_detail_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `fk_coupont_detail_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
 -- Các ràng buộc cho bảng `order`
@@ -373,8 +411,7 @@ ALTER TABLE `order_detail`
 -- Các ràng buộc cho bảng `product`
 --
 ALTER TABLE `product`
-  ADD CONSTRAINT `fk_product_category` FOREIGN KEY (`id_category`) REFERENCES `category` (`id`),
-  ADD CONSTRAINT `fk_product_unit` FOREIGN KEY (`id_unit`) REFERENCES `unit` (`id`);
+  ADD CONSTRAINT `fk_product_category` FOREIGN KEY (`id_category`) REFERENCES `category` (`id`);
 
 --
 -- Các ràng buộc cho bảng `token`
@@ -383,10 +420,17 @@ ALTER TABLE `token`
   ADD CONSTRAINT `fk_token_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
+-- Các ràng buộc cho bảng `unit_detail`
+--
+ALTER TABLE `unit_detail`
+  ADD CONSTRAINT `fk_unit_detail_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`),
+  ADD CONSTRAINT `fk_unit_detail_unit` FOREIGN KEY (`id_unit`) REFERENCES `unit` (`id`),
+  ADD CONSTRAINT `fk_unit_detail_unit_detail` FOREIGN KEY (`id_convert_unit`) REFERENCES `unit_detail` (`id`);
+
+--
 -- Các ràng buộc cho bảng `user`
 --
 ALTER TABLE `user`
-  ADD CONSTRAINT `fk_user_address` FOREIGN KEY (`id_address`) REFERENCES `address` (`id`),
   ADD CONSTRAINT `fk_user_role` FOREIGN KEY (`id_role`) REFERENCES `role` (`id`);
 COMMIT;
 
