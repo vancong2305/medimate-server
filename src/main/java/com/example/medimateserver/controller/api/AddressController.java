@@ -48,13 +48,12 @@ public class AddressController {
     // Create a new Address
     @PostMapping
     public ResponseEntity<?> createAddress(HttpServletRequest request, @RequestBody AddressDto AddressDto) {
-
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                AddressDto savedAddress = addressService.save(AddressDto);
+                AddressDto savedAddress = addressService.save(user.getId(), AddressDto);
                 return ResponseUtil.success();
             }
             return ResponseUtil.failed();
@@ -66,16 +65,26 @@ public class AddressController {
 
     // Update a Address
     @PutMapping
-    public ResponseEntity<String> updateAddress(@PathVariable Integer id, @RequestBody AddressDto Address) {
-        return ResponseEntity.ok("");
+    public ResponseEntity<?> updateByIdAddress(HttpServletRequest request, @RequestBody AddressDto addressDto) {
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+                AddressDto updateDto = addressService.update(user.getId(), addressDto);
+                return ResponseUtil.success();
+            }
+            return ResponseUtil.failed();
+        } catch (Exception ex) {
+            System.out.println("Lỗi ở đây nè " + ex.getMessage());
+            return ResponseUtil.failed();
+        }
     }
 
     // Delete a Address
     @DeleteMapping
-    public ResponseEntity<?> deleteAddress(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteAddress(HttpServletRequest request) {
         try {
-            AddressDto Address = addressService.findById(id);
-            addressService.save(Address);
             return ResponseUtil.success();
         } catch (Exception ex) {
 

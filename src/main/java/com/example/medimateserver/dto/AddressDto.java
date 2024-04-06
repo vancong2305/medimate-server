@@ -15,7 +15,8 @@ public class AddressDto {
     private String district;
     private String province;
     private String type;
-    private boolean isDefault;
+    private Boolean isDefault;
     private String specificAddress;
     private Integer status;
+
 }

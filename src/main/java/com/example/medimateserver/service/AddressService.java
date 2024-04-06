@@ -11,7 +11,7 @@ public interface AddressService {
 
     AddressDto findById(Integer id);
 
-    AddressDto save(AddressDto addressDto);
+    AddressDto save(Integer id, AddressDto addressDto);
 
     AddressDto update(Integer id, AddressDto addressDto);
 
