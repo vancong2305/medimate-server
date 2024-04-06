@@ -18,7 +18,7 @@ public class CouponDetail {
     @Column(name = "id_coupon")
     private Integer idCoupon;
 
-    @Column(name = "id_user") // <--- Điểm quan trọng
+    @Column(name = "id_user")
     private Integer idUser;
 
     @Column(name = "id_oder")
@@ -33,15 +33,4 @@ public class CouponDetail {
     @Column(name = "status")
     private Integer status;
 
-    @OneToOne
-    @JoinColumn(name = "id_user")
-    private User user;
-
-    @OneToOne
-    @JoinColumn(name = "id_coupon")
-    private Coupon coupon;
-
-    @OneToOne
-    @JoinColumn(name = "id_oder")
-    private Order order;
 }
