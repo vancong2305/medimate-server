@@ -1,7 +1,7 @@
 package com.example.medimateserver.controller.api;
 
-import com.example.medimateserver.dto.UnitDto;
-import com.example.medimateserver.service.UnitService;
+import com.example.medimateserver.dto.AddressDto;
+import com.example.medimateserver.service.AddressService;
 import com.example.medimateserver.util.GsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,16 +12,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping(value = "/api/unit", produces = "application/json")
-public class UnitController {
+public class AddressController {
     @Autowired
-    UnitService unitService;
+    private AddressService addressService;
     @GetMapping
-    public ResponseEntity<String> getUnitById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<String> getAddressById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
         try {
-            List<UnitDto> UnitList = unitService.findAll();
-            String jsons = GsonUtil.gI().toJson(UnitList);
+            List<AddressDto> AddressList = addressService.findAll();
+            String jsons = GsonUtil.gI().toJson(AddressList);
             return new ResponseEntity<>(
                     jsons,
                     HttpStatus.OK
@@ -35,25 +33,25 @@ public class UnitController {
 
     }
 
-    // Create a new Unit
+    // Create a new Address
     @PostMapping
-    public ResponseEntity<UnitDto> createUnit(@RequestBody UnitDto UnitDto) {
-        UnitDto savedUnit = unitService.save(UnitDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUnit);
+    public ResponseEntity<AddressDto> createAddress(@RequestBody AddressDto AddressDto) {
+        AddressDto savedAddress = addressService.save(AddressDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedAddress);
     }
 
-    // Update a Unit
+    // Update a Address
     @PutMapping
-    public ResponseEntity<String> updateUnit(@PathVariable Integer id, @RequestBody UnitDto Unit) {
+    public ResponseEntity<String> updateAddress(@PathVariable Integer id, @RequestBody AddressDto Address) {
         return ResponseEntity.ok("");
     }
 
-    // Delete a Unit
+    // Delete a Address
     @DeleteMapping
-    public ResponseEntity<String> deleteUnit(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteAddress(@PathVariable Integer id) {
         try {
-            UnitDto Unit = unitService.findById(id);
-            unitService.save(Unit);
+            AddressDto Address = addressService.findById(id);
+            addressService.save(Address);
             return new ResponseEntity<>(
                     "Success",
                     HttpStatus.OK

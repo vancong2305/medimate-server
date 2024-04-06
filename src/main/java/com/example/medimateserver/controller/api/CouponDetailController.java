@@ -1,7 +1,16 @@
 package com.example.medimateserver.controller.api;
 
+import com.example.medimateserver.config.jwt.JwtProvider;
+import com.example.medimateserver.dto.CouponDetailDto;
+import com.example.medimateserver.dto.CouponDto;
+import com.example.medimateserver.dto.TokenDto;
+import com.example.medimateserver.dto.UserDto;
 import com.example.medimateserver.entity.CouponDetail;
 import com.example.medimateserver.service.CouponDetailService;
+import com.example.medimateserver.service.TokenService;
+import com.example.medimateserver.util.GsonUtil;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,40 +19,56 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/coupon_detail")
+@RequestMapping(value = "/api/coupon_detail", produces = "application/json")
 public class CouponDetailController {
-
     @Autowired
     private CouponDetailService couponDetailService;
-
+    @Autowired
+    private TokenService tokenService;
     @GetMapping
-    public List<CouponDetail> getAllCouponDetails() {
-        return couponDetailService.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CouponDetail> getCouponDetailById(@PathVariable Integer id) {
-        CouponDetail CouponDetail = couponDetailService.findById(id);
-        if (CouponDetail != null) {
-            return ResponseEntity.ok(CouponDetail);
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> getAllCouponDetails(HttpServletRequest request) {
+        try {
+            String tokenInformation = request.getHeader("Authorization");
+            tokenInformation = tokenInformation.substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+                return new ResponseEntity<>(couponDetailService.findByUserId(user.getId()), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
         }
     }
-
+//    @PostMapping
+//    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, CouponDetailDto couponDetailDto) {
+//        try {
+//            String tokenInformation = request.getHeader("Authorization");
+//            tokenInformation = tokenInformation.substring(7);
+//            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+//            TokenDto tokenDto = tokenService.findById(user.getId());
+//            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+//                couponDetailService.save(couponDetailDto);
+//
+//                return new ResponseEntity<>(couponDetailService.findById(user.getId()), HttpStatus.OK);
+//            }
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+//        } catch (Exception ex) {
+//            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
     @PostMapping
-    public ResponseEntity<CouponDetail> createCouponDetail(@RequestBody CouponDetail CouponDetail) {
-        CouponDetail savedCouponDetail = couponDetailService.save(CouponDetail);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCouponDetail);
+    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, @RequestBody CouponDetailDto couponDetailDto) {
+        System.out.println(couponDetailDto.getIdCoupon());
+        CouponDetailDto savedCoupon = couponDetailService.save(couponDetailDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCoupon);
     }
-
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<String> updateCouponDetail(@PathVariable Long id, @RequestBody CouponDetail CouponDetail) {
         // ... (Implement update logic with CouponDetailService)
         return ResponseEntity.ok("success");
     }
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     public ResponseEntity<Void> deleteCouponDetail(@PathVariable Long id) {
         // ... (Implement delete logic with CouponDetailService)
         return ResponseEntity.noContent().build();

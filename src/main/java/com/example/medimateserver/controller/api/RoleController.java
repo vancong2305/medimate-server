@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/role")
+@RequestMapping(value = "/api/role", produces = "application/json")
 public class RoleController {
 
     @Autowired

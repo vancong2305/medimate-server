@@ -1,5 +1,6 @@
 package com.example.medimateserver.service;
 
+import com.example.medimateserver.dto.CouponDetailDto;
 import com.example.medimateserver.entity.CouponDetail;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +11,12 @@ public interface CouponDetailService {
     List<CouponDetail> findAll();
 
     CouponDetail findById(Integer id);
+    List<CouponDetailDto> findByUserId(Integer id);
 
-    CouponDetail save(CouponDetail couponDetail);
 
-    CouponDetail update(Integer id, CouponDetail couponDetail);
+    CouponDetailDto save(CouponDetailDto couponDetail);
+
+    CouponDetailDto update(Integer id, CouponDetailDto couponDetail);
 
     void deleteById(Integer id);
 }

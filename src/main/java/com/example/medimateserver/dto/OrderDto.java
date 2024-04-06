@@ -9,7 +9,6 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class OrderDto {
     private Integer id;
     private Integer idUser;

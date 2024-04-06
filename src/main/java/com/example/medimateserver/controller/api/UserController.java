@@ -21,16 +21,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping(value = "/api/user", produces = "application/json")
 public class UserController {
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private TokenService tokenService;
-
-
     @GetMapping
     public ResponseEntity<?> getUserById(HttpServletRequest request) {
         try {
@@ -80,7 +76,7 @@ public class UserController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<UserDto> updateUser(@PathVariable Integer id, @RequestBody UserDto userDto) {
         UserDto updatedUser = userService.update(id, userDto);
         if (updatedUser == null) {
@@ -89,7 +85,7 @@ public class UserController {
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         userService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

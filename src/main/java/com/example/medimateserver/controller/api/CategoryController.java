@@ -31,10 +31,8 @@ public class CategoryController {
     @Autowired
     private UserService userService;
 
-
-
     // Get category by ID
-    @GetMapping("/{id}")
+    @GetMapping
     public ResponseEntity<String> getCategoryById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
 //        System.out.println("Lấy thông tin phân trang " + pageInformation);
 //
@@ -101,13 +99,13 @@ public class CategoryController {
     }
 
     // Update a category
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<String> updateCategory(@PathVariable Integer id, @RequestBody CategoryDto category) {
         return ResponseEntity.ok("");
     }
 
     // Delete a category
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
         try {
             CategoryDto category = categoryService.findById(id);

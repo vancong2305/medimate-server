@@ -1,9 +1,11 @@
 package com.example.medimateserver.service;
 
 import com.example.medimateserver.dto.UnitDto;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface UnitService {
     List<UnitDto> findAll();
     List<UnitDto> findWithPageAndSize(int page, int size);

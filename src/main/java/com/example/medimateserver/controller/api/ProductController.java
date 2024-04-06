@@ -20,19 +20,15 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/product", produces = "application/json")
 public class ProductController {
-
     @Autowired
     private ProductService productService;
     @Autowired
     private TokenService tokenService;
-
     @Autowired
     private UserService userService;
 
-
-
     // Get category by ID
-    @GetMapping("/{id}")
+    @GetMapping
     public ResponseEntity<String> getCategoryById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
         String pageInformation = request.getHeader("Pagination");
         String tokenInformation = request.getHeader("Token");
@@ -87,13 +83,13 @@ public class ProductController {
     }
 
     // Update a category
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<String> updateCategory(@PathVariable Integer id, @RequestBody ProductDto category) {
         return ResponseEntity.ok("");
     }
 
     // Delete a category
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
         try {
             ProductDto product = productService.findById(id);
