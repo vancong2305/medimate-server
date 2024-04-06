@@ -16,7 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@RestController
+@RequestMapping(value = "/api/address", produces = "application/json")
 public class AddressController {
     @Autowired
     private UserService userService;
@@ -43,6 +44,7 @@ public class AddressController {
                     HttpStatus.BAD_REQUEST
             );
         } catch (Exception ex) {
+            System.out.println();
             return new ResponseEntity<>(
                     "badRequest",
                     HttpStatus.BAD_REQUEST

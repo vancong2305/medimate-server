@@ -1,6 +1,7 @@
 package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
+import com.example.medimateserver.dto.ResponseDto;
 import com.example.medimateserver.dto.TokenDto;
 import com.example.medimateserver.dto.UserDto;
 import com.example.medimateserver.entity.Token;
@@ -47,8 +48,11 @@ public class AuthController {
                         HttpStatus.OK
                 );
             }
+            ResponseDto a = new ResponseDto();
+            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            a.setStatus(HttpStatus.BAD_REQUEST.value());
             return new ResponseEntity<>(
-                    "Password Error!",
+                    GsonUtil.gI().toJson(a),
                     HttpStatus.BAD_REQUEST
             );
         } catch (Exception ex) {
@@ -67,14 +71,17 @@ public class AuthController {
             userPL.setRank("Đồng");
             userPL.setPoint(0);
             userService.save(userPL);
-            return new ResponseEntity<>(
-                    "Register Success!",
-                    HttpStatus.OK
-            );
+            ResponseDto a = new ResponseDto();
+            a.setMessage(HttpStatus.OK.getReasonPhrase());
+            a.setStatus(HttpStatus.OK.value());
+            return new ResponseEntity<>(GsonUtil.gI().toJson(a), HttpStatus.OK);
+
         } catch (Exception ex) {
-            MLogger.LOGGER.severe("Error: " + ex.getMessage());
+            ResponseDto a = new ResponseDto();
+            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            a.setStatus(HttpStatus.BAD_REQUEST.value());
             return new ResponseEntity<>(
-                    "Error Or User Already Exists!" + ex.toString(),
+                    GsonUtil.gI().toJson(a),
                     HttpStatus.BAD_REQUEST
             );
         }
@@ -88,11 +95,23 @@ public class AuthController {
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
                 UserDto userDto1 = userService.findByPhone(user.getPhone());
                 tokenService.deleteById(userDto1.getId());
-                return new ResponseEntity<>("Logout success", HttpStatus.OK);
+                ResponseDto a = new ResponseDto();
+                a.setMessage(HttpStatus.OK.getReasonPhrase());
+                a.setStatus(HttpStatus.OK.value());
+                return new ResponseEntity<>(GsonUtil.gI().toJson(a), HttpStatus.OK);
             }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+            ResponseDto a = new ResponseDto();
+            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            a.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(GsonUtil.gI().toJson(a), HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
-            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
+            ResponseDto a = new ResponseDto();
+            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            a.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(
+                    GsonUtil.gI().toJson(a),
+                    HttpStatus.BAD_REQUEST
+            );
         }
     }
 
@@ -118,9 +137,21 @@ public class AuthController {
                         HttpStatus.OK
                 );
             }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+            ResponseDto a = new ResponseDto();
+            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            a.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(
+                    GsonUtil.gI().toJson(a),
+                    HttpStatus.BAD_REQUEST
+            );
         } catch (Exception ex) {
-            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
+            ResponseDto a = new ResponseDto();
+            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
+            a.setStatus(HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(
+                    GsonUtil.gI().toJson(a),
+                    HttpStatus.BAD_REQUEST
+            );
         }
     }
 }
