@@ -80,13 +80,13 @@ public class AuthController {
         }
     }
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, @RequestBody UserDto userDto) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                UserDto userDto1 = userService.findByPhone(userDto.getPhone());
+                UserDto userDto1 = userService.findByPhone(user.getPhone());
                 tokenService.deleteById(userDto1.getId());
                 return new ResponseEntity<>("Logout success", HttpStatus.OK);
             }

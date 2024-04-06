@@ -40,29 +40,29 @@ public class CouponDetailController {
             return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
         }
     }
-//    @PostMapping
-//    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, CouponDetailDto couponDetailDto) {
-//        try {
-//            String tokenInformation = request.getHeader("Authorization");
-//            tokenInformation = tokenInformation.substring(7);
-//            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-//            TokenDto tokenDto = tokenService.findById(user.getId());
-//            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-//                couponDetailService.save(couponDetailDto);
-//
-//                return new ResponseEntity<>(couponDetailService.findById(user.getId()), HttpStatus.OK);
-//            }
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
-//        } catch (Exception ex) {
-//            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
     @PostMapping
-    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, @RequestBody CouponDetailDto couponDetailDto) {
-        System.out.println(couponDetailDto.getIdCoupon());
-        CouponDetailDto savedCoupon = couponDetailService.save(couponDetailDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCoupon);
+    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, CouponDetailDto couponDetailDto) {
+        try {
+            String tokenInformation = request.getHeader("Authorization");
+            tokenInformation = tokenInformation.substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+                couponDetailDto.setIdOrder(null);
+                couponDetailService.save(couponDetailDto);
+                return new ResponseEntity<>(couponDetailService.findById(user.getId()), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
+        }
     }
+//    @PostMapping
+//    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, @RequestBody CouponDetailDto couponDetailDto) {
+//        System.out.println(couponDetailDto.getIdCoupon());
+//        CouponDetailDto savedCoupon = couponDetailService.save(couponDetailDto);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(savedCoupon);
+//    }
     @PutMapping
     public ResponseEntity<String> updateCouponDetail(@PathVariable Long id, @RequestBody CouponDetail CouponDetail) {
         // ... (Implement update logic with CouponDetailService)
