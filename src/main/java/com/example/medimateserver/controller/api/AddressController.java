@@ -1,7 +1,12 @@
 package com.example.medimateserver.controller.api;
 
+import com.example.medimateserver.config.jwt.JwtProvider;
 import com.example.medimateserver.dto.AddressDto;
+import com.example.medimateserver.dto.TokenDto;
+import com.example.medimateserver.dto.UserDto;
 import com.example.medimateserver.service.AddressService;
+import com.example.medimateserver.service.TokenService;
+import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.GsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,15 +19,28 @@ import java.util.List;
 
 public class AddressController {
     @Autowired
+    private UserService userService;
+    @Autowired
+    private TokenService tokenService;
+    @Autowired
     private AddressService addressService;
     @GetMapping
     public ResponseEntity<String> getAddressById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
         try {
-            List<AddressDto> AddressList = addressService.findAll();
-            String jsons = GsonUtil.gI().toJson(AddressList);
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+                List<AddressDto> addressList = addressService.findAll();
+                String jsons = GsonUtil.gI().toJson(addressList);
+                return new ResponseEntity<>(
+                        jsons,
+                        HttpStatus.OK
+                );
+            }
             return new ResponseEntity<>(
-                    jsons,
-                    HttpStatus.OK
+                    "badRequest",
+                    HttpStatus.BAD_REQUEST
             );
         } catch (Exception ex) {
             return new ResponseEntity<>(
@@ -30,7 +48,6 @@ public class AddressController {
                     HttpStatus.BAD_REQUEST
             );
         }
-
     }
 
     // Create a new Address

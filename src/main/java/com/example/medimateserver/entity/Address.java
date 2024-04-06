@@ -26,6 +26,8 @@ public class Address {
     private String type;
     @Column(name="is_default")
     private boolean isDefault;
+    @Column(name="specific_address")
+    private String specific_address;
     @Column(name="status")
     private Integer status;
 }

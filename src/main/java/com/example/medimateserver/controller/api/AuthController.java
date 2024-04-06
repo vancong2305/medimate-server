@@ -14,10 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,11 +29,6 @@ public class AuthController {
     @Autowired
     TokenService tokenService;
 
-    /*
-        First, users provide the server with their information. Could be email, password...
-        Second, we compare emails and passwords from users and databases.
-        Finally, based on the condition return the token or return an invalid request to the user.
-    */
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserDto userDto) throws JsonProcessingException {
         try {
@@ -44,9 +36,6 @@ public class AuthController {
             if (userDto.getPassword().toString().compareTo(user.getPassword().toString()) == 0) {
                 String token = JwtProvider.generateToken(GsonUtil.gI().toJson(user));
                 String refreshToken = JwtProvider.generateRefreshToken(GsonUtil.gI().toJson(user));
-//                System.out.println("Email has been received: " + userDto.getEmail());
-//                System.out.println("Token after generated: " + token);
-//                System.out.println("User from token: " + JwtProvider.getUsernameFromToken(token));
                 TokenDto tokenDto = new TokenDto();
                 tokenDto.setAccessToken(token);
                 tokenDto.setRefreshToken(refreshToken);
@@ -70,11 +59,6 @@ public class AuthController {
         }
     }
 
-    /*
-        We set default role for new beginer is one
-        The point of them is zero
-        We set email is the only field by command <ALTER TABLE `user` ADD UNIQUE(`email`)>
-    */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserDto userPL) {
         try {
@@ -95,11 +79,10 @@ public class AuthController {
             );
         }
     }
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, @RequestBody UserDto userDto) {
         try {
-            String tokenInformation = request.getHeader("Authorization");
-            tokenInformation = tokenInformation.substring(7);
+            String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
