@@ -16,4 +16,6 @@ public interface AddressService {
     AddressDto update(Integer id, AddressDto addressDto);
 
     void deleteById(Integer id);
+
+    List<AddressDto> findByIdUser(Integer id);
 }

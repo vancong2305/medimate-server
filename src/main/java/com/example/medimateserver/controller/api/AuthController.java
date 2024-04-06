@@ -10,6 +10,7 @@ import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.GsonUtil;
 import com.example.medimateserver.util.MLogger;
+import com.example.medimateserver.util.ResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class AuthController {
     TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserDto userDto) throws JsonProcessingException {
+    public ResponseEntity<?> login(@RequestBody UserDto userDto) throws JsonProcessingException {
         try {
             UserDto user = userService.findByPhone(userDto.getPhone());
             if (userDto.getPassword().toString().compareTo(user.getPassword().toString()) == 0) {
@@ -48,13 +49,7 @@ public class AuthController {
                         HttpStatus.OK
                 );
             }
-            ResponseDto a = new ResponseDto();
-            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-            a.setStatus(HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(
-                    GsonUtil.gI().toJson(a),
-                    HttpStatus.BAD_REQUEST
-            );
+             return ResponseUtil.failed();
         } catch (Exception ex) {
             return new ResponseEntity<>(
                     ex.getMessage(),
@@ -71,19 +66,10 @@ public class AuthController {
             userPL.setRank("Đồng");
             userPL.setPoint(0);
             userService.save(userPL);
-            ResponseDto a = new ResponseDto();
-            a.setMessage(HttpStatus.OK.getReasonPhrase());
-            a.setStatus(HttpStatus.OK.value());
-            return new ResponseEntity<>(GsonUtil.gI().toJson(a), HttpStatus.OK);
+            return ResponseUtil.success();
 
         } catch (Exception ex) {
-            ResponseDto a = new ResponseDto();
-            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-            a.setStatus(HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(
-                    GsonUtil.gI().toJson(a),
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseUtil.failed();
         }
     }
     @GetMapping("/logout")
@@ -95,23 +81,11 @@ public class AuthController {
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
                 UserDto userDto1 = userService.findByPhone(user.getPhone());
                 tokenService.deleteById(userDto1.getId());
-                ResponseDto a = new ResponseDto();
-                a.setMessage(HttpStatus.OK.getReasonPhrase());
-                a.setStatus(HttpStatus.OK.value());
-                return new ResponseEntity<>(GsonUtil.gI().toJson(a), HttpStatus.OK);
+                return ResponseUtil.success();
             }
-            ResponseDto a = new ResponseDto();
-            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-            a.setStatus(HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(GsonUtil.gI().toJson(a), HttpStatus.BAD_REQUEST);
+             return ResponseUtil.failed();
         } catch (Exception ex) {
-            ResponseDto a = new ResponseDto();
-            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-            a.setStatus(HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(
-                    GsonUtil.gI().toJson(a),
-                    HttpStatus.BAD_REQUEST
-            );
+             return ResponseUtil.failed();
         }
     }
 
@@ -137,21 +111,9 @@ public class AuthController {
                         HttpStatus.OK
                 );
             }
-            ResponseDto a = new ResponseDto();
-            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-            a.setStatus(HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(
-                    GsonUtil.gI().toJson(a),
-                    HttpStatus.BAD_REQUEST
-            );
+             return ResponseUtil.failed();
         } catch (Exception ex) {
-            ResponseDto a = new ResponseDto();
-            a.setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase());
-            a.setStatus(HttpStatus.BAD_REQUEST.value());
-            return new ResponseEntity<>(
-                    GsonUtil.gI().toJson(a),
-                    HttpStatus.BAD_REQUEST
-            );
+             return ResponseUtil.failed();
         }
     }
 }

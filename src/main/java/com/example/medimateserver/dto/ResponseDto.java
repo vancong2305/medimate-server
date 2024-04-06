@@ -8,4 +8,11 @@ import lombok.NoArgsConstructor;
 public class ResponseDto {
     private String message;
     private Integer status;
+    private static ResponseDto responseDto;
+    public static ResponseDto gI() {
+        if (responseDto == null) {
+            responseDto = new ResponseDto();
+        }
+        return responseDto;
+    }
 }

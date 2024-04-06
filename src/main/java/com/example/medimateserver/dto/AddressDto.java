@@ -1,5 +1,6 @@
 package com.example.medimateserver.dto;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddressDto {
     private Integer id;
+    private Integer idUser;
+    private String fullName;
     private String phone;
     private String ward;
     private String district;

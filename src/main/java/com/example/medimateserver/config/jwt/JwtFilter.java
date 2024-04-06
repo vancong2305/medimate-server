@@ -1,5 +1,6 @@
 package com.example.medimateserver.config.jwt;
 
+import com.example.medimateserver.util.ResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -52,12 +53,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 username = jwtProvider.getUsernameFromToken(token);
                 if (username.equals("")) {
                     response.setStatus(HttpStatus.BAD_REQUEST.value());
-                    response.getWriter().write("JWT token has expired");
+                    response.getWriter().write(ResponseUtil.failedExpriration().getBody().toString());
                     return;
                 }
             } catch (ExpiredJwtException e) {
                 response.setStatus(HttpStatus.BAD_REQUEST.value());
-                response.getWriter().write("JWT token has expired");
+                response.getWriter().write(ResponseUtil.failedExpriration().getBody().toString());
                 return;
             }
         }

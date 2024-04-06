@@ -1,11 +1,14 @@
 package com.example.medimateserver.service.impl;
 
 import com.example.medimateserver.dto.AddressDto;
+import com.example.medimateserver.dto.CouponDetailDto;
 import com.example.medimateserver.entity.Address;
+import com.example.medimateserver.entity.CouponDetail;
 import com.example.medimateserver.repository.AddressRepository;
 import com.example.medimateserver.service.AddressService;
 import com.example.medimateserver.util.ConvertUtil;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class AddressServiceImpl implements AddressService {
+    @Autowired
     private AddressRepository addressRepository;
     @Override
     public List<AddressDto> findAll() {
@@ -60,5 +64,13 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void deleteById(Integer id) {
 
+    }
+
+    @Override
+    public List<AddressDto> findByIdUser(Integer id) {
+        List<Address> addressList = addressRepository.findByIdUser(id);
+        return addressList.stream()
+                .map(address -> ConvertUtil.gI().toDto(address, AddressDto.class))
+                .collect(Collectors.toList());
     }
 }

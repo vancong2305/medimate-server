@@ -6,6 +6,7 @@ import com.example.medimateserver.repository.UnitRepository;
 import com.example.medimateserver.service.UnitService;
 import com.example.medimateserver.util.ConvertUtil;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Service
 public class UnitServiceImpl implements UnitService {
+    @Autowired
     private UnitRepository unitRepository;
 
     @Override

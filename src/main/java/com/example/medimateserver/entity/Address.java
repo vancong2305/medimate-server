@@ -13,7 +13,9 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name="id_user")
-    private String idUser;
+    private Integer idUser;
+    @Column(name="full_name")
+    private String fullName;
     @Column(name="phone")
     private String phone;
     @Column(name="ward")

@@ -2,12 +2,14 @@ package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
 import com.example.medimateserver.dto.AddressDto;
+import com.example.medimateserver.dto.ResponseDto;
 import com.example.medimateserver.dto.TokenDto;
 import com.example.medimateserver.dto.UserDto;
 import com.example.medimateserver.service.AddressService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.GsonUtil;
+import com.example.medimateserver.util.ResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,37 +28,40 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
     @GetMapping
-    public ResponseEntity<String> getAddressById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<?> getAddressById(HttpServletRequest request) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                List<AddressDto> addressList = addressService.findAll();
+                List<AddressDto> addressList = addressService.findByIdUser(user.getId());
                 String jsons = GsonUtil.gI().toJson(addressList);
-                return new ResponseEntity<>(
-                        jsons,
-                        HttpStatus.OK
-                );
+                return ResponseUtil.success(jsons);
             }
-            return new ResponseEntity<>(
-                    "badRequest",
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseUtil.failed();
         } catch (Exception ex) {
-            System.out.println();
-            return new ResponseEntity<>(
-                    "badRequest",
-                    HttpStatus.BAD_REQUEST
-            );
+            System.out.println("Lỗi ở đây " + ex.getMessage());
+            return ResponseUtil.failed();
         }
     }
 
     // Create a new Address
     @PostMapping
-    public ResponseEntity<AddressDto> createAddress(@RequestBody AddressDto AddressDto) {
-        AddressDto savedAddress = addressService.save(AddressDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedAddress);
+    public ResponseEntity<?> createAddress(HttpServletRequest request, @RequestBody AddressDto AddressDto) {
+
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+                AddressDto savedAddress = addressService.save(AddressDto);
+                return ResponseUtil.success();
+            }
+            return ResponseUtil.failed();
+        } catch (Exception ex) {
+            System.out.println("Lỗiở đây " + ex.getMessage());
+            return ResponseUtil.failed();
+        }
     }
 
     // Update a Address
@@ -67,17 +72,14 @@ public class AddressController {
 
     // Delete a Address
     @DeleteMapping
-    public ResponseEntity<String> deleteAddress(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteAddress(@PathVariable Integer id) {
         try {
             AddressDto Address = addressService.findById(id);
             addressService.save(Address);
-            return new ResponseEntity<>(
-                    "Success",
-                    HttpStatus.OK
-            );
+            return ResponseUtil.success();
         } catch (Exception ex) {
 
         }
-        return ResponseEntity.noContent().build();
+        return ResponseUtil.failed();
     }
 }
