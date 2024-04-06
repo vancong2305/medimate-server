@@ -11,7 +11,6 @@ import java.io.Serializable;
 @Data // Bao gồm getter, setter, toString, equals, hashCode
 @NoArgsConstructor  // Constructor không tham số
 public class OrderDetail {
-
     @EmbeddedId
     private OrderDetailId id;
     @Column(name = "discount_price")

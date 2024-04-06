@@ -12,10 +12,12 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name="id_user")
+    private String idUser;
     @Column(name="phone")
     private String phone;
-    @Column(name="street")
-    private String street;
+    @Column(name="ward")
+    private String ward;
     @Column(name="district")
     private String district;
     @Column(name="province")

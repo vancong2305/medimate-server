@@ -96,20 +96,20 @@ public class AuthController {
         }
     }
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody UserDto userDto) {
+    public ResponseEntity<?> logout(HttpServletRequest request, @RequestBody UserDto userDto) {
         try {
-            UserDto userDto1 = userService.findByPhone(userDto.getPhone());
-            tokenService.deleteById(userDto1.getId());
-            return new ResponseEntity<>(
-                    "Delete success!",
-                    HttpStatus.OK
-            );
+            String tokenInformation = request.getHeader("Authorization");
+            tokenInformation = tokenInformation.substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+                UserDto userDto1 = userService.findByPhone(userDto.getPhone());
+                tokenService.deleteById(userDto1.getId());
+                return new ResponseEntity<>("Logout success", HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
-            MLogger.LOGGER.severe("Error: " + ex.getMessage());
-            return new ResponseEntity<>(
-                    "Error: " + ex.toString(),
-                    HttpStatus.BAD_REQUEST
-            );
+            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 

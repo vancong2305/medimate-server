@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 06, 2024 lúc 05:05 PM
+-- Thời gian đã tạo: Th4 06, 2024 lúc 03:43 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -29,7 +29,6 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `address` (
   `id` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
   `phone` text NOT NULL,
   `ward` text NOT NULL,
   `district` text NOT NULL,
@@ -99,9 +98,7 @@ CREATE TABLE `coupon_detail` (
 INSERT INTO `coupon_detail` (`id`, `id_coupon`, `id_user`, `id_oder`, `start_time`, `end_time`, `status`) VALUES
 (4, 1, 12, NULL, '2024-04-01', '2024-04-03', 1),
 (5, 1, 12, NULL, '2024-04-01', '2024-04-30', 1),
-(6, 1, 12, NULL, '2024-04-01', '2024-04-03', 1),
-(7, 1, 12, NULL, '2024-04-01', '2024-04-03', 1),
-(8, 1, 12, NULL, '2024-04-01', '2024-04-03', 1);
+(6, 1, 12, NULL, '2024-04-01', '2024-04-03', 1);
 
 -- --------------------------------------------------------
 
@@ -995,7 +992,7 @@ CREATE TABLE `token` (
 
 INSERT INTO `token` (`id_user`, `access_token`, `refresh_token`) VALUES
 (16, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjE2LFwiaWRSb2xlXCI6MSxcInBob25lXCI6XCIwMTkyOTIyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MDg1NDksImV4cCI6MTcxMjQ5NDk0OX0.LnPPnSNUFuqarvsjDHbqoXPGYuyf3K5wshpzwep2kFM', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjE2LFwiaWRSb2xlXCI6MSxcInBob25lXCI6XCIwMTkyOTIyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MDg1NDksImV4cCI6MTcxMzAxMzM0OX0.xBFKviHVf3rL6iYL8koRoOmO5MiNArzAQ3MeghLOzh4'),
-(12, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCJhXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MTUyOTksImV4cCI6MTcxMjUwMTY5OX0.muusu4788dOiuNtPJcu-J6tKfvdttTPRLV31L501BXk', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCJhXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MTUyOTksImV4cCI6MTcxMzAyMDA5OX0.Y_yA_UGsh1dbej-U7JWT_x4uGau6_vsvpdhmcMLWYU8');
+(12, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCJhXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MDkyNDgsImV4cCI6MTcxMjQ5NTY0OH0.mdou5zvKGgH3euz0tEE9-35UC1nk69sH5StZ8D76L0U', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCJhXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MDkyNDgsImV4cCI6MTcxMzAxNDA0OH0.YFH8lUUiMBr-mjmh6qMmPMbqtSPk1ljMAFiLHvCCd6Y');
 
 -- --------------------------------------------------------
 
@@ -1017,6 +1014,7 @@ CREATE TABLE `unit` (
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
+  `id_address` int(11) DEFAULT NULL,
   `id_role` int(11) NOT NULL DEFAULT 2,
   `phone` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -1034,11 +1032,11 @@ CREATE TABLE `user` (
 -- Đang đổ dữ liệu cho bảng `user`
 --
 
-INSERT INTO `user` (`id`, `id_role`, `phone`, `password`, `first_name`, `last_name`, `rank`, `point`, `birthday`, `gender`, `image`, `status`) VALUES
-(12, 2, 'a', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
-(14, 1, '019292', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
-(16, 1, '0192922', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
-(18, 1, '01929223', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1);
+INSERT INTO `user` (`id`, `id_address`, `id_role`, `phone`, `password`, `first_name`, `last_name`, `rank`, `point`, `birthday`, `gender`, `image`, `status`) VALUES
+(12, NULL, 2, 'a', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
+(14, NULL, 1, '019292', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
+(16, NULL, 1, '0192922', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
+(18, NULL, 1, '01929223', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -11655,8 +11653,7 @@ INSERT INTO `ward` (`id`, `id_district`, `name`) VALUES
 -- Chỉ mục cho bảng `address`
 --
 ALTER TABLE `address`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_address_user` (`id_user`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Chỉ mục cho bảng `category`
@@ -11739,7 +11736,8 @@ ALTER TABLE `unit`
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `phone` (`phone`),
-  ADD KEY `fk_user_role` (`id_role`);
+  ADD KEY `fk_user_role` (`id_role`),
+  ADD KEY `fk_user_address` (`id_address`);
 
 --
 -- Chỉ mục cho bảng `ward`
@@ -11773,7 +11771,7 @@ ALTER TABLE `coupon`
 -- AUTO_INCREMENT cho bảng `coupon_detail`
 --
 ALTER TABLE `coupon_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `district`
@@ -11828,12 +11826,6 @@ ALTER TABLE `ward`
 --
 
 --
--- Các ràng buộc cho bảng `address`
---
-ALTER TABLE `address`
-  ADD CONSTRAINT `id_address_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
-
---
 -- Các ràng buộc cho bảng `coupon_detail`
 --
 ALTER TABLE `coupon_detail`
@@ -11871,6 +11863,7 @@ ALTER TABLE `token`
 -- Các ràng buộc cho bảng `user`
 --
 ALTER TABLE `user`
+  ADD CONSTRAINT `fk_user_address` FOREIGN KEY (`id_address`) REFERENCES `address` (`id`),
   ADD CONSTRAINT `fk_user_role` FOREIGN KEY (`id_role`) REFERENCES `role` (`id`);
 COMMIT;
 

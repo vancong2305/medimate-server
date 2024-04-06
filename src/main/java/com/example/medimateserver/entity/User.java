@@ -15,8 +15,6 @@ public class User {
     private Integer id;
     @Column(name = "id_role")
     private Integer idRole;
-    @Column(name = "id_address")
-    private String idAddress;
     @Column(name = "phone")
     private String phone;
     @Column(name = "password")
