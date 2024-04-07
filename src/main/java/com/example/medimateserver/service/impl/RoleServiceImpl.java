@@ -1,8 +1,6 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.dto.OrderDto;
 import com.example.medimateserver.dto.RoleDto;
-import com.example.medimateserver.entity.Order;
 import com.example.medimateserver.entity.Role;
 import com.example.medimateserver.repository.RoleRepository;
 import com.example.medimateserver.service.RoleService;

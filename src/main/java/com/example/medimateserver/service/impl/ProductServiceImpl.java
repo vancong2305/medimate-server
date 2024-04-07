@@ -30,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> findWithFilter(ProductFilter productFilter) {
-        List<Product> products = productRepository.findWithFilter(productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch());
+        List<Product> products = productRepository.findWithFilter(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch());
         return products.stream()
                 .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
                 .collect(Collectors.toList());

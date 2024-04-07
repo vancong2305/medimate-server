@@ -1,9 +1,6 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.dto.CategoryDto;
 import com.example.medimateserver.dto.OrderDetailDto;
-import com.example.medimateserver.dto.OrderDto;
-import com.example.medimateserver.entity.Order;
 import com.example.medimateserver.entity.OrderDetail;
 import com.example.medimateserver.repository.OrderDetailRepository;
 import com.example.medimateserver.service.OrderDetailService;
@@ -18,37 +15,27 @@ import java.util.stream.Collectors;
 public class OrderDetailServiceImpl implements OrderDetailService {
     @Autowired
     OrderDetailRepository orderDetailRepository;
+
     @Override
-    public List<OrderDetailDto> findAll() {
-        List<OrderDetail> orderDetailList = orderDetailRepository.findAll();
+    public List<OrderDetailDto> findByOrderId(Integer id) {
+        List<OrderDetail> orderDetailList = orderDetailRepository.findByIdOrder(id);
+        System.out.println(orderDetailList.get(0).toString());
         return orderDetailList.stream()
-                .map(orderDetail -> ConvertUtil.gI().toDto(orderDetailList, OrderDetailDto.class))
+                .map(orderDetail -> ConvertUtil.gI().toDto(orderDetail, OrderDetailDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public OrderDetailDto findById(Integer id) {
-        return orderDetailRepository.findById(id)
-                .map(orderDetail -> ConvertUtil.gI().toDto(orderDetail, OrderDetailDto.class))
-                .orElse(null);
-    }
-
-
-    @Override
-    public OrderDetailDto save(OrderDetailDto orderDetailDto) {
-        OrderDetail orderDetail = ConvertUtil.gI().toEntity(orderDetailDto, OrderDetail.class);
-        orderDetail = orderDetailRepository.save(orderDetail);
-        return ConvertUtil.gI().toDto(orderDetail, OrderDetailDto.class);
-    }
-
-    @Override
-    public OrderDetailDto update(Integer id, OrderDetailDto orderDetail) {
+    public List<OrderDetailDto> findAll() {
         return null;
     }
 
-    @Override
-    public void deleteById(Integer id) {
-
+    public OrderDetailDto toDto(OrderDetail orderDetail) {
+        OrderDetailDto dto = new OrderDetailDto();
+        dto.setIdOrder(orderDetail.getIdOrder());
+        dto.setIdProduct(orderDetail.getIdProduct());
+        dto.setDiscountPrice(orderDetail.getDiscountPrice());
+        dto.setQuantity(orderDetail.getQuantity());
+        return dto;
     }
-
 }

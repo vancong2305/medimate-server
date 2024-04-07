@@ -58,7 +58,7 @@ public class AddressController {
             }
             return ResponseUtil.failed();
         } catch (Exception ex) {
-            System.out.println("Lỗiở đây " + ex.getMessage());
+            System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
         }
     }
@@ -82,14 +82,14 @@ public class AddressController {
     }
 
     // Delete a Address
-    @DeleteMapping
-    public ResponseEntity<?> deleteAddress(HttpServletRequest request, @RequestBody AddressDto addressDto) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAddress(HttpServletRequest request, @PathVariable Integer id) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                addressService.deleteById(addressDto.getId());
+                addressService.deleteById(id);
                 return ResponseUtil.success();
             }
             return ResponseUtil.failed();

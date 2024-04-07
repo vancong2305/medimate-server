@@ -4,18 +4,20 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "order")
 @Data
 @NoArgsConstructor // Thêm constructor không tham số
-public class Order {
+public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "id_user")
     private Integer idUser;
     @Column(name = "code")
-    private Integer code;
+    private String code;
     @Column(name = "payment_method")
     private Integer paymentMethod;
     @Column(name = "discount_coupon")
@@ -23,7 +25,7 @@ public class Order {
     @Column(name = "delivery_fee")
     private Integer deliveryFee;
     @Column(name = "order_time")
-    private Integer orderTime;
+    private Date orderTime;
     @Column(name = "note")
     private Integer note;
     @Column(name = "point")
