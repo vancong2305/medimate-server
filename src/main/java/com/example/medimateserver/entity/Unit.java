@@ -13,7 +13,9 @@ public class Unit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "name")
-    private Integer name;
+    private String name;
+    @Column(name = "description")
+    private String description;
     @Column(name = "status")
     private Integer status;
 

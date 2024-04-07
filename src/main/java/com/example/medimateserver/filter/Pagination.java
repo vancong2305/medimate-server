@@ -1,4 +1,4 @@
-package com.example.medimateserver.fillter;
+package com.example.medimateserver.filter;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

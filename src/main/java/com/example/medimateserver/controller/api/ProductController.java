@@ -1,15 +1,13 @@
 package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.dto.ProductDto;
-import com.example.medimateserver.dto.TokenDto;
-import com.example.medimateserver.entity.Token;
+import com.example.medimateserver.filter.ProductFilter;
 import com.example.medimateserver.service.ProductService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UserService;
-import com.example.medimateserver.util.CheckAuthUtil;
 import com.example.medimateserver.util.GsonUtil;
+import com.example.medimateserver.util.ResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,49 +27,24 @@ public class ProductController {
 
     // Get category by ID
     @GetMapping
-    public ResponseEntity<String> getCategoryById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
-        String pageInformation = request.getHeader("Pagination");
-        String tokenInformation = request.getHeader("Token");
-//        System.out.println("Lấy thông tin phân trang " + pageInformation);
-//
-//        //Lấy thông tin người dùng qua id và so sánh với token
-//        User user = userService.findById(id);
-//        System.out.println("User from token: " + JwtProvider.getUsernameFromToken(tokenInformation));
-//
-//        // Chuyển JSON sang object
-//        Pagination studentFromJson = GsonUtil.getInstance().fromJson(pageInformation, Pagination.class);
-//        String json = GsonUtil.getInstance().toJson(studentFromJson);
-//
-//        String filterValue = studentFromJson.getFillter();
-//        if (filterValue == null) {
-//            System.out.println("null");
-//        } else {
-//            System.out.println("1");
-//        }
-//        List<User> userList = userService.findAll();
-//        String jsonUser = GsonUtil.getInstance().toJson(userList);
-//        TokenDto tokenDto = tokenService.findById(id);
-//
-//        if (CheckAuthUtil.gI().check(tokenInformation, tokenDto.getAccessToken(), id)) {
-//            List<ProductDto> productList = productService.findAll();
-//            String jsons = GsonUtil.gI().toJson(productList);
-//            return new ResponseEntity<>(
-//                    jsons,
-//                    HttpStatus.OK
-//            );
-//        }
+    public ResponseEntity<?> getCategoryById() throws JsonProcessingException {
         try {
             List<ProductDto> productList = productService.findAll();
             String jsons = GsonUtil.gI().toJson(productList);
-            return new ResponseEntity<>(
-                    jsons,
-                    HttpStatus.OK
-            );
+            return ResponseUtil.success(jsons);
         } catch (Exception ex) {
-            return new ResponseEntity<>(
-                    "badRequest",
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseUtil.failed();
+        }
+    }
+
+    @PostMapping("/filter")
+    public ResponseEntity<?> getProductFilter(@RequestBody ProductFilter productFilter) throws JsonProcessingException {
+        try {
+            List<ProductDto> productList = productService.findWithFilter(productFilter);
+            String jsons = GsonUtil.gI().toJson(productList);
+            return ResponseUtil.success(jsons);
+        } catch (Exception ex) {
+            return ResponseUtil.failed();
         }
     }
 

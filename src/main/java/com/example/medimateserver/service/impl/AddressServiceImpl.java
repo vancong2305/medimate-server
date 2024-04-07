@@ -28,19 +28,25 @@ public class AddressServiceImpl implements AddressService {
         List<Address> AddressList = addressRepository.findAll();
         return AddressList
                 .stream()
+                .filter(address -> address.getStatus() != 0) // Filter out addresses with status 0
                 .map(Address -> ConvertUtil.gI().toDto(Address, AddressDto.class))
                 .collect(Collectors.toList());
     }
     @Override
     public AddressDto findById(Integer id) {
-
         return addressRepository.findById(id)
-                .map(Address -> ConvertUtil.gI().toDto(Address, AddressDto.class))
-                .orElse(null);
+                .map(Address -> {
+                    if (Address.getStatus() == 0) {
+                        throw new IllegalArgumentException("Địa chỉ không hợp lệ: Trạng thái không thể bằng 0");
+                    }
+                    return ConvertUtil.gI().toDto(Address, AddressDto.class);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("We not found with id: " + id));
     }
     @Override
     public AddressDto save(Integer id, AddressDto addressDto) {
         Address savedAddress = ConvertUtil.gI().toEntity(addressDto, Address.class);
+        savedAddress.setStatus(1);
         savedAddress = addressRepository.save(savedAddress);
         if (addressDto.getIsDefault()) {
             System.out.println("Zô đây rồi nè");
@@ -60,6 +66,10 @@ public class AddressServiceImpl implements AddressService {
     public AddressDto update(Integer id, AddressDto addressDto) {
         Address existingAddress = addressRepository.findById(addressDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("We not found with id: " + addressDto.getId()));
+        // Kiểm tra status của bản ghi hiện tại
+        if (existingAddress.getStatus() == 0) {
+            throw new IllegalArgumentException("Địa chỉ không hợp lệ: Trạng thái không thể bằng 0");
+        }
         // Kiểm tra isDefault của addressDto
         if (addressDto.getIsDefault()) {
             System.out.println("Zô đây rồi nè");
@@ -82,14 +92,19 @@ public class AddressServiceImpl implements AddressService {
     }
     @Override
     public void deleteById(Integer id) {
-
+        Address existingAddress = addressRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("We not found with id: " + id));
+        existingAddress.setStatus(0);
+        addressRepository.save(existingAddress);
     }
 
     @Override
     public List<AddressDto> findByIdUser(Integer id) {
         List<Address> addressList = addressRepository.findByIdUser(id);
-        return addressList.stream()
-                .map(address -> ConvertUtil.gI().toDto(address, AddressDto.class))
+        return addressList
+                .stream()
+                .filter(address -> address.getStatus() != 0) // Filter out addresses with status 0
+                .map(Address -> ConvertUtil.gI().toDto(Address, AddressDto.class))
                 .collect(Collectors.toList());
     }
 }

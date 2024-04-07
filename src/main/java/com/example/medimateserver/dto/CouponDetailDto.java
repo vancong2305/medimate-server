@@ -22,5 +22,5 @@ public class CouponDetailDto {
     private Integer status;
     private CouponDto coupon;
     private OrderDto order;
-    private User user;
+    private UserDto user;
 }

@@ -1,19 +1,17 @@
 package com.example.medimateserver.service.impl;
 
+import com.example.medimateserver.dto.*;
 import com.example.medimateserver.dto.CouponDetailDto;
-import com.example.medimateserver.dto.CouponDetailDto;
-import com.example.medimateserver.dto.CouponDto;
-import com.example.medimateserver.dto.OrderDetailDto;
-import com.example.medimateserver.entity.Coupon;
+import com.example.medimateserver.entity.*;
 import com.example.medimateserver.entity.CouponDetail;
-import com.example.medimateserver.entity.CouponDetail;
-import com.example.medimateserver.entity.OrderDetail;
 import com.example.medimateserver.repository.CouponDetailRepository; // Giả sử bạn đã tạo Repository này
 import com.example.medimateserver.repository.CouponRepository;
+import com.example.medimateserver.repository.UserRepository;
 import com.example.medimateserver.service.CouponDetailService;
 import com.example.medimateserver.service.CouponService;
 import com.example.medimateserver.util.ConvertUtil;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +25,9 @@ public class CouponDetailServiceImpl implements CouponDetailService {
     @Autowired
     private CouponDetailRepository couponDetailRepository;
     @Autowired
-    private CouponService couponService;
+    private UserRepository userRepository;
+    @Autowired
+    private CouponRepository couponRepository;
 
     @Override
     public List<CouponDetail> findAll() {
@@ -51,15 +51,35 @@ public class CouponDetailServiceImpl implements CouponDetailService {
 
 
     @Override
+    @Transactional // Important for consistency
     public CouponDetailDto save(CouponDetailDto couponDetailDto) {
+        Optional<User> userDto = userRepository.findById(couponDetailDto.getIdUser());
+
+        if (userDto.isEmpty()) {
+            throw new IllegalArgumentException("Người dùng không hợp lệ");
+        }
+
+        Optional<Coupon> couponDto = couponRepository.findById(couponDetailDto.getIdCoupon());
+        if (couponDto == null) {
+            throw new IllegalArgumentException("Không tìm thấy phiếu giảm giá này");
+        }
+
+        User user = userDto.get(); // Unwrap User
+
+        // Ensure sufficient points
+        if (user.getPoint() < couponDto.get().getPoint()) {
+            throw new IllegalArgumentException("Điểm người dùng không đủ");
+        }
+
+        // Deduct points
+        user.setPoint(user.getPoint() - couponDto.get().getPoint());
+        userRepository.save(user); // Update user's points
+
+        // Create CouponDetail
         CouponDetail couponDetail = ConvertUtil.gI().toEntity(couponDetailDto, CouponDetail.class);
-        System.out.println("ID là: " + couponDetail.getIdCoupon());
-        CouponDto couponDto = couponService.findById(couponDetail.getIdCoupon());
-        System.out.println("coupon la " + couponDto.getExpirationTime());
-        couponDetail.setIdCoupon(couponDto.getId());
+        couponDetail.setIdCoupon(couponDto.get().getId()); // Ensure ID is set
         couponDetail = couponDetailRepository.save(couponDetail);
-        System.out.println("id coupon " + couponDetail.getIdCoupon());
-        System.out.println("id user " + couponDetail.getIdUser());
+
         return ConvertUtil.gI().toDto(couponDetail, CouponDetailDto.class);
     }
 

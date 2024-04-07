@@ -1,18 +1,12 @@
 package com.example.medimateserver.controller.api;
 
-import com.example.medimateserver.config.jwt.JwtProvider;
 import com.example.medimateserver.dto.CategoryDto;
-import com.example.medimateserver.dto.TokenDto;
-import com.example.medimateserver.dto.UserDto;
-import com.example.medimateserver.entity.User;
-import com.example.medimateserver.fillter.Pagination;
 import com.example.medimateserver.service.CategoryService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UserService;
-import com.example.medimateserver.util.CheckAuthUtil;
 import com.example.medimateserver.util.GsonUtil;
+import com.example.medimateserver.util.ResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,60 +27,13 @@ public class CategoryController {
 
     // Get category by ID
     @GetMapping
-    public ResponseEntity<String> getCategoryById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
-//        System.out.println("Lấy thông tin phân trang " + pageInformation);
-//
-//        //Lấy thông tin người dùng qua id và so sánh với token
-//        User user = userService.findById(id);
-//        System.out.println("User from token: " + JwtProvider.getUsernameFromToken(tokenInformation));
-//
-//        // Chuyển JSON sang object
-//        Pagination studentFromJson = GsonUtil.getInstance().fromJson(pageInformation, Pagination.class);
-//        String json = GsonUtil.getInstance().toJson(studentFromJson);
-//
-//        String filterValue = studentFromJson.getFillter();
-//        if (filterValue == null) {
-//            System.out.println("null");
-//        } else {
-//            System.out.println("1");
-//        }
-//        List<User> userList = userService.findAll();
-//        String jsonUser = GsonUtil.getInstance().toJson(userList);
-
-//        try {
-//            String tokenInformation = request.getHeader("Token");
-//            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-//            TokenDto tokenDto = tokenService.findById(user.getId());
-//            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-//                List<CategoryDto> categoryList = categoryService.findAll();
-//                String jsons = GsonUtil.gI().toJson(categoryList);
-//                return new ResponseEntity<>(
-//                        jsons,
-//                        HttpStatus.OK
-//                );
-//            }
-//            return new ResponseEntity<>(
-//                    "Không có quyền truy cập",
-//                    HttpStatus.NOT_FOUND
-//            );
-//        } catch (Exception ex) {
-//            return new ResponseEntity<>(
-//                    "badRequest",
-//                    HttpStatus.BAD_REQUEST
-//            );
-//        }
+    public ResponseEntity<?> getCategoryById() throws JsonProcessingException {
         try {
             List<CategoryDto> categoryList = categoryService.findAll();
             String jsons = GsonUtil.gI().toJson(categoryList);
-            return new ResponseEntity<>(
-                    jsons,
-                    HttpStatus.OK
-            );
+            return ResponseUtil.success(jsons);
         } catch (Exception ex) {
-            return new ResponseEntity<>(
-                    "badRequest",
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseUtil.failed();
         }
 
     }

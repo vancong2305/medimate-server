@@ -30,4 +30,7 @@ public class CouponDetail {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_coupon", referencedColumnName = "id", insertable = false, updatable = false)
     private Coupon coupon;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id_user", referencedColumnName = "id", insertable = false, updatable = false)
+    private User user;
 }

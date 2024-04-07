@@ -1,5 +1,6 @@
 package com.example.medimateserver.dto;
 
+import com.example.medimateserver.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,6 @@ public class ProductDto {
     private Integer quantity;
     private String image;
     private Integer status;
+    private UnitDto unit;
+    private CategoryDto category;
 }

@@ -26,7 +26,7 @@ public class User {
     @Column(name = "rank")
     private String rank;
     @Column(name = "point")
-    private String point;
+    private Integer point;
     @Column(name = "birthday")
     private String birthday;
     @Column(name = "gender")

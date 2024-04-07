@@ -1,9 +1,8 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.dto.CategoryDto;
 import com.example.medimateserver.dto.ProductDto;
-import com.example.medimateserver.entity.Category;
 import com.example.medimateserver.entity.Product;
+import com.example.medimateserver.filter.ProductFilter;
 import com.example.medimateserver.repository.ProductRepository;
 import com.example.medimateserver.service.ProductService;
 import com.example.medimateserver.util.ConvertUtil;
@@ -23,6 +22,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDto> findAll() {
         List<Product> products = productRepository.findAll();
+        System.out.println(products.get(0).getUnit().getName());
+        return products.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> findWithFilter(ProductFilter productFilter) {
+        List<Product> products = productRepository.findWithFilter(productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch());
         return products.stream()
                 .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
                 .collect(Collectors.toList());

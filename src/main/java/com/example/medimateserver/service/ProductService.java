@@ -1,7 +1,7 @@
 package com.example.medimateserver.service;
 
 import com.example.medimateserver.dto.ProductDto;
-import com.example.medimateserver.entity.Product;
+import com.example.medimateserver.filter.ProductFilter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,6 +9,7 @@ import java.util.List;
 public interface ProductService {
 
     List<ProductDto> findAll();
+    List<ProductDto> findWithFilter(ProductFilter productFilter);
 
     ProductDto findById(Integer id);
 

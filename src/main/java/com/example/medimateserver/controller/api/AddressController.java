@@ -83,9 +83,16 @@ public class AddressController {
 
     // Delete a Address
     @DeleteMapping
-    public ResponseEntity<?> deleteAddress(HttpServletRequest request) {
+    public ResponseEntity<?> deleteAddress(HttpServletRequest request, @RequestBody AddressDto addressDto) {
         try {
-            return ResponseUtil.success();
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+                addressService.deleteById(addressDto.getId());
+                return ResponseUtil.success();
+            }
+            return ResponseUtil.failed();
         } catch (Exception ex) {
 
         }

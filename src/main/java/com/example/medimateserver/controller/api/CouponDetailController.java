@@ -9,6 +9,7 @@ import com.example.medimateserver.entity.CouponDetail;
 import com.example.medimateserver.service.CouponDetailService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.util.GsonUtil;
+import com.example.medimateserver.util.ResponseUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class CouponDetailController {
         }
     }
     @PostMapping
-    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, CouponDetailDto couponDetailDto) {
+    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, @RequestBody CouponDetailDto couponDetailDto) {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
@@ -50,19 +51,13 @@ public class CouponDetailController {
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
                 couponDetailDto.setIdOrder(null);
                 couponDetailService.save(couponDetailDto);
-                return new ResponseEntity<>(couponDetailService.findById(user.getId()), HttpStatus.OK);
+                return ResponseUtil.success();
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
             return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
         }
     }
-//    @PostMapping
-//    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, @RequestBody CouponDetailDto couponDetailDto) {
-//        System.out.println(couponDetailDto.getIdCoupon());
-//        CouponDetailDto savedCoupon = couponDetailService.save(couponDetailDto);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(savedCoupon);
-//    }
     @PutMapping
     public ResponseEntity<String> updateCouponDetail(@PathVariable Long id, @RequestBody CouponDetail CouponDetail) {
         // ... (Implement update logic with CouponDetailService)
