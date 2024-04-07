@@ -8,6 +8,7 @@ import com.example.medimateserver.service.DistrictService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.GsonUtil;
+import com.example.medimateserver.util.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,19 +24,20 @@ public class DistrictController {
     private TokenService tokenService;
     @Autowired
     private DistrictService districtService;
-    @GetMapping
-    public ResponseEntity<?> getDistrictByProvince(HttpServletRequest request, @RequestBody ProvinceDto provinceDto) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDistrictByProvince(HttpServletRequest request, @PathVariable Integer id) {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                return new ResponseEntity<>(districtService.findByIdProvince(provinceDto.getId()), HttpStatus.OK);
+                String json = GsonUtil.gI().toJson(districtService.findByIdProvince(id));
+                return ResponseUtil.success(json);
             }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+            return ResponseUtil.failed();
         } catch (Exception ex) {
-            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
+            return ResponseUtil.failed();
         }
     }
 }

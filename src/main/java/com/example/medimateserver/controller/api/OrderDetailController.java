@@ -28,14 +28,14 @@ public class OrderDetailController {
     private TokenService tokenService;
     @Autowired
     private OrderDetailService orderDetailService;
-    @GetMapping
-    public ResponseEntity<?> getOrderDetailById(HttpServletRequest request) throws JsonProcessingException {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrderDetailById(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                List<OrderDetailDto> orderDetailList = orderDetailService.findAll();
+                List<OrderDetailDto> orderDetailList = orderDetailService.findByIdUser(id);
                 String jsons = GsonUtil.gI().toJson(orderDetailList);
                 return ResponseUtil.success(jsons);
             }

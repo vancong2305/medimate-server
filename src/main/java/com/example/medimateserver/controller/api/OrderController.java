@@ -1,7 +1,7 @@
 package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.dto.OrderDto;
-import com.example.medimateserver.entity.OrderEntity;
+import com.example.medimateserver.entity.Orders;
 import com.example.medimateserver.service.OrderService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UnitService;
@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/order", produces = "application/json")
+@RequestMapping(value = "/api/orders", produces = "application/json")
 public class OrderController {
     @Autowired
     OrderService orderService;
@@ -31,7 +31,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateOrder(@PathVariable String code, @RequestBody OrderEntity OrderEntity) {
+    public ResponseEntity<String> updateOrder(@PathVariable String code, @RequestBody Orders Orders) {
         return ResponseEntity.ok("updated Order");
     }
     @DeleteMapping("/{id}")

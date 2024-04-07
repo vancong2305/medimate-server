@@ -1,7 +1,7 @@
 package com.example.medimateserver.service.impl;
 
 import com.example.medimateserver.dto.OrderDto;
-import com.example.medimateserver.entity.OrderEntity;
+import com.example.medimateserver.entity.Orders;
 import com.example.medimateserver.repository.OrderRepository;
 import com.example.medimateserver.service.OrderService;
 import com.example.medimateserver.util.ConvertUtil;
@@ -19,8 +19,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> findAll() {
-        List<OrderEntity> orderEntityList = orderRepository.findAll();
-        return orderEntityList.stream()
+        List<Orders> ordersList = orderRepository.findAll();
+        return ordersList.stream()
                 .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))
                 .collect(Collectors.toList());
     }
@@ -35,11 +35,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto save(OrderDto orderDto) {
-        OrderEntity savedOrderEntity = ConvertUtil.gI().toEntity(orderDto, OrderEntity.class);
-        savedOrderEntity.setStatus(1);
-        savedOrderEntity = orderRepository.save(savedOrderEntity);
+        Orders savedOrders = ConvertUtil.gI().toEntity(orderDto, Orders.class);
+        savedOrders.setStatus(1);
+        savedOrders = orderRepository.save(savedOrders);
 
-        return ConvertUtil.gI().toDto(savedOrderEntity, OrderDto.class);
+        return ConvertUtil.gI().toDto(savedOrders, OrderDto.class);
     }
 
     @Override
@@ -54,8 +54,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> findByIdUser(Integer id) {
-        List<OrderEntity> orderEntityList = orderRepository.findByIdUser(id);
-        return orderEntityList
+        List<Orders> ordersList = orderRepository.findByIdUser(id);
+        return ordersList
                 .stream()
                 .filter(order -> order.getStatus() != 0) // Filter out orderes with status 0
                 .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))

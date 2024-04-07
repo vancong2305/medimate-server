@@ -12,4 +12,6 @@ public class OrderDetailDto {
     private Integer idProduct;
     private Integer discountPrice;
     private Integer quantity;
+    private ProductDto product;
+    private OrderDto orders;
 }

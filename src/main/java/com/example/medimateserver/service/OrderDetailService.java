@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public interface OrderDetailService {
-    List<OrderDetailDto> findByOrderId(Integer id);
-
     List<OrderDetailDto> findAll();
+    List<OrderDetailDto> findByIdUser(Integer id);
 }

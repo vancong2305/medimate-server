@@ -4,26 +4,50 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "order_detail")
 @Data
 @NoArgsConstructor
 public class OrderDetail {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id; // id là khóa chính duy nhất
-    @Column(name = "id_order")
-    private Integer idOrder;
-    @Column(name = "id_product")
-    private Integer idProduct;
+
+    @EmbeddedId
+    private OrderDetailId id;
+
     @Column(name = "discount_price")
     private Integer discountPrice;
+
     @Column(name = "quantity")
     private Integer quantity;
+
     @ManyToOne
-    @JoinColumn(name = "id_order", insertable = false, updatable = false)
-    private OrderEntity orderEntity;
+    @MapsId("idOrder")
+    @JoinColumn(name = "id_order", referencedColumnName = "id", insertable = false, updatable = false)
+    private Orders orders;
+
     @ManyToOne
-    @JoinColumn(name = "id_product", insertable = false, updatable = false)
+    @MapsId("idProduct")
+    @JoinColumn(name = "id_product", referencedColumnName = "id", insertable = false, updatable = false)
     private Product product;
+
+
+    public OrderDetail(OrderDetailId id, Integer discountPrice, Integer quantity) {
+    }
+
+    // Lớp khóa chính kép (không thay đổi)
+    @Embeddable
+    @Data
+    @NoArgsConstructor
+    public static class OrderDetailId implements Serializable {
+        @Column(name = "id_order")
+        private Integer idOrder;
+        @Column(name = "id_product")
+        private Integer idProduct;
+
+        public OrderDetailId(Integer idOrder, Integer idProduct) {
+        }
+    }
+
 }
+
