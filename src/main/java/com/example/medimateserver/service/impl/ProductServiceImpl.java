@@ -1,13 +1,19 @@
 package com.example.medimateserver.service.impl;
 
 import com.example.medimateserver.dto.ProductDto;
+import com.example.medimateserver.dto.UnitDto;
 import com.example.medimateserver.entity.Product;
+import com.example.medimateserver.entity.Unit;
+import com.example.medimateserver.filter.Pagination;
 import com.example.medimateserver.filter.ProductFilter;
 import com.example.medimateserver.repository.ProductRepository;
 import com.example.medimateserver.service.ProductService;
 import com.example.medimateserver.util.ConvertUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +30,16 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productRepository.findAll();
         System.out.println(products.get(0).getUnit().getName());
         return products.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> findAllWithPage(Integer page) {
+        Pageable pageable = PageRequest.of(page, 2);
+        Page<Product> productList = productRepository.findAll(pageable);
+        return productList
+                .stream()
                 .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
                 .collect(Collectors.toList());
     }

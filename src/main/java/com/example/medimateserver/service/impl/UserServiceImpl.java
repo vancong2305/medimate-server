@@ -11,6 +11,7 @@ import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.ConvertUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
         // Tạo Pageable object
         Pageable pageable = PageRequest.of(page, size);
         // Truy vấn dữ liệu
-        List<User> users = (List<User>) userRepository.findAll(pageable);
+        Page<User> users =userRepository.findAll(pageable);
         return users
                 .stream()
                 .map(user -> ConvertUtil.gI().toDto(user, UserDto.class))

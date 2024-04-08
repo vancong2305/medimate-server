@@ -25,11 +25,23 @@ public class ProductController {
     @Autowired
     private UserService userService;
 
-    // Get category by ID
-    @GetMapping
-    public ResponseEntity<?> getCategoryById() throws JsonProcessingException {
+
+//    @GetMapping
+//    public ResponseEntity<?> getCategoryById() throws JsonProcessingException {
+//        try {
+//            List<ProductDto> productList = productService.findAll();
+//            String jsons = GsonUtil.gI().toJson(productList);
+//            return ResponseUtil.success(jsons);
+//        } catch (Exception ex) {
+//            return ResponseUtil.failed();
+//        }
+//    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws JsonProcessingException {
+        System.out.println(id);
         try {
-            List<ProductDto> productList = productService.findAll();
+            List<ProductDto> productList = productService.findAllWithPage(id);
             String jsons = GsonUtil.gI().toJson(productList);
             return ResponseUtil.success(jsons);
         } catch (Exception ex) {
