@@ -107,8 +107,7 @@ public class OrderServiceImpl implements OrderService {
             savedCoupon.setIdOrder(order.getId());
             savedCoupon.setStatus(0);
             couponDetailRepository.save(savedCoupon);
-
-            System.out.println(paymentDto.getIdUser());
+            
             savedUser.setPoint(savedUser.getPoint()+order.getPoint());
             userRepository.save(savedUser);
 
