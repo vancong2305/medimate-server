@@ -60,7 +60,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
         }
-        System.out.println("Không được vào đây");
 
         // Xác thực nếu có username và token chưa được xác thực trước đó
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

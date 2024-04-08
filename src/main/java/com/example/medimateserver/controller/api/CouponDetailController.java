@@ -53,9 +53,9 @@ public class CouponDetailController {
                 couponDetailService.save(couponDetailDto);
                 return ResponseUtil.success();
             }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+            return ResponseUtil.failed();
         } catch (Exception ex) {
-            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
+            return ResponseUtil.failed();
         }
     }
     @PutMapping

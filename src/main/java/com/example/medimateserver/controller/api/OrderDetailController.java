@@ -5,6 +5,7 @@ import com.example.medimateserver.dto.OrderDetailDto;
 import com.example.medimateserver.dto.OrderDto;
 import com.example.medimateserver.dto.TokenDto;
 import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.entity.OrderDetail;
 import com.example.medimateserver.service.OrderDetailService;
 import com.example.medimateserver.service.OrderService;
 import com.example.medimateserver.service.TokenService;
@@ -28,6 +29,7 @@ public class OrderDetailController {
     private TokenService tokenService;
     @Autowired
     private OrderDetailService orderDetailService;
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderDetailById(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
@@ -46,4 +48,8 @@ public class OrderDetailController {
         }
     }
 
+    @PostMapping
+    public ResponseEntity<?> postgetOrderDetailById(HttpServletRequest request, @RequestBody OrderDetailDto orderDetailDto) throws JsonProcessingException {
+        return ResponseUtil.success();
+    }
 }

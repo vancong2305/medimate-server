@@ -22,12 +22,10 @@ public class Orders {
     private Integer paymentMethod;
     @Column(name = "discount_coupon")
     private Integer discountCoupon;
-    @Column(name = "delivery_fee")
-    private Integer deliveryFee;
     @Column(name = "order_time")
     private Date orderTime;
     @Column(name = "note")
-    private Integer note;
+    private String note;
     @Column(name = "point")
     private Integer point;
     @Column(name = "status")

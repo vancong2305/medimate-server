@@ -9,4 +9,5 @@ import java.util.List;
 public interface OrderDetailService {
     List<OrderDetailDto> findAll();
     List<OrderDetailDto> findByIdUser(Integer id);
+
 }

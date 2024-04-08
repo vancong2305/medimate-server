@@ -47,6 +47,22 @@ public class OrderDetail {
 
         public OrderDetailId(Integer idOrder, Integer idProduct) {
         }
+
+        public Integer getIdOrder() {
+            return idOrder;
+        }
+
+        public void setIdOrder(Integer idOrder) {
+            this.idOrder = idOrder;
+        }
+
+        public Integer getIdProduct() {
+            return idProduct;
+        }
+
+        public void setIdProduct(Integer idProduct) {
+            this.idProduct = idProduct;
+        }
     }
 
 }

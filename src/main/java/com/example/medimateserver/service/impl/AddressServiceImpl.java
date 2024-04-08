@@ -49,11 +49,10 @@ public class AddressServiceImpl implements AddressService {
         savedAddress.setStatus(1);
         savedAddress = addressRepository.save(savedAddress);
         if (addressDto.getIsDefault()) {
-            System.out.println("Zô đây rồi nè");
             List<Address> addresses = addressRepository.findByIdUser(id);
             for (Address address : addresses) {
                 address.setIsDefault(false);
-                if (address.getId()==savedAddress.getId()) {
+                if (address.getId() == savedAddress.getId()) {
                     address.setIsDefault(true);
                 }
             }
@@ -72,7 +71,6 @@ public class AddressServiceImpl implements AddressService {
         }
         // Kiểm tra isDefault của addressDto
         if (addressDto.getIsDefault()) {
-            System.out.println("Zô đây rồi nè");
             Address updatedAddress = null;
             List<Address> addresses = addressRepository.findByIdUser(id);
             for (Address address : addresses) {

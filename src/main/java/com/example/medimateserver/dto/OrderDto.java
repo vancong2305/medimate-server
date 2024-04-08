@@ -15,7 +15,6 @@ public class OrderDto {
     private String code;
     private Integer paymentMethod;
     private Integer discountCoupon;
-    private Integer deliveryFee;
     private Date orderTime;
     private String note;
     private Integer point;

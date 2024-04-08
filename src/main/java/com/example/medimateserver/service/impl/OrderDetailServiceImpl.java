@@ -32,6 +32,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                 .collect(Collectors.toList());
     }
 
+
     public OrderDetailDto toDto(OrderDetail orderDetail) {
         OrderDetailDto dto = new OrderDetailDto();
         dto.setIdOrder(orderDetail.getId().getIdOrder());
@@ -44,7 +45,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     public OrderDetail toEntity(OrderDetailDto dto) {
-        OrderDetail orderDetail = new OrderDetail(); // Tạo instance của OuterClass nếu dùng cách 1
         OrderDetail.OrderDetailId id = new OrderDetail.OrderDetailId(dto.getIdOrder(), dto.getIdProduct()); // Cách 2, sau khi thêm static
         return new OrderDetail(id, dto.getDiscountPrice(), dto.getQuantity());
     }

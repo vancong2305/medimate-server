@@ -75,10 +75,7 @@ public class JwtProvider {
         return false;
     }
     public static boolean verifyToken(String accessToken, TokenDto tokenDto) {
-        System.out.println("At verify" + accessToken);
         try {
-            System.out.println("Token at database: " + tokenDto.getAccessToken());
-            System.out.println("Token at post: " + accessToken);
             if (!tokenDto.getAccessToken().equals(accessToken)) {
                 return false;
             }
@@ -97,11 +94,6 @@ public class JwtProvider {
             String issuedAt = dateFormat.format(issuedAtDate);
             String expiration = dateFormat.format(expirationDate);
 
-            // In kết quả
-            System.out.println("Username: " + username);
-            System.out.println("Ngày khởi tạo: " + issuedAt);
-            System.out.println("Ngày hết hạn: " + expiration);
-
             // Kiểm tra thời gian hết hạn
             if (expirationDate.before(new Date())) {
                 return false;
@@ -117,10 +109,7 @@ public class JwtProvider {
         }
     }
     public static boolean verifyRefreshToken(String refreshToken, TokenDto tokenDto) {
-        System.out.println("At verify" + refreshToken);
         try {
-            System.out.println("Token at database: " + tokenDto.getAccessToken());
-            System.out.println("Token at post: " + refreshToken);
             if (!tokenDto.getRefreshToken().equals(refreshToken)) {
                 return false;
             }
@@ -139,11 +128,6 @@ public class JwtProvider {
             String issuedAt = dateFormat.format(issuedAtDate);
             String expiration = dateFormat.format(expirationDate);
 
-            // In kết quả
-            System.out.println("Username: " + username);
-            System.out.println("Ngày khởi tạo: " + issuedAt);
-            System.out.println("Ngày hết hạn: " + expiration);
-
             // Kiểm tra thời gian hết hạn
             if (expirationDate.before(new Date())) {
                 return false;
@@ -154,7 +138,6 @@ public class JwtProvider {
         } catch (ExpiredJwtException e) {
             return false;
         } catch (JwtException e) {
-            System.out.println("Lỗi giải mã token: " + e.getMessage());
             return false;
         }
     }
