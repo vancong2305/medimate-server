@@ -11,4 +11,5 @@ public class PaymentDto {
     private List<OrderDetailDto> orderDetailDtoList;
     private CouponDetailDto couponDetail;
     private String note;
+    private Integer paymentMethod;
 }

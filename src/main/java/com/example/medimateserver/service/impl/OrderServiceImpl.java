@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderTime(now);
             order.setPoint(point);
             order.setNote(paymentDto.getNote());
-            order.setPaymentMethod(1);
+            order.setPaymentMethod(paymentDto.getPaymentMethod());
             order.setStatus(1);
             order = orderRepository.save(order);
 
