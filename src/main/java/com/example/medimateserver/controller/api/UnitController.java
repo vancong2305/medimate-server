@@ -3,6 +3,7 @@ package com.example.medimateserver.controller.api;
 import com.example.medimateserver.dto.UnitDto;
 import com.example.medimateserver.service.UnitService;
 import com.example.medimateserver.util.GsonUtil;
+import com.example.medimateserver.util.ResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +19,13 @@ public class UnitController {
     @Autowired
     UnitService unitService;
     @GetMapping
-    public ResponseEntity<String> getUnitById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<?> getAllUnit(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
         try {
             List<UnitDto> UnitList = unitService.findAll();
             String jsons = GsonUtil.gI().toJson(UnitList);
-            return new ResponseEntity<>(
-                    jsons,
-                    HttpStatus.OK
-            );
+            return ResponseUtil.success(jsons);
         } catch (Exception ex) {
-            return new ResponseEntity<>(
-                    "badRequest",
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseUtil.failed();
         }
 
     }
@@ -50,17 +45,13 @@ public class UnitController {
 
     // Delete a Unit
     @DeleteMapping
-    public ResponseEntity<String> deleteUnit(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteUnit(@PathVariable Integer id) {
         try {
             UnitDto Unit = unitService.findById(id);
             unitService.save(Unit);
-            return new ResponseEntity<>(
-                    "Success",
-                    HttpStatus.OK
-            );
+            return ResponseUtil.success();
         } catch (Exception ex) {
-
+            return ResponseUtil.failed();
         }
-        return ResponseEntity.noContent().build();
     }
 }

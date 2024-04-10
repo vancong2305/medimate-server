@@ -21,8 +21,8 @@ public class ResponseUtil {
         return new ResponseEntity<>(GsonUtil.gI().toJson(ResponseDto.gI()), HttpStatus.BAD_REQUEST);
     }
     public static ResponseEntity<?> failedExpriration() {
-        ResponseDto.gI().setMessage(HttpStatus.BAD_REQUEST.getReasonPhrase() + " token is expriration");
-        ResponseDto.gI().setStatus(HttpStatus.BAD_REQUEST.value());
-        return new ResponseEntity<>(GsonUtil.gI().toJson(ResponseDto.gI()), HttpStatus.BAD_REQUEST);
+        ResponseDto.gI().setMessage(HttpStatus.UNAUTHORIZED.getReasonPhrase() + " token is expriration");
+        ResponseDto.gI().setStatus(HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<>(GsonUtil.gI().toJson(ResponseDto.gI()), HttpStatus.UNAUTHORIZED);
     }
 }

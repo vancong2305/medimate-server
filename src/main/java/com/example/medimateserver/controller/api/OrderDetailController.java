@@ -31,7 +31,7 @@ public class OrderDetailController {
     private OrderDetailService orderDetailService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderDetailById(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
+    public ResponseEntity<?> getAllOrderDetail(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
@@ -46,10 +46,5 @@ public class OrderDetailController {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
         }
-    }
-
-    @PostMapping
-    public ResponseEntity<?> postgetOrderDetailById(HttpServletRequest request, @RequestBody OrderDetailDto orderDetailDto) throws JsonProcessingException {
-        return ResponseUtil.success();
     }
 }

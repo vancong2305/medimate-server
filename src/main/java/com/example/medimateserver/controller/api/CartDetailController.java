@@ -1,11 +1,11 @@
 package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
-import com.example.medimateserver.dto.AddressDto;
-import com.example.medimateserver.dto.ResponseDto;
+import com.example.medimateserver.dto.CartDetailDto;
 import com.example.medimateserver.dto.TokenDto;
 import com.example.medimateserver.dto.UserDto;
-import com.example.medimateserver.service.AddressService;
+import com.example.medimateserver.entity.CartDetail;
+import com.example.medimateserver.service.CartDetailService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.service.UserService;
 import com.example.medimateserver.util.GsonUtil;
@@ -13,30 +13,31 @@ import com.example.medimateserver.util.ResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@RestController
-@RequestMapping(value = "/api/address", produces = "application/json")
-public class AddressController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private TokenService tokenService;
-    @Autowired
-    private AddressService addressService;
 
+@RestController
+@RequestMapping(value = "/api/cart_detail", produces = "application/json")
+public class CartDetailController {
+    @Autowired
+    TokenService tokenService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    CartDetailService cartDetailService;
+
+    // Lấy tất cả cartDetail dựa vào userID
     @GetMapping
-    public ResponseEntity<?> getAllAddress(HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<?> getAllCartDetail(HttpServletRequest request) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                List<AddressDto> addressList = addressService.findByIdUser(user.getId());
-                String jsons = GsonUtil.gI().toJson(addressList);
+                List<CartDetailDto> cartDetailList = cartDetailService.findByIdUser(user.getId());
+                String jsons = GsonUtil.gI().toJson(cartDetailList);
                 return ResponseUtil.success(jsons);
             }
             return ResponseUtil.failed();
@@ -46,15 +47,38 @@ public class AddressController {
         }
     }
 
-    // Create a new Address
-    @PostMapping
-    public ResponseEntity<?> createAddress(HttpServletRequest request, @RequestBody AddressDto AddressDto) {
+
+    @GetMapping("/status/{id}")
+    public ResponseEntity<?> getStatusProduct(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                AddressDto savedAddress = addressService.save(user.getId(), AddressDto);
+                List<CartDetailDto> cartDetailList = cartDetailService.findByIdUser(user.getId());
+                for (CartDetailDto c : cartDetailList) {
+                    if (c.getProductDto().getId() == id && c.getProductDto().getQuantity() - c.getQuantity() >= 0) {
+                        return ResponseUtil.success();
+                    }
+                }
+            }
+            return ResponseUtil.failed();
+        } catch (Exception ex) {
+            System.out.println("Lỗi ở đây " + ex.getMessage());
+            return ResponseUtil.failed();
+        }
+    }
+
+    // Tăng số lượng lên 1 hoặc lưu cartDetail với số lượng sản phẩm là 1
+    @PostMapping
+    public ResponseEntity<?> saveCartDetail(HttpServletRequest request, @RequestBody CartDetailDto cartDetailDto) throws JsonProcessingException {
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+                cartDetailDto.setIdUser(user.getId());
+                cartDetailService.saveCartDetail(cartDetailDto);
                 return ResponseUtil.success();
             }
             return ResponseUtil.failed();
@@ -64,39 +88,42 @@ public class AddressController {
         }
     }
 
-    // Update a Address
+    // Tăng sản phẩm cartDetail lên nhiều hoặc xoá nếu số lượng sản phẩm bé hơn 0
     @PutMapping
-    public ResponseEntity<?> updateAddress(HttpServletRequest request, @RequestBody AddressDto addressDto) {
+    public ResponseEntity<?> updateCartDetail(HttpServletRequest request, @RequestBody CartDetailDto cartDetailDto) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                AddressDto updateDto = addressService.update(user.getId(), addressDto);
+                cartDetailDto.setIdUser(user.getId());
+                cartDetailService.updateCartDetail(cartDetailDto);
                 return ResponseUtil.success();
             }
             return ResponseUtil.failed();
         } catch (Exception ex) {
-            System.out.println("Lỗi ở đây nè " + ex.getMessage());
+            System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
         }
     }
 
-    // Delete a Address
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAddress(HttpServletRequest request, @PathVariable Integer id) {
+    // Xoá sản phẩm ra khỏi cartDetail
+    @DeleteMapping
+    public ResponseEntity<?> deleteCartDetail(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
             if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                addressService.deleteById(id);
+                cartDetailService.deleteCartDetail(user.getId(), id);
                 return ResponseUtil.success();
             }
             return ResponseUtil.failed();
         } catch (Exception ex) {
-
+            System.out.println("Lỗi ở đây " + ex.getMessage());
+            return ResponseUtil.failed();
         }
-        return ResponseUtil.failed();
     }
+
+
 }

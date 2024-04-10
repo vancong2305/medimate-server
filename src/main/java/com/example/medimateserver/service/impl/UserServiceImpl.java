@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(Integer id, UserDto userDto) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
 
         existingUser.setPhone(userDto.getPhone());
         existingUser.setStatus(userDto.getStatus());

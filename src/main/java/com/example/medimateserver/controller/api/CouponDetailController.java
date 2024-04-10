@@ -27,7 +27,7 @@ public class CouponDetailController {
     @Autowired
     private TokenService tokenService;
     @GetMapping
-    public ResponseEntity<?> getAllCouponDetails(HttpServletRequest request) {
+    public ResponseEntity<?> getAllCouponDetail(HttpServletRequest request) {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
@@ -42,7 +42,7 @@ public class CouponDetailController {
         }
     }
     @PostMapping
-    public ResponseEntity<?> getCouponDetailById(HttpServletRequest request, @RequestBody CouponDetailDto couponDetailDto) {
+    public ResponseEntity<?> saveCouponDetail(HttpServletRequest request, @RequestBody CouponDetailDto couponDetailDto) {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
@@ -57,15 +57,5 @@ public class CouponDetailController {
         } catch (Exception ex) {
             return ResponseUtil.failed();
         }
-    }
-    @PutMapping
-    public ResponseEntity<String> updateCouponDetail(@PathVariable Long id, @RequestBody CouponDetail CouponDetail) {
-        // ... (Implement update logic with CouponDetailService)
-        return ResponseEntity.ok("success");
-    }
-    @DeleteMapping
-    public ResponseEntity<Void> deleteCouponDetail(@PathVariable Long id) {
-        // ... (Implement delete logic with CouponDetailService)
-        return ResponseEntity.noContent().build();
     }
 }

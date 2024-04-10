@@ -13,4 +13,5 @@ public interface OrderService {
     OrderDto findById(Integer id);
     OrderDto save(PaymentDto paymentDto);
     List<OrderDto> findByIdUser(Integer id);
+    OrderDto saveWithOrderDetail(PaymentDto paymentDto);
 }

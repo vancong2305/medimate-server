@@ -25,7 +25,7 @@ public class DistrictController {
     @Autowired
     private DistrictService districtService;
     @GetMapping("/{id}")
-    public ResponseEntity<?> getDistrictByProvince(HttpServletRequest request, @PathVariable Integer id) {
+    public ResponseEntity<?> getAllDistrict(HttpServletRequest request, @PathVariable Integer id) {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);

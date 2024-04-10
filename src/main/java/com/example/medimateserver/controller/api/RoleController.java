@@ -37,15 +37,4 @@ public class RoleController {
         RoleDto newRole = roleService.save(role);
         return ResponseEntity.status(HttpStatus.CREATED).body(newRole);
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateRole(@PathVariable Integer roleId, @RequestBody Role roleDetails) {
-        return ResponseEntity.ok("updatedRole");
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRole(@PathVariable Integer roleId) {
-        // ... (Implement delete logic with RoleService)
-        return ResponseEntity.noContent().build();
-    }
 }

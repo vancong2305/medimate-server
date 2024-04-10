@@ -27,7 +27,7 @@ public class CategoryController {
 
     // Get category by ID
     @GetMapping
-    public ResponseEntity<?> getCategoryById() throws JsonProcessingException {
+    public ResponseEntity<?> getAllCategory() throws JsonProcessingException {
         try {
             List<CategoryDto> categoryList = categoryService.findAll();
             String jsons = GsonUtil.gI().toJson(categoryList);
@@ -45,26 +45,4 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
-    // Update a category
-    @PutMapping
-    public ResponseEntity<String> updateCategory(@PathVariable Integer id, @RequestBody CategoryDto category) {
-        return ResponseEntity.ok("");
-    }
-
-    // Delete a category
-    @DeleteMapping
-    public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
-        try {
-            CategoryDto category = categoryService.findById(id);
-            category.setStatus(0);
-            categoryService.save(category);
-            return new ResponseEntity<>(
-                    "Success",
-                    HttpStatus.OK
-            );
-        } catch (Exception ex) {
-
-        }
-        return ResponseEntity.noContent().build();
-    }
 }

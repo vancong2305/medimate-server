@@ -28,7 +28,7 @@ public class OrderController {
     @Autowired
     private TokenService tokenService;
     @GetMapping
-    public ResponseEntity<?> getAllOrders(HttpServletRequest request) {
+    public ResponseEntity<?> getAllOrder(HttpServletRequest request) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);

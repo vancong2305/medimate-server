@@ -38,7 +38,7 @@ public class ProductController {
 //    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryById(@PathVariable Integer id) throws JsonProcessingException {
+    public ResponseEntity<?> getAllProduct(@PathVariable Integer id) throws JsonProcessingException {
         System.out.println(id);
         try {
             List<ProductDto> productList = productService.findAllWithPage(id);
@@ -50,7 +50,7 @@ public class ProductController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<?> getProductFilter(@RequestBody ProductFilter productFilter) throws JsonProcessingException {
+    public ResponseEntity<?> getFilterProduct(@RequestBody ProductFilter productFilter) throws JsonProcessingException {
         try {
             List<ProductDto> productList = productService.findWithFilter(productFilter);
             String jsons = GsonUtil.gI().toJson(productList);
@@ -75,18 +75,15 @@ public class ProductController {
 
     // Delete a category
     @DeleteMapping
-    public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteCategory(@PathVariable Integer id) {
         try {
             ProductDto product = productService.findById(id);
             product.setStatus(0);
             productService.save(product);
-            return new ResponseEntity<>(
-                    "Success",
-                    HttpStatus.OK
-            );
+            return ResponseUtil.success();
         } catch (Exception ex) {
 
         }
-        return ResponseEntity.noContent().build();
+        return ResponseUtil.failed();
     }
 }

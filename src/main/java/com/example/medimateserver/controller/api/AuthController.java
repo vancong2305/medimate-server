@@ -51,10 +51,7 @@ public class AuthController {
             }
              return ResponseUtil.failed();
         } catch (Exception ex) {
-            return new ResponseEntity<>(
-                    ex.getMessage(),
-                    HttpStatus.BAD_REQUEST
-            );
+            return ResponseUtil.failed();
         }
     }
 

@@ -33,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
     CouponDetailRepository couponDetailRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    CartDetailRepository cartDetailRepository;
 
     @Override
     public List<OrderDto> findAll() {
@@ -41,7 +43,6 @@ public class OrderServiceImpl implements OrderService {
                 .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))
                 .collect(Collectors.toList());
     }
-
     @Override
     public OrderDto findById(Integer id) {
 
@@ -53,14 +54,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto save(PaymentDto paymentDto) {
             Integer sum = 0;
-            for (OrderDetailDto orderDetailDto : paymentDto.getOrderDetailDtoList()) {
-                Optional<Product> product = productRepository.findById(orderDetailDto.getIdProduct());
-                orderDetailDto.setIdOrder(null);
-                orderDetailDto.setDiscountPrice(Integer.parseInt(product.get().getPrice() * product.get().getDiscountPercent() / 100 + ""));
-                if (!product.isPresent() || orderDetailDto.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
+            List<CartDetail> cartDetailList = cartDetailRepository.findAll();
+            for (CartDetail cartDetail : cartDetailList) {
+                Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
+                cartDetail.setDiscountPrice(Integer.parseInt(product.get().getPrice() * product.get().getDiscountPercent() / 100 + ""));
+                if (!product.isPresent() || cartDetail.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
                     throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
                 }
-                sum += orderDetailDto.getQuantity() * product.get().getPrice() - orderDetailDto.getDiscountPrice();
+                sum += cartDetail.getQuantity() * product.get().getPrice() - cartDetail.getDiscountPrice();
             }
 
             Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetail().getId());
@@ -82,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
             User savedUser = user.get();
 
             Orders order = new Orders();
-            String code = savedUser.getId()+now.getTime()+"";
+            String code = savedUser.getId()+""+now.getTime();
             order.setCode("MDH"+code.hashCode()+"");
             order.setIdUser(paymentDto.getIdUser());
             order.setDiscountCoupon(discountCoupon);
@@ -95,11 +96,11 @@ public class OrderServiceImpl implements OrderService {
 
             List<Product> productList = new ArrayList<>();
 
-            for (OrderDetailDto orderDetailDto : paymentDto.getOrderDetailDtoList()) {
-                Optional<Product> product = productRepository.findById(orderDetailDto.getIdProduct());
-                product.get().setQuantity(product.get().getQuantity() - orderDetailDto.getQuantity());
+            for (CartDetail cartDetail : cartDetailList) {
+                Optional<Product> product = productRepository.findById(cartDetail.getId().getIdProduct());
+                product.get().setQuantity(product.get().getQuantity() - cartDetail.getQuantity());
                 productList.add(product.get());
-                orderDetailRepository.saveCustome(order.getId(), product.get().getId(), orderDetailDto.getDiscountPrice(), orderDetailDto.getQuantity());
+                orderDetailRepository.saveCustome(order.getId(), product.get().getId(), cartDetail.getDiscountPrice(), cartDetail.getQuantity());
             }
             productRepository.saveAll(productList);
 
@@ -113,7 +114,70 @@ public class OrderServiceImpl implements OrderService {
 
             return ConvertUtil.gI().toDto(order, OrderDto.class);
     }
+    @Transactional
+    @Override
+    public OrderDto saveWithOrderDetail(PaymentDto paymentDto) {
+        Integer sum = 0;
+        for (OrderDetailDto orderDetailDto : paymentDto.getOrderDetailDtoList()) {
+            Optional<Product> product = productRepository.findById(orderDetailDto.getIdProduct());
+            orderDetailDto.setIdOrder(null);
+            orderDetailDto.setDiscountPrice(Integer.parseInt(product.get().getPrice() * product.get().getDiscountPercent() / 100 + ""));
+            if (!product.isPresent() || orderDetailDto.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
+                throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
+            }
+            sum += orderDetailDto.getQuantity() * product.get().getPrice() - orderDetailDto.getDiscountPrice();
+        }
 
+        Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetail().getId());
+        if (couponDetail.get().getIdUser() != paymentDto.getIdUser() || couponDetail.get().getStatus() == 0) {
+            throw new IllegalArgumentException("Khuyến mãi hết hạn hoặc không đúng!");
+        }
+        Date date = couponDetail.get().getEndTime();
+        Date now = new Date();
+        boolean isAfter = date.after(now);
+        if (!isAfter) {
+            throw new IllegalArgumentException("Khuyến mãi hết hạn!");
+        }
+
+        Integer discountCoupon = sum * couponDetail.get().getCoupon().getDiscountPercent() / 100;
+        sum -= discountCoupon;
+        Integer point = sum / 1000;
+
+        Optional<User> user = userRepository.findById(paymentDto.getIdUser());
+        User savedUser = user.get();
+
+        Orders order = new Orders();
+        String code = savedUser.getId()+now.getTime()+"";
+        order.setCode("MDH"+code.hashCode()+"");
+        order.setIdUser(paymentDto.getIdUser());
+        order.setDiscountCoupon(discountCoupon);
+        order.setOrderTime(now);
+        order.setPoint(point);
+        order.setNote(paymentDto.getNote());
+        order.setPaymentMethod(paymentDto.getPaymentMethod());
+        order.setStatus(1);
+        order = orderRepository.save(order);
+
+        List<Product> productList = new ArrayList<>();
+
+        for (OrderDetailDto orderDetailDto : paymentDto.getOrderDetailDtoList()) {
+            Optional<Product> product = productRepository.findById(orderDetailDto.getIdProduct());
+            product.get().setQuantity(product.get().getQuantity() - orderDetailDto.getQuantity());
+            productList.add(product.get());
+            orderDetailRepository.saveCustome(order.getId(), product.get().getId(), orderDetailDto.getDiscountPrice(), orderDetailDto.getQuantity());
+        }
+        productRepository.saveAll(productList);
+
+        CouponDetail savedCoupon = couponDetail.get();
+        savedCoupon.setIdOrder(order.getId());
+        savedCoupon.setStatus(0);
+        couponDetailRepository.save(savedCoupon);
+
+        savedUser.setPoint(savedUser.getPoint()+order.getPoint());
+        userRepository.save(savedUser);
+
+        return ConvertUtil.gI().toDto(order, OrderDto.class);
+    }
     @Override
     public List<OrderDto> findByIdUser(Integer id) {
         List<Orders> ordersList = orderRepository.findByIdUser(id);

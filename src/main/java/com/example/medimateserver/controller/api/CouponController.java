@@ -27,7 +27,7 @@ public class CouponController {
     private TokenService tokenService;
 
     @GetMapping
-    public ResponseEntity<?> getAllCoupons(HttpServletRequest request) {
+    public ResponseEntity<?> getAllCoupon(HttpServletRequest request) {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);

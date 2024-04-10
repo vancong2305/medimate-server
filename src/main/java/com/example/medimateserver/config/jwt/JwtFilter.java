@@ -30,6 +30,10 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (request.getServletPath().contains("/test")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (request.getServletPath().contains("/api/product")) {
             filterChain.doFilter(request, response);
             return;
@@ -50,12 +54,12 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 username = jwtProvider.getUsernameFromToken(token);
                 if (username.equals("")) {
-                    response.setStatus(HttpStatus.BAD_REQUEST.value());
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     response.getWriter().write(ResponseUtil.failedExpriration().getBody().toString());
                     return;
                 }
             } catch (ExpiredJwtException e) {
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write(ResponseUtil.failedExpriration().getBody().toString());
                 return;
             }
