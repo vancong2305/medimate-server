@@ -49,12 +49,12 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
 
-            // Xác thực user hiện tại có trùng với token trong csdl hay không, trùng cho qua, sai trả lỗi 403
+            // Xác thực user
             UserDto user = GsonUtil.gI().fromJson(jwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             UserDto userDto = userService.findById(user.getId());
-            if (userDto.getId()!=user.getId()) {
-                response.setStatus(HttpStatus.Series.SERVER_ERROR.value());
-                response.getWriter().write(HttpStatus.Series.SERVER_ERROR.value());
+            if (userDto.getPhone()!=user.getPhone() || userDto.getPassword() != user.getPassword()) {
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.getWriter().write(HttpStatus.UNAUTHORIZED.value());
                 return;
             }
 

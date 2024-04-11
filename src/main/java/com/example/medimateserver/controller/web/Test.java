@@ -50,7 +50,7 @@ public class Test {
         String payload = GsonUtil.gI().toJson(MomoCreateRequest.getInstance());
         MomoCreateResponse momoCreateResponse = GsonUtil.gI().fromJson(sendRequest(payload), MomoCreateResponse.class);
         System.out.println(momoCreateResponse.getPayUrl());
-        return GsonUtil.gI().toJson(momoCreateResponse);
+        return sendRequest(payload) +"\n\n" + GsonUtil.gI().toJson(momoCreateResponse).replaceAll("\\\\u003d", "=");
     }
     public static String sendRequest(String payload) throws IOException {
         URL url = new URL("https://test-payment.momo.vn/v2/gateway/api/create");
