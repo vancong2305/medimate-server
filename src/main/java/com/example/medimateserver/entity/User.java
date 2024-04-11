@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.el.stream.Optional;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "user")
 @Data
@@ -28,7 +30,7 @@ public class User {
     @Column(name = "point")
     private Integer point;
     @Column(name = "birthday")
-    private String birthday;
+    private Timestamp birthday;
     @Column(name = "gender")
     private Integer gender;
     @Column(name = "image")

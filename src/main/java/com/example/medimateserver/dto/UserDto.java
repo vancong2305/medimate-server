@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 
@@ -22,7 +23,7 @@ public class UserDto {
     private String lastName;
     private String rank;
     private Integer point;
-    private Date birthday;
+    private Timestamp birthday;
     private Integer gender;
     private String image;
     private Integer status;
