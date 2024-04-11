@@ -55,9 +55,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> findWithFilterTraditional(ProductFilter productFilter) {
+    public List<ProductDto> findWithFilterTraditional(ProductFilter productFilter, Integer id) {
         // Giả sử productFilter chứa các giá trị lọc
-        int currentPage = productFilter.getCurrentPage(); // Trang hiện tại (bắt đầu từ 1)
+        int currentPage = id+1; // Trang hiện tại (bắt đầu từ 1)
         int pageSize = 10; // Số phần tử trên mỗi trang
         int offset = (currentPage - 1) * pageSize;
         List<Product> productList = productRepository.findWithFilterTraditional(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch(), pageSize, offset);

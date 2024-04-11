@@ -37,10 +37,11 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/filter")
-    public ResponseEntity<?> getFilterProduct(@RequestBody ProductFilter productFilter) throws JsonProcessingException {
+    @PostMapping("/filter/{id}")
+    public ResponseEntity<?> getFilterProduct(@RequestBody ProductFilter productFilter, @PathVariable Integer id) throws JsonProcessingException {
         try {
-            List<ProductDto> productList = productService.findWithFilterTraditional(productFilter);
+            System.out.println(id);
+            List<ProductDto> productList = productService.findWithFilterTraditional(productFilter, id);
             String jsons = GsonUtil.gI().toJson(productList);
             return ResponseUtil.success(jsons);
         } catch (Exception ex) {

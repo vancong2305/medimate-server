@@ -12,7 +12,7 @@ public interface ProductService {
     List<ProductDto> findAll();
     List<ProductDto> findAllWithPage(Integer id);
     List<ProductDto> findWithFilter(ProductFilter productFilter);
-    List<ProductDto> findWithFilterTraditional(ProductFilter productFilter);
+    List<ProductDto> findWithFilterTraditional(ProductFilter productFilter, Integer id);
     ProductDto findById(Integer id);
 
     ProductDto save(ProductDto productDto);
