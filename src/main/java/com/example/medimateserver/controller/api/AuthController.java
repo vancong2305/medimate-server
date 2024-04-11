@@ -86,6 +86,8 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody TokenDto tokenDto, HttpServletRequest request) {
         try {
+
+        // Xác thực user
             String tokenInformation = tokenDto.getRefreshToken();
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDtoDatabase = tokenService.findById(user.getId());
@@ -100,7 +102,7 @@ public class AuthController {
                 String jsons = GsonUtil.gI().toJson(returnTokenDto);
                 returnTokenDto.setIdUser(user.getId());
                 tokenService.save(returnTokenDto);
-                ResponseUtil.success(jsons);
+                return ResponseUtil.success(jsons);
             }
              return ResponseUtil.failed();
         } catch (Exception ex) {
