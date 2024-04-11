@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -23,7 +24,7 @@ public class UserDto {
     private String lastName;
     private String rank;
     private Integer point;
-    private Timestamp birthday;
+    private Date birthday;
     private Integer gender;
     private String image;
     private Integer status;
