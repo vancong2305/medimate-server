@@ -52,11 +52,16 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-
             // Xác thực user
             UserDto user = GsonUtil.gI().fromJson(jwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
             UserDto userDto = userService.findById(user.getId());
-            if (userDto.getPhone()!=user.getPhone() || userDto.getPassword() != user.getPassword()) {
+            if (user==null) {
+                System.out.println("123213");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                response.getWriter().write(HttpStatus.UNAUTHORIZED.value());
+                return;
+            }
+            if (userDto.getPassword().toString().compareTo(user.getPassword().toString()) != 0 || userDto.getPhone().toString().compareTo(user.getPhone().toString()) != 0) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write(HttpStatus.UNAUTHORIZED.value());
                 return;
