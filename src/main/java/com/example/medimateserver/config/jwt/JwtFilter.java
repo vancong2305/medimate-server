@@ -1,31 +1,35 @@
 package com.example.medimateserver.config.jwt;
 
+import com.example.medimateserver.dto.TokenDto;
+import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.service.TokenService;
+import com.example.medimateserver.service.UserService;
+import com.example.medimateserver.util.GsonUtil;
 import com.example.medimateserver.util.ResponseUtil;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.sound.midi.Soundbank;
 import java.io.IOException;
+
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     @Autowired
-    private JwtProvider jwtProvider;
+    JwtProvider jwtProvider;
     @Autowired
-    private UserDetailsService userDetailsService;
+    TokenService tokenService;
+    @Autowired
+    UserService userService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        JwtProvider.gI().setAccessTime(jwtProvider.getAccessTime());
+        JwtProvider.gI().setRefreshTime(jwtProvider.getRefreshTime());
         if (request.getServletPath().contains("/api/category")) {
             filterChain.doFilter(request, response);
             return;
@@ -42,43 +46,32 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
 
-        final String authorizationHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String token = null;
-
-        // Kiểm tra header và lấy token
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-            try {
-                username = jwtProvider.getUsernameFromToken(token);
-                if (username.equals("")) {
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.getWriter().write(ResponseUtil.failedExpriration().getBody().toString());
-                    return;
-                }
-            } catch (ExpiredJwtException e) {
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.getWriter().write(ResponseUtil.failedExpriration().getBody().toString());
+            // Xác thực user hiện tại có trùng với token trong csdl hay không, trùng cho qua, sai trả lỗi 403
+            UserDto user = GsonUtil.gI().fromJson(jwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            UserDto userDto = userService.findById(user.getId());
+            if (userDto.getId()!=user.getId()) {
+                response.setStatus(HttpStatus.Series.SERVER_ERROR.value());
+                response.getWriter().write(HttpStatus.Series.SERVER_ERROR.value());
                 return;
             }
-        }
 
-        // Xác thực nếu có username và token chưa được xác thực trước đó
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            if (jwtProvider.validateToken(token, userDetails)) { // Kiểm tra token còn hiệu lực
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            // Xác thực token hiện tại có trùng với token trong csdl hay không, trùng cho qua
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.gI().verifyToken(tokenInformation, tokenDto)) {
+                filterChain.doFilter(request, response);
+                return;
             }
+            System.out.println("Thông tin token sai");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(ResponseUtil.failedExpriration().getBody().toString());
+        } catch (Exception ex) {
+            System.out.println("Không có token lỗi ở đây");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(ResponseUtil.failedExpriration().getBody().toString());
         }
-        filterChain.doFilter(request, response);
     }
 
 }

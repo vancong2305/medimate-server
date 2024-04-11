@@ -24,9 +24,9 @@ public class TokenController {
     @PostMapping("/check")
     public ResponseEntity<Boolean> checkToken(@RequestBody TokenDto token) {
         try {
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(token.getAccessToken()), UserDto.class);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(token.getAccessToken()), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
-            boolean check = JwtProvider.verifyToken(token.getAccessToken(), tokenDto);
+            boolean check = JwtProvider.gI().verifyToken(token.getAccessToken(), tokenDto);
 
             if (check) {
                 return new ResponseEntity<>(true, HttpStatus.OK);

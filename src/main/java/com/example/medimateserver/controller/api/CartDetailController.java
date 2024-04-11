@@ -33,14 +33,10 @@ public class CartDetailController {
     public ResponseEntity<?> getAllCartDetail(HttpServletRequest request) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                List<CartDetailDto> cartDetailList = cartDetailService.findByIdUser(user.getId());
-                String jsons = GsonUtil.gI().toJson(cartDetailList);
-                return ResponseUtil.success(jsons);
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            List<CartDetailDto> cartDetailList = cartDetailService.findByIdUser(user.getId());
+            String jsons = GsonUtil.gI().toJson(cartDetailList);
+            return ResponseUtil.success(jsons);
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
@@ -52,9 +48,9 @@ public class CartDetailController {
     public ResponseEntity<?> getStatusProduct(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+            if (JwtProvider.gI().verifyToken(tokenInformation, tokenDto)) {
                 List<CartDetailDto> cartDetailList = cartDetailService.findByIdUser(user.getId());
                 for (CartDetailDto c : cartDetailList) {
                     if (c.getProductDto().getId() == id && c.getProductDto().getQuantity() - c.getQuantity() >= 0) {
@@ -74,14 +70,10 @@ public class CartDetailController {
     public ResponseEntity<?> saveCartDetail(HttpServletRequest request, @RequestBody CartDetailDto cartDetailDto) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
                 cartDetailDto.setIdUser(user.getId());
                 cartDetailService.saveCartDetail(cartDetailDto);
                 return ResponseUtil.success();
-            }
-            return ResponseUtil.failed();
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
@@ -93,14 +85,10 @@ public class CartDetailController {
     public ResponseEntity<?> updateCartDetail(HttpServletRequest request, @RequestBody CartDetailDto cartDetailDto) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
                 cartDetailDto.setIdUser(user.getId());
                 cartDetailService.updateCartDetail(cartDetailDto);
                 return ResponseUtil.success();
-            }
-            return ResponseUtil.failed();
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
@@ -112,13 +100,9 @@ public class CartDetailController {
     public ResponseEntity<?> deleteCartDetail(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                cartDetailService.deleteCartDetail(user.getId(), id);
-                return ResponseUtil.success();
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            cartDetailService.deleteCartDetail(user.getId(), id);
+            return ResponseUtil.success();
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();

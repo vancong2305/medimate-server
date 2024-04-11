@@ -31,13 +31,9 @@ public class WardController {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                String json = GsonUtil.gI().toJson(wardService.findByIdDistrict(id));
-                return ResponseUtil.success(json);
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            String json = GsonUtil.gI().toJson(wardService.findByIdDistrict(id));
+            return ResponseUtil.success(json);
         } catch (Exception ex) {
             return ResponseUtil.failed();
         }

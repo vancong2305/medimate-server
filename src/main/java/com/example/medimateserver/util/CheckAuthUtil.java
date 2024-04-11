@@ -20,7 +20,7 @@ public class CheckAuthUtil {
     }
     public boolean check(String token, String databaseToken, Integer id) {
         String oldToken = token;
-        token = JwtProvider.getUsernameFromToken(token);
+        token = JwtProvider.gI().getUsernameFromToken(token);
         UserDto user = GsonUtil.gI().fromJson(token, UserDto.class);
         if (user.getId() == id && oldToken.equals(databaseToken)) {
             return true;

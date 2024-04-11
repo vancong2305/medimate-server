@@ -10,4 +10,5 @@ public class ProductFilter {
     private Integer minPrice;
     private Integer maxPrice;
     private String keySearch;
+    private Integer currentPage;
 }

@@ -34,14 +34,10 @@ public class OrderDetailController {
     public ResponseEntity<?> getAllOrderDetail(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                List<OrderDetailDto> orderDetailList = orderDetailService.findByIdUser(id);
-                String jsons = GsonUtil.gI().toJson(orderDetailList);
-                return ResponseUtil.success(jsons);
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            List<OrderDetailDto> orderDetailList = orderDetailService.findByIdUser(id);
+            String jsons = GsonUtil.gI().toJson(orderDetailList);
+            return ResponseUtil.success(jsons);
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();

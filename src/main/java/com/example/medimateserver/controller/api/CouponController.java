@@ -8,6 +8,7 @@ import com.example.medimateserver.entity.Coupon;
 import com.example.medimateserver.service.CouponService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.util.GsonUtil;
+import com.example.medimateserver.util.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,31 +32,28 @@ public class CouponController {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                return new ResponseEntity<>(couponService.findAll(), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            String jsons = GsonUtil.gI().toJson(couponService.findAll());
+            return ResponseUtil.success(jsons);
+
         } catch (Exception ex) {
-            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
+            return ResponseUtil.failed();
         }
     }
 
     @PostMapping
-    public ResponseEntity<CouponDto> createCoupon(@RequestBody CouponDto couponDto) {
+    public ResponseEntity<?> createCoupon(@RequestBody CouponDto couponDto) {
         CouponDto savedCoupon = couponService.save(couponDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCoupon);
+        return ResponseUtil.success();
     }
 
     @PutMapping
-    public ResponseEntity<String> updateCoupon(@PathVariable String code, @RequestBody Coupon Coupon) {
-        return ResponseEntity.ok("updated Coupon");
+    public ResponseEntity<?> updateCoupon(@PathVariable String code, @RequestBody Coupon Coupon) {
+        return ResponseUtil.success();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteCoupon(@PathVariable String code) {
-        // ... (Implement delete logic with CouponService)
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteCoupon(@PathVariable String code) {
+        return ResponseUtil.success();
     }
 }

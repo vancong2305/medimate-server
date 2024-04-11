@@ -1,6 +1,8 @@
 package com.example.medimateserver.controller.web;
 
+import com.example.medimateserver.config.jwt.JwtProvider;
 import com.example.medimateserver.config.payment.momo.model.MomoCreateRequest;
+import com.example.medimateserver.config.payment.momo.model.MomoCreateResponse;
 import com.example.medimateserver.config.payment.momo.shared.Encoder;
 import com.example.medimateserver.config.payment.momo.shared.Parameter;
 import com.example.medimateserver.service.UserService;
@@ -22,42 +24,33 @@ import java.net.URL;
 public class Test {
     @Autowired
     UserService userService;
+    @Autowired
+    JwtProvider jwtProvider;
+
     @GetMapping("/test")
     public String test() throws Exception {
-        String orderId = String.valueOf(System.currentTimeMillis());
-        String requestId = String.valueOf(System.currentTimeMillis());
-        System.out.println("Vào đây nè!");
-        MomoCreateRequest createReq = new MomoCreateRequest();
-        createReq.setOrderInfo("Pay With MoMo");
-        createReq.setAmount(100000);
-        createReq.setPartnerName("test MoMo");
-        createReq.setRequestType("captureWallet");
-        createReq.setRedirectUrl("https://google.com.vn");
-        createReq.setIpnUrl("https://google.com.vn");
-        createReq.setStoreId("test store ID");
-        createReq.setExtraData("");
-        createReq.setAutoCapture(true);
-        createReq.setPartnerCode("MOMOLRJZ20181206");
-        createReq.setRequestId(requestId);
-        createReq.setOrderId(orderId);
-        createReq.setLang("en");
-        createReq.setStartTime(System.currentTimeMillis());
+        MomoCreateRequest.getInstance().setAmount(100000);
+        MomoCreateRequest.getInstance().setRequestId(String.valueOf(System.currentTimeMillis()));
+        MomoCreateRequest.getInstance().setOrderId(String.valueOf(System.currentTimeMillis()));
+        MomoCreateRequest.getInstance().setStartTime(System.currentTimeMillis());
         String requestRawData = new StringBuilder()
                 .append(Parameter.ACCESS_KEY).append("=").append(Parameter.DEV_ACCESS_KEY).append("&")
-                .append(Parameter.AMOUNT).append("=").append(Long.toString(createReq.getAmount())).append("&")
+                .append(Parameter.AMOUNT).append("=").append(Long.toString(MomoCreateRequest.getInstance().getAmount())).append("&")
                 .append(Parameter.EXTRA_DATA).append("=").append("").append("&")
-                .append(Parameter.IPN_URL).append("=").append(createReq.getIpnUrl()).append("&")
-                .append(Parameter.ORDER_ID).append("=").append(createReq.getOrderId()).append("&")
-                .append(Parameter.ORDER_INFO).append("=").append(createReq.getOrderInfo()).append("&")
-                .append(Parameter.PARTNER_CODE).append("=").append(createReq.getPartnerCode()).append("&")
-                .append(Parameter.REDIRECT_URL).append("=").append(createReq.getRedirectUrl()).append("&")
-                .append(Parameter.REQUEST_ID).append("=").append(createReq.getRequestId()).append("&")
-                .append(Parameter.REQUEST_TYPE).append("=").append(createReq.getRequestType())
+                .append(Parameter.IPN_URL).append("=").append(MomoCreateRequest.getInstance().getIpnUrl()).append("&")
+                .append(Parameter.ORDER_ID).append("=").append(MomoCreateRequest.getInstance().getOrderId()).append("&")
+                .append(Parameter.ORDER_INFO).append("=").append(MomoCreateRequest.getInstance().getOrderInfo()).append("&")
+                .append(Parameter.PARTNER_CODE).append("=").append(MomoCreateRequest.getInstance().getPartnerCode()).append("&")
+                .append(Parameter.REDIRECT_URL).append("=").append(MomoCreateRequest.getInstance().getRedirectUrl()).append("&")
+                .append(Parameter.REQUEST_ID).append("=").append(MomoCreateRequest.getInstance().getRequestId()).append("&")
+                .append(Parameter.REQUEST_TYPE).append("=").append(MomoCreateRequest.getInstance().getRequestType())
                 .toString();
         String signRequest = Encoder.signHmacSHA256(requestRawData, Parameter.DEV_SECRET_KEY);
-        createReq.setSignature(signRequest);
-        String payload = GsonUtil.gI().toJson(createReq);
-        return sendRequest(payload);
+        MomoCreateRequest.getInstance().setSignature(signRequest);
+        String payload = GsonUtil.gI().toJson(MomoCreateRequest.getInstance());
+        MomoCreateResponse momoCreateResponse = GsonUtil.gI().fromJson(sendRequest(payload), MomoCreateResponse.class);
+        System.out.println(momoCreateResponse.getPayUrl());
+        return GsonUtil.gI().toJson(momoCreateResponse);
     }
     public static String sendRequest(String payload) throws IOException {
         URL url = new URL("https://test-payment.momo.vn/v2/gateway/api/create");

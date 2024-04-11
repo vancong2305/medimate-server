@@ -34,6 +34,13 @@ public class TokenServiceImpl implements TokenService {
                 .map(Token -> ConvertUtil.gI().toDto(Token, TokenDto.class))
                 .orElse(null);
     }
+    @Override
+    public TokenDto findByIdUser(Integer id) {
+
+        return tokenRepository.findByIdUser(id)
+                .map(Token -> ConvertUtil.gI().toDto(Token, TokenDto.class))
+                .orElse(null);
+    }
 
     @Override
     public TokenDto save(TokenDto tokenDto) {

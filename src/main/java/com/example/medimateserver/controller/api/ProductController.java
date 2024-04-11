@@ -25,18 +25,6 @@ public class ProductController {
     @Autowired
     private UserService userService;
 
-
-//    @GetMapping
-//    public ResponseEntity<?> getCategoryById() throws JsonProcessingException {
-//        try {
-//            List<ProductDto> productList = productService.findAll();
-//            String jsons = GsonUtil.gI().toJson(productList);
-//            return ResponseUtil.success(jsons);
-//        } catch (Exception ex) {
-//            return ResponseUtil.failed();
-//        }
-//    }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getAllProduct(@PathVariable Integer id) throws JsonProcessingException {
         System.out.println(id);
@@ -52,7 +40,7 @@ public class ProductController {
     @PostMapping("/filter")
     public ResponseEntity<?> getFilterProduct(@RequestBody ProductFilter productFilter) throws JsonProcessingException {
         try {
-            List<ProductDto> productList = productService.findWithFilter(productFilter);
+            List<ProductDto> productList = productService.findWithFilterTraditional(productFilter);
             String jsons = GsonUtil.gI().toJson(productList);
             return ResponseUtil.success(jsons);
         } catch (Exception ex) {
@@ -62,15 +50,15 @@ public class ProductController {
 
     // Create a new category
     @PostMapping
-    public ResponseEntity<ProductDto> createCategory(@RequestBody ProductDto productDto) {
+    public ResponseEntity<?> createCategory(@RequestBody ProductDto productDto) {
         ProductDto savedCategory = productService.save(productDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+        return ResponseUtil.success();
     }
 
     // Update a category
     @PutMapping
-    public ResponseEntity<String> updateCategory(@PathVariable Integer id, @RequestBody ProductDto category) {
-        return ResponseEntity.ok("");
+    public ResponseEntity<?> updateCategory(@PathVariable Integer id, @RequestBody ProductDto category) {
+        return ResponseUtil.success();
     }
 
     // Delete a category
@@ -82,8 +70,7 @@ public class ProductController {
             productService.save(product);
             return ResponseUtil.success();
         } catch (Exception ex) {
-
+            return ResponseUtil.failed();
         }
-        return ResponseUtil.failed();
     }
 }

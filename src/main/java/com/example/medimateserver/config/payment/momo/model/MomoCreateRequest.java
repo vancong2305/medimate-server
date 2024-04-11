@@ -23,4 +23,21 @@ public class MomoCreateRequest {
     private String orderId;
     private String lang;
     private long startTime;
+    private static MomoCreateRequest momoCreateRequest;
+    public static MomoCreateRequest getInstance() {
+        if (momoCreateRequest == null) {
+            momoCreateRequest = new MomoCreateRequest();
+            momoCreateRequest.setOrderInfo("Pay for Medimate orders");
+            momoCreateRequest.setPartnerName("test MoMo");
+            momoCreateRequest.setRequestType("captureWallet");
+            momoCreateRequest.setRedirectUrl("https://google.com.vn");
+            momoCreateRequest.setIpnUrl("https://google.com.vn");
+            momoCreateRequest.setStoreId("Medimateserver");
+            momoCreateRequest.setExtraData("");
+            momoCreateRequest.setAutoCapture(true);
+            momoCreateRequest.setPartnerCode("MOMOLRJZ20181206");
+            momoCreateRequest.setLang("en");
+        }
+        return momoCreateRequest;
+    }
 }

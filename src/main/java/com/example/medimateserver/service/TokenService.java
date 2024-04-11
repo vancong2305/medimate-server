@@ -9,6 +9,7 @@ import java.util.List;
 public interface TokenService {
     List<TokenDto> findAll();
     TokenDto findById(Integer id);
+    TokenDto findByIdUser(Integer id);
 
     TokenDto save(TokenDto TokenDto);
 

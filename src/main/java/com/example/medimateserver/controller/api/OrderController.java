@@ -1,6 +1,9 @@
 package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
+import com.example.medimateserver.config.payment.momo.model.MomoCreateRequest;
+import com.example.medimateserver.config.payment.momo.shared.Encoder;
+import com.example.medimateserver.config.payment.momo.shared.Parameter;
 import com.example.medimateserver.dto.*;
 import com.example.medimateserver.entity.OrderDetail;
 import com.example.medimateserver.entity.Orders;
@@ -10,12 +13,19 @@ import com.example.medimateserver.service.UnitService;
 import com.example.medimateserver.util.GsonUtil;
 import com.example.medimateserver.util.ResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 @RestController
@@ -31,9 +41,9 @@ public class OrderController {
     public ResponseEntity<?> getAllOrder(HttpServletRequest request) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
+            if (JwtProvider.gI().verifyToken(tokenInformation, tokenDto)) {
                 return ResponseUtil.success(GsonUtil.gI().toJson(orderService.findByIdUser(user.getId())));
             }
             return ResponseUtil.failed();
@@ -47,16 +57,64 @@ public class OrderController {
     public ResponseEntity<?> createOrder(HttpServletRequest request, @RequestBody PaymentDto paymentDto)  throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                paymentDto.setIdUser(user.getId());
-                OrderDto savedOrder = orderService.save(paymentDto);
-                return ResponseUtil.success();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            paymentDto.setIdUser(user.getId());
+            if (paymentDto.getPaymentMethod() == 1) {
+
             }
-            return ResponseUtil.failed();
+            OrderDto savedOrder = orderService.save(paymentDto);
+            return ResponseUtil.success();
         } catch (Exception ex) {
             return ResponseUtil.failed();
         }
     }
+
+    public String getPayUrl(MomoCreateRequest createReq) throws Exception {
+        MomoCreateRequest.getInstance().setAmount(100000);
+        MomoCreateRequest.getInstance().setRequestId(String.valueOf(System.currentTimeMillis()));
+        MomoCreateRequest.getInstance().setOrderId(String.valueOf(System.currentTimeMillis()));
+        MomoCreateRequest.getInstance().setStartTime(System.currentTimeMillis());
+        String requestRawData = new StringBuilder()
+                .append(Parameter.ACCESS_KEY).append("=").append(Parameter.DEV_ACCESS_KEY).append("&")
+                .append(Parameter.AMOUNT).append("=").append(Long.toString(MomoCreateRequest.getInstance().getAmount())).append("&")
+                .append(Parameter.EXTRA_DATA).append("=").append("").append("&")
+                .append(Parameter.IPN_URL).append("=").append(MomoCreateRequest.getInstance().getIpnUrl()).append("&")
+                .append(Parameter.ORDER_ID).append("=").append(MomoCreateRequest.getInstance().getOrderId()).append("&")
+                .append(Parameter.ORDER_INFO).append("=").append(MomoCreateRequest.getInstance().getOrderInfo()).append("&")
+                .append(Parameter.PARTNER_CODE).append("=").append(MomoCreateRequest.getInstance().getPartnerCode()).append("&")
+                .append(Parameter.REDIRECT_URL).append("=").append(MomoCreateRequest.getInstance().getRedirectUrl()).append("&")
+                .append(Parameter.REQUEST_ID).append("=").append(MomoCreateRequest.getInstance().getRequestId()).append("&")
+                .append(Parameter.REQUEST_TYPE).append("=").append(MomoCreateRequest.getInstance().getRequestType())
+                .toString();
+        String signRequest = Encoder.signHmacSHA256(requestRawData, Parameter.DEV_SECRET_KEY);
+        MomoCreateRequest.getInstance().setSignature(signRequest);
+        String payload = GsonUtil.gI().toJson(MomoCreateRequest.getInstance());
+        return sendRequest(payload);
+    }
+    public static String sendRequest(String payload) throws IOException {
+        URL url = new URL("https://test-payment.momo.vn/v2/gateway/api/create");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setDoOutput(true);
+
+        try (OutputStream os = connection.getOutputStream()) {
+            os.write(payload.getBytes());
+        }
+
+        int responseCode = connection.getResponseCode();
+        String responseBody = "";
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String input;
+            while ((input = br.readLine()) != null) {
+                responseBody += input;
+            }
+        }
+
+        return responseBody;
+    }
+
 }

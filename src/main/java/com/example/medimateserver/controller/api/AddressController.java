@@ -32,16 +32,11 @@ public class AddressController {
     public ResponseEntity<?> getAllAddress(HttpServletRequest request) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                List<AddressDto> addressList = addressService.findByIdUser(user.getId());
-                String jsons = GsonUtil.gI().toJson(addressList);
-                return ResponseUtil.success(jsons);
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            List<AddressDto> addressList = addressService.findByIdUser(user.getId());
+            String jsons = GsonUtil.gI().toJson(addressList);
+            return ResponseUtil.success(jsons);
         } catch (Exception ex) {
-            System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
         }
     }
@@ -51,13 +46,9 @@ public class AddressController {
     public ResponseEntity<?> createAddress(HttpServletRequest request, @RequestBody AddressDto AddressDto) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                AddressDto savedAddress = addressService.save(user.getId(), AddressDto);
-                return ResponseUtil.success();
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            AddressDto savedAddress = addressService.save(user.getId(), AddressDto);
+            return ResponseUtil.success();
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
@@ -69,13 +60,9 @@ public class AddressController {
     public ResponseEntity<?> updateAddress(HttpServletRequest request, @RequestBody AddressDto addressDto) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                AddressDto updateDto = addressService.update(user.getId(), addressDto);
-                return ResponseUtil.success();
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            AddressDto updateDto = addressService.update(user.getId(), addressDto);
+            return ResponseUtil.success();
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây nè " + ex.getMessage());
             return ResponseUtil.failed();
@@ -87,16 +74,11 @@ public class AddressController {
     public ResponseEntity<?> deleteAddress(HttpServletRequest request, @PathVariable Integer id) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                addressService.deleteById(id);
-                return ResponseUtil.success();
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            addressService.deleteById(id);
+            return ResponseUtil.success();
         } catch (Exception ex) {
-
+            return ResponseUtil.failed();
         }
-        return ResponseUtil.failed();
     }
 }

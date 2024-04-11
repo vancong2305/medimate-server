@@ -2,6 +2,7 @@ package com.example.medimateserver.util;
 
 import com.example.medimateserver.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseUtil {
@@ -20,9 +21,16 @@ public class ResponseUtil {
         ResponseDto.gI().setStatus(HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(GsonUtil.gI().toJson(ResponseDto.gI()), HttpStatus.BAD_REQUEST);
     }
+
     public static ResponseEntity<?> failedExpriration() {
         ResponseDto.gI().setMessage(HttpStatus.UNAUTHORIZED.getReasonPhrase() + " token is expriration");
         ResponseDto.gI().setStatus(HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<>(GsonUtil.gI().toJson(ResponseDto.gI()), HttpStatus.UNAUTHORIZED);
+    }
+
+    public static ResponseEntity<?> failed(int value) {
+        ResponseDto.gI().setStatus(value);
+        ResponseDto.gI().setMessage(HttpStatus.valueOf(value).getReasonPhrase());
+        return new ResponseEntity<>(GsonUtil.gI().toJson(ResponseDto.gI()), HttpStatusCode.valueOf(value));
     }
 }

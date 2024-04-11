@@ -26,19 +26,17 @@ public class CouponDetailController {
     private CouponDetailService couponDetailService;
     @Autowired
     private TokenService tokenService;
+
     @GetMapping
     public ResponseEntity<?> getAllCouponDetail(HttpServletRequest request) {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                return new ResponseEntity<>(couponDetailService.findByUserId(user.getId()), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST.getReasonPhrase() + " Wrong token!", HttpStatus.BAD_REQUEST);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            String jsons = GsonUtil.gI().toJson(couponDetailService.findByUserId(user.getId()));
+            return ResponseUtil.success(jsons);
         } catch (Exception ex) {
-            return new ResponseEntity<>("Errorr: " + ex.toString(), HttpStatus.BAD_REQUEST);
+            return ResponseUtil.failed();
         }
     }
     @PostMapping
@@ -46,14 +44,10 @@ public class CouponDetailController {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                couponDetailDto.setIdOrder(null);
-                couponDetailService.save(couponDetailDto);
-                return ResponseUtil.success();
-            }
-            return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            couponDetailDto.setIdOrder(null);
+            couponDetailService.save(couponDetailDto);
+            return ResponseUtil.success();
         } catch (Exception ex) {
             return ResponseUtil.failed();
         }

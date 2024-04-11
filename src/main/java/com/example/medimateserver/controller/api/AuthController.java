@@ -27,7 +27,8 @@ import java.util.Map;
 public class AuthController {
     @Autowired
     UserService userService;
-
+    @Autowired
+    JwtProvider jwtProvider;
     @Autowired
     TokenService tokenService;
 
@@ -36,18 +37,15 @@ public class AuthController {
         try {
             UserDto user = userService.findByPhone(userDto.getPhone());
             if (userDto.getPassword().toString().compareTo(user.getPassword().toString()) == 0) {
-                String token = JwtProvider.generateToken(GsonUtil.gI().toJson(user));
-                String refreshToken = JwtProvider.generateRefreshToken(GsonUtil.gI().toJson(user));
+                String token = JwtProvider.gI().generateToken(GsonUtil.gI().toJson(user));
+                String refreshToken = JwtProvider.gI().generateRefreshToken(GsonUtil.gI().toJson(user));
                 TokenDto tokenDto = new TokenDto();
                 tokenDto.setAccessToken(token);
                 tokenDto.setRefreshToken(refreshToken);
                 String jsons = GsonUtil.gI().toJson(tokenDto);
                 tokenDto.setIdUser(user.getId());
                 tokenService.save(tokenDto);
-                return new ResponseEntity<>(
-                        jsons,
-                        HttpStatus.OK
-                );
+                return ResponseUtil.success(jsons);
             }
              return ResponseUtil.failed();
         } catch (Exception ex) {
@@ -64,7 +62,6 @@ public class AuthController {
             userPL.setPoint(0);
             userService.save(userPL);
             return ResponseUtil.success();
-
         } catch (Exception ex) {
             return ResponseUtil.failed();
         }
@@ -73,14 +70,10 @@ public class AuthController {
     public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
-            TokenDto tokenDto = tokenService.findById(user.getId());
-            if (JwtProvider.verifyToken(tokenInformation, tokenDto)) {
-                UserDto userDto1 = userService.findByPhone(user.getPhone());
-                tokenService.deleteById(userDto1.getId());
-                return ResponseUtil.success();
-            }
-             return ResponseUtil.failed();
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            UserDto userDto1 = userService.findByPhone(user.getPhone());
+            tokenService.deleteById(userDto1.getId());
+            return ResponseUtil.success();
         } catch (Exception ex) {
              return ResponseUtil.failed();
         }
@@ -90,23 +83,20 @@ public class AuthController {
     public ResponseEntity<?> refresh(@RequestBody TokenDto tokenDto, HttpServletRequest request) {
         try {
             String tokenInformation = tokenDto.getRefreshToken();
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.getUsernameFromToken(tokenInformation), UserDto.class);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             TokenDto tokenDtoDatabase = tokenService.findById(user.getId());
-            if (JwtProvider.verifyRefreshToken(tokenInformation, tokenDtoDatabase)) {
+            if (JwtProvider.gI().verifyRefreshToken(tokenInformation, tokenDtoDatabase)) {
                 // Xác thực refreshToken thành công thì xoá token cũ trong db và trả về token mới
                 tokenService.deleteById(user.getId());
-                String token = JwtProvider.generateToken(GsonUtil.gI().toJson(user));
-                String refreshToken = JwtProvider.generateRefreshToken(GsonUtil.gI().toJson(user));
+                String token = JwtProvider.gI().generateToken(GsonUtil.gI().toJson(user));
+                String refreshToken = JwtProvider.gI().generateRefreshToken(GsonUtil.gI().toJson(user));
                 TokenDto returnTokenDto = new TokenDto();
                 returnTokenDto.setAccessToken(token);
                 returnTokenDto.setRefreshToken(refreshToken);
                 String jsons = GsonUtil.gI().toJson(returnTokenDto);
                 returnTokenDto.setIdUser(user.getId());
                 tokenService.save(returnTokenDto);
-                return new ResponseEntity<>(
-                        jsons,
-                        HttpStatus.OK
-                );
+                ResponseUtil.success(jsons);
             }
              return ResponseUtil.failed();
         } catch (Exception ex) {

@@ -46,8 +46,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> findWithFilter(ProductFilter productFilter) {
-        List<Product> products = productRepository.findWithFilter(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch());
-        return products.stream()
+        Pageable pageable = PageRequest.of(productFilter.getCurrentPage()-1, 10);
+        Page<Product> productList = productRepository.findWithFilter(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch(), pageable);
+        System.out.println(productList.getSize() + "get");
+        return productList.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> findWithFilterTraditional(ProductFilter productFilter) {
+        // Giả sử productFilter chứa các giá trị lọc
+        int currentPage = productFilter.getCurrentPage(); // Trang hiện tại (bắt đầu từ 1)
+        int pageSize = 10; // Số phần tử trên mỗi trang
+        int offset = (currentPage - 1) * pageSize;
+        List<Product> productList = productRepository.findWithFilterTraditional(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch(), pageSize, offset);
+
+        return productList.stream()
                 .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
                 .collect(Collectors.toList());
     }
