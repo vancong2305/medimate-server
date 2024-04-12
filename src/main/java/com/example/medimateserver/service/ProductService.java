@@ -10,14 +10,16 @@ import java.util.List;
 public interface ProductService {
 
     List<ProductDto> findAll();
-    List<ProductDto> findAllWithPage(Integer id);
+    List<ProductDto> findAllWithPage();
     List<ProductDto> findWithFilter(ProductFilter productFilter);
-    List<ProductDto> findWithFilterTraditional(ProductFilter productFilter, Integer id);
+    List<ProductDto> findWithFilterTraditional(ProductFilter productFilter);
+    List<ProductDto> getNewProduct();
+    List<ProductDto> getBestSellersProduct();
+    List<ProductDto> getHaveSoldProduct();
+    List<ProductDto> getBestPromotionProduct();
+    List<ProductDto> getHavePromotionProduct();
     ProductDto findById(Integer id);
-
     ProductDto save(ProductDto productDto);
-
     ProductDto update(Integer id, ProductDto productDto);
-
     void deleteById(Integer id);
 }

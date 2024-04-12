@@ -34,10 +34,19 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
+//    @Override
+//    public List<ProductDto> findAllWithPage(Integer page) {
+//        Pageable pageable = PageRequest.of(page, 10);
+//        Page<Product> productList = productRepository.findAll(pageable);
+//        return productList
+//                .stream()
+//                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+//                .collect(Collectors.toList());
+//    }
     @Override
-    public List<ProductDto> findAllWithPage(Integer page) {
-        Pageable pageable = PageRequest.of(page, 10);
-        Page<Product> productList = productRepository.findAll(pageable);
+    public List<ProductDto> findAllWithPage() {
+//        Pageable pageable = PageRequest.of(page, 10);
+        List<Product> productList = productRepository.findAll();
         return productList
                 .stream()
                 .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
@@ -48,19 +57,74 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDto> findWithFilter(ProductFilter productFilter) {
         Pageable pageable = PageRequest.of(productFilter.getCurrentPage()-1, 10);
         Page<Product> productList = productRepository.findWithFilter(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch(), pageable);
-        System.out.println(productList.getSize() + "get");
+        return productList.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+//    @Override
+//    public List<ProductDto> findWithFilterTraditional(ProductFilter productFilter, Integer id) {
+//        // Giả sử productFilter chứa các giá trị lọc
+//        int currentPage = id+1; // Trang hiện tại (bắt đầu từ 1)
+//        int pageSize = 10; // Số phần tử trên mỗi trang
+//        int offset = (currentPage - 1) * pageSize;
+//        List<Product> productList = productRepository.findWithFilterTraditional(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch(), pageSize, offset);
+//
+//        return productList.stream()
+//                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+//                .collect(Collectors.toList());
+//    }
+    @Override
+    public List<ProductDto> findWithFilterTraditional(ProductFilter productFilter) {
+        List<Product> productList = productRepository.findWithFilterTraditional(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch());
+
         return productList.stream()
                 .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ProductDto> findWithFilterTraditional(ProductFilter productFilter, Integer id) {
-        // Giả sử productFilter chứa các giá trị lọc
-        int currentPage = id+1; // Trang hiện tại (bắt đầu từ 1)
-        int pageSize = 10; // Số phần tử trên mỗi trang
-        int offset = (currentPage - 1) * pageSize;
-        List<Product> productList = productRepository.findWithFilterTraditional(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch(), pageSize, offset);
+    public List<ProductDto> getNewProduct() {
+
+        List<Product> productList = productRepository.getNewProduct();
+
+        return productList.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> getBestSellersProduct() {
+
+        List<Product> productList = productRepository.getBestSellersProduct();
+
+        return productList.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> getHaveSoldProduct() {
+        List<Product> productList = productRepository.getHaveSoldProduct();
+
+        return productList.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> getBestPromotionProduct() {
+
+        List<Product> productList = productRepository.getBestPromotionProduct();
+
+        return productList.stream()
+                .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> getHavePromotionProduct() {
+        List<Product> productList = productRepository.getHavePromotionProduct();
 
         return productList.stream()
                 .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))

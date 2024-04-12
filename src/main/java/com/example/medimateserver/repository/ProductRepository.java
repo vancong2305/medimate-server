@@ -25,27 +25,76 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             @Param("keySearch") String keySearch,
             Pageable pageable);
 
+//    @Query("SELECT p FROM Product p " +
+//            "WHERE ((:idCategory IS NULL OR p.category.id = :idCategory) " +
+//            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+//            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
+//            "AND (:keySearch IS NULL OR p.name LIKE CONCAT('%', :keySearch, '%'))) " +
+//            "OR ((:keySearch IS NULL OR p.category.name LIKE CONCAT('%', :keySearch, '%')) " +
+//            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+//            "AND (:maxPrice IS NULL OR p.price <= :maxPrice)) " +
+//            "ORDER BY p.id ASC " +
+//            "LIMIT :pageSize OFFSET :offset")
+//    List<Product> findWithFilterTraditional(
+//            @Param("idCategory") Integer idCategory,
+//            @Param("minPrice") Integer minPrice,
+//            @Param("maxPrice") Integer maxPrice,
+//            @Param("keySearch") String keySearch,
+//            @Param("pageSize") Integer pageSize,
+//            @Param("offset") Integer offset);
+
     @Query("SELECT p FROM Product p " +
-            "WHERE (:idCategory IS NULL OR p.category.id = :idCategory) " +
+            "WHERE ((:idCategory IS NULL OR p.category.id = :idCategory) " +
             "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
-            "AND (:keySearch IS NULL OR p.name LIKE CONCAT('%', :keySearch, '%')) " +
-            "ORDER BY p.id ASC " +
-            "LIMIT :pageSize OFFSET :offset")
+            "AND (:keySearch IS NULL OR p.name LIKE CONCAT('%', :keySearch, '%'))) " +
+            "OR ((:keySearch IS NULL OR p.category.name LIKE CONCAT('%', :keySearch, '%')) " +
+            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR p.price <= :maxPrice)) ")
     List<Product> findWithFilterTraditional(
             @Param("idCategory") Integer idCategory,
             @Param("minPrice") Integer minPrice,
             @Param("maxPrice") Integer maxPrice,
-            @Param("keySearch") String keySearch,
-            @Param("pageSize") Integer pageSize,
-            @Param("offset") Integer offset);
+            @Param("keySearch") String keySearch);
 
-    @Query(value = "SELECT TOP 5 p.id, p.name, p.image, SUM(oi.quantity) AS total_sales "
-            + "FROM product p "
-            + "JOIN order_item oi ON p.id = oi.product_id "
-            + "JOIN order o ON oi.order_id = o.id "
-            + "GROUP BY p.id, p.name, p.image "
-            + "ORDER BY total_sales DESC", nativeQuery = true)
-    List<Product> findTop5BestSellingProducts();
 
+    @Query("SELECT p FROM Product p ORDER BY p.id DESC LIMIT 10")
+    List<Product> getNewProduct();
+
+    @Query(value = "SELECT p.*, COUNT(od.quantity) AS order_count " + // Assuming 'product' is the entity name
+            "FROM Product as p " +
+            "JOIN order_detail od ON od.id_order = p.id " +
+            "JOIN orders o ON o.id = od.id_order " +
+            "WHERE o.status = 1 " +
+            "AND p.status = 1 " +
+            "GROUP BY p.id, p.name " +
+            "ORDER BY order_count DESC " +
+            "LIMIT 10",
+            nativeQuery = true)
+    List<Product> getBestSellersProduct();
+    @Query(value = "SELECT DISTINCT p.* " + // Assuming 'product' is the entity name
+            "FROM Product p " +
+            "JOIN order_detail od ON od.id_product = p.id " +
+            "JOIN orders o ON o.id = od.id_order " +
+            "WHERE o.status = 1 " +
+            "AND p.status = 1 " +
+            "GROUP BY p.id",
+            nativeQuery = true)
+    List<Product> getHaveSoldProduct();
+    @Query(value = "SELECT p.* " +
+            "FROM Product p " +
+            "WHERE p.status = 1 " +
+            "GROUP BY p.id " +
+            "ORDER BY p.discount_percent DESC " +
+            "LIMIT 5",
+            nativeQuery = true)
+    List<Product> getBestPromotionProduct();
+    @Query(value = "SELECT p.* " +
+            "FROM Product p " +
+            "WHERE p.status = 1 " +
+            "AND p.discount_percent > 0 " +
+            "GROUP BY p.id " +
+            "ORDER BY p.discount_percent DESC ",
+            nativeQuery = true)
+    List<Product> getHavePromotionProduct();
 }
