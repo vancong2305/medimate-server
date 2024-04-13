@@ -142,8 +142,8 @@ public class CartDetailServiceImpl implements CartDetailService {
         dto.setIdProduct(CartDetail.getId().getIdProduct());
 //        dto.setDiscountPrice(CartDetail.getDiscountPrice());
         dto.setQuantity(CartDetail.getQuantity());
-        dto.setProductDto(ConvertUtil.gI().toDto(CartDetail.getProduct(), ProductDto.class));
-        dto.setUserDto(ConvertUtil.gI().toDto(CartDetail.getUser(), UserDto.class));
+        dto.setProduct(ConvertUtil.gI().toDto(CartDetail.getProduct(), ProductDto.class));
+        dto.setUser(ConvertUtil.gI().toDto(CartDetail.getUser(), UserDto.class));
         return dto;
     }
 

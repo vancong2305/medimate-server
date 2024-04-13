@@ -53,7 +53,7 @@ public class CartDetailController {
             if (JwtProvider.gI().verifyToken(tokenInformation, tokenDto)) {
                 List<CartDetailDto> cartDetailList = cartDetailService.findByIdUser(user.getId());
                 for (CartDetailDto c : cartDetailList) {
-                    if (c.getProductDto().getId() == id && c.getProductDto().getQuantity() - c.getQuantity() >= 0) {
+                    if (c.getProduct().getId() == id && c.getProduct().getQuantity() - c.getQuantity() >= 0) {
                         return ResponseUtil.success();
                     }
                 }

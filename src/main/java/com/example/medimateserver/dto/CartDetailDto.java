@@ -9,6 +9,6 @@ public class CartDetailDto {
     private Integer idUser;
     private Integer idProduct;
     private Integer quantity;
-    private UserDto userDto;
-    private ProductDto productDto;
+    private UserDto user;
+    private ProductDto product;
 }
