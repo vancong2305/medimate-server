@@ -61,17 +61,15 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p FROM Product p ORDER BY p.id DESC LIMIT 10")
     List<Product> getNewProduct();
 
-    @Query(value = "SELECT p.*, COUNT(od.quantity) AS order_count " + // Assuming 'product' is the entity name
-            "FROM Product as p " +
-            "JOIN order_detail od ON od.id_order = p.id " +
-            "JOIN orders o ON o.id = od.id_order " +
-            "WHERE o.status = 1 " +
-            "AND p.status = 1 " +
-            "GROUP BY p.id, p.name " +
-            "ORDER BY order_count DESC " +
-            "LIMIT 10",
-            nativeQuery = true)
+    @Query(value = "SELECT p.*, SUM(od.quantity) AS sales_count " +
+            "FROM order_detail od " +
+            "JOIN product p ON od.id_product = p.id " +
+            "WHERE p.status = 1 " +
+            "GROUP BY od.id_product, p.id, p.name " +
+            "ORDER BY sales_count DESC " +
+            "LIMIT 50", nativeQuery = true)
     List<Product> getBestSellersProduct();
+
     @Query(value = "SELECT DISTINCT p.* " + // Assuming 'product' is the entity name
             "FROM Product p " +
             "JOIN order_detail od ON od.id_product = p.id " +
@@ -81,12 +79,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "GROUP BY p.id",
             nativeQuery = true)
     List<Product> getHaveSoldProduct();
+
     @Query(value = "SELECT p.* " +
             "FROM Product p " +
             "WHERE p.status = 1 " +
             "GROUP BY p.id " +
             "ORDER BY p.discount_percent DESC " +
-            "LIMIT 5",
+            "LIMIT 10",
             nativeQuery = true)
     List<Product> getBestPromotionProduct();
     @Query(value = "SELECT p.* " +
@@ -94,7 +93,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "WHERE p.status = 1 " +
             "AND p.discount_percent > 0 " +
             "GROUP BY p.id " +
-            "ORDER BY p.discount_percent DESC ",
+            "ORDER BY p.discount_percent DESC",
             nativeQuery = true)
     List<Product> getHavePromotionProduct();
 }
