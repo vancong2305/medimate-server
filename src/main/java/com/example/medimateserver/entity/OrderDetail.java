@@ -18,6 +18,9 @@ public class OrderDetail {
     @Column(name = "discount_price")
     private Integer discountPrice;
 
+    @Column(name = "product_price")
+    private Integer productPrice;
+
     @Column(name = "quantity")
     private Integer quantity;
 

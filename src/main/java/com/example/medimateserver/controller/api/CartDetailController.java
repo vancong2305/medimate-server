@@ -71,9 +71,9 @@ public class CartDetailController {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
-                cartDetailDto.setIdUser(user.getId());
-                cartDetailService.saveCartDetail(cartDetailDto);
-                return ResponseUtil.success();
+            cartDetailDto.setIdUser(user.getId());
+            cartDetailService.saveCartDetail(cartDetailDto);
+            return ResponseUtil.success();
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
@@ -96,12 +96,25 @@ public class CartDetailController {
     }
 
     // Xoá sản phẩm ra khỏi cartDetail
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCartDetail(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             cartDetailService.deleteCartDetail(user.getId(), id);
+            return ResponseUtil.success();
+        } catch (Exception ex) {
+            System.out.println("Lỗi ở đây " + ex.getMessage());
+            return ResponseUtil.failed();
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteCartDetail(HttpServletRequest request, @RequestBody List<CartDetailDto> cartDetailDto) throws JsonProcessingException {
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            cartDetailService.deleteCartDetail(user.getId(), cartDetailDto);
             return ResponseUtil.success();
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());

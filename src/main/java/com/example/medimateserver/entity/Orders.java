@@ -19,15 +19,19 @@ public class Orders {
     @Column(name = "code")
     private String code;
     @Column(name = "payment_method")
-    private Integer paymentMethod;
+    private String paymentMethod;
     @Column(name = "discount_coupon")
     private Integer discountCoupon;
+    @Column(name = "discount_product")
+    private Integer discountProduct;
     @Column(name = "order_time")
     private Date orderTime;
     @Column(name = "note")
     private String note;
     @Column(name = "point")
     private Integer point;
+    @Column(name = "total")
+    private Integer total;
     @Column(name = "status")
     private Integer status;
 }

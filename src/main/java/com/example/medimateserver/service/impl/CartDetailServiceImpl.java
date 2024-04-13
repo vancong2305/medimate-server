@@ -63,8 +63,8 @@ public class CartDetailServiceImpl implements CartDetailService {
             // Nếu chi tiết giỏ hàng đã tồn tại, cập nhật số lượng
             if (cartDetailOptional.isPresent()) {
                 CartDetail uCartDetail = cartDetailOptional.get();
-                if (uProduct.getQuantity() - (uCartDetail.getQuantity() + 1) >= 0) {
-                    uCartDetail.setQuantity(uCartDetail.getQuantity() + 1);
+                if (uProduct.getQuantity() - (uCartDetail.getQuantity() + cartDetailDto.getQuantity()) >= 0) {
+                    uCartDetail.setQuantity(uCartDetail.getQuantity() + cartDetailDto.getQuantity());
                     cartDetailRepository.save(uCartDetail);
                 }
             } else {
@@ -127,12 +127,20 @@ public class CartDetailServiceImpl implements CartDetailService {
         cartDetailRepository.deleteById(id);
     }
 
+    @Override
+    public void deleteCartDetail(Integer idUser, List<CartDetailDto> cartDetailDto) {
+        for (CartDetailDto cart: cartDetailDto) {
+            CartDetail.CartDetailId id = new CartDetail.CartDetailId(idUser, cart.getIdProduct());
+            cartDetailRepository.deleteById(id);
+        }
+    }
+
 
     public CartDetailDto toDto(CartDetail CartDetail) {
         CartDetailDto dto = new CartDetailDto();
         dto.setIdUser(CartDetail.getId().getIdUser());
         dto.setIdProduct(CartDetail.getId().getIdProduct());
-        dto.setDiscountPrice(CartDetail.getDiscountPrice());
+//        dto.setDiscountPrice(CartDetail.getDiscountPrice());
         dto.setQuantity(CartDetail.getQuantity());
         dto.setProductDto(ConvertUtil.gI().toDto(CartDetail.getProduct(), ProductDto.class));
         dto.setUserDto(ConvertUtil.gI().toDto(CartDetail.getUser(), UserDto.class));
@@ -141,7 +149,7 @@ public class CartDetailServiceImpl implements CartDetailService {
 
     public CartDetail toEntity(CartDetailDto dto) {
         CartDetail.CartDetailId id = new CartDetail.CartDetailId(dto.getIdUser(), dto.getIdProduct()); // Cách 2, sau khi thêm static
-        return new CartDetail(id, dto.getDiscountPrice(), dto.getQuantity());
+        return new CartDetail(id, dto.getQuantity());
     }
 
 }

@@ -14,4 +14,5 @@ public interface CartDetailService {
     void saveCartDetail(CartDetailDto cartDetailDto);
     void updateCartDetail(CartDetailDto cartDetailDto);
     void deleteCartDetail(Integer idUser, Integer idProduct);
+    void deleteCartDetail(Integer idUser, List<CartDetailDto> cartDetailDto);
 }

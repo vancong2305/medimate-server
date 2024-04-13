@@ -13,10 +13,12 @@ public class OrderDto {
     private Integer id;
     private Integer idUser;
     private String code;
-    private Integer paymentMethod;
+    private String paymentMethod;
     private Integer discountCoupon;
+    private Integer discountProduct;
     private Date orderTime;
     private String note;
     private Integer point;
+    private Integer total;
     private Integer status;
 }

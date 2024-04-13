@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 public class CartDetailDto {
     private Integer idUser;
     private Integer idProduct;
-    private Integer discountPrice;
     private Integer quantity;
     private UserDto userDto;
     private ProductDto productDto;

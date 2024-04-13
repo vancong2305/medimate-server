@@ -57,11 +57,11 @@ public class OrderServiceImpl implements OrderService {
             List<CartDetail> cartDetailList = cartDetailRepository.findAll();
             for (CartDetail cartDetail : cartDetailList) {
                 Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
-                cartDetail.setDiscountPrice(Integer.parseInt(product.get().getPrice() * product.get().getDiscountPercent() / 100 + ""));
+//                cartDetail.setDiscountPrice(Integer.parseInt(product.get().getPrice() * product.get().getDiscountPercent() / 100 + ""));
                 if (!product.isPresent() || cartDetail.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
                     throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
                 }
-                sum += cartDetail.getQuantity() * product.get().getPrice() - cartDetail.getDiscountPrice();
+//                sum += cartDetail.getQuantity() * product.get().getPrice() - cartDetail.getDiscountPrice();
             }
 
             Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetail().getId());
@@ -90,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderTime(now);
             order.setPoint(point);
             order.setNote(paymentDto.getNote());
-            order.setPaymentMethod(paymentDto.getPaymentMethod());
+//            order.setPaymentMethod(paymentDto.getPaymentMethod());
             order.setStatus(1);
             order = orderRepository.save(order);
 
@@ -100,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
                 Optional<Product> product = productRepository.findById(cartDetail.getId().getIdProduct());
                 product.get().setQuantity(product.get().getQuantity() - cartDetail.getQuantity());
                 productList.add(product.get());
-                orderDetailRepository.saveCustome(order.getId(), product.get().getId(), cartDetail.getDiscountPrice(), cartDetail.getQuantity());
+//                orderDetailRepository.saveCustome(order.getId(), product.get().getId(), cartDetail.getDiscountPrice(), cartDetail.getQuantity());
             }
             productRepository.saveAll(productList);
 
@@ -154,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderTime(now);
         order.setPoint(point);
         order.setNote(paymentDto.getNote());
-        order.setPaymentMethod(paymentDto.getPaymentMethod());
+//        order.setPaymentMethod(paymentDto.getPaymentMethod());
         order.setStatus(1);
         order = orderRepository.save(order);
 

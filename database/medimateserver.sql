@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 06, 2024 lúc 05:05 PM
+-- Thời gian đã tạo: Th4 13, 2024 lúc 09:35 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -30,14 +30,37 @@ SET time_zone = "+00:00";
 CREATE TABLE `address` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
+  `full_name` text NOT NULL,
   `phone` text NOT NULL,
   `ward` text NOT NULL,
   `district` text NOT NULL,
   `province` text NOT NULL,
   `type` text NOT NULL,
   `is_default` tinyint(1) NOT NULL,
+  `specific_address` varchar(255) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `cart_detail`
+--
+
+CREATE TABLE `cart_detail` (
+  `id_user` int(11) NOT NULL,
+  `id_product` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `cart_detail`
+--
+
+INSERT INTO `cart_detail` (`id_user`, `id_product`, `quantity`) VALUES
+(12, 3, 1),
+(12, 4, 2),
+(12, 5, 5);
 
 -- --------------------------------------------------------
 
@@ -50,6 +73,20 @@ CREATE TABLE `category` (
   `name` varchar(255) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `category`
+--
+
+INSERT INTO `category` (`id`, `name`, `status`) VALUES
+(1, 'Dược Phẩm', 1),
+(2, 'Chăm Sóc Sức Khỏe', 1),
+(3, 'Chăm Sóc Cá Nhân', 1),
+(4, 'Sản Phẩm Tiện Lợi', 1),
+(5, 'Thực Phẩm Chức Năng', 1),
+(6, 'Mẹ Và Bé', 1),
+(7, 'Chăm Sóc Sắc Đẹp', 1),
+(8, 'Thiết Bị Y Tế', 1);
 
 -- --------------------------------------------------------
 
@@ -91,17 +128,6 @@ CREATE TABLE `coupon_detail` (
   `end_time` date NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `coupon_detail`
---
-
-INSERT INTO `coupon_detail` (`id`, `id_coupon`, `id_user`, `id_oder`, `start_time`, `end_time`, `status`) VALUES
-(4, 1, 12, NULL, '2024-04-01', '2024-04-03', 1),
-(5, 1, 12, NULL, '2024-04-01', '2024-04-30', 1),
-(6, 1, 12, NULL, '2024-04-01', '2024-04-03', 1),
-(7, 1, 12, NULL, '2024-04-01', '2024-04-03', 1),
-(8, 1, 12, NULL, '2024-04-01', '2024-04-03', 1);
 
 -- --------------------------------------------------------
 
@@ -829,19 +855,20 @@ INSERT INTO `district` (`id`, `id_province`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `order`
+-- Cấu trúc bảng cho bảng `orders`
 --
 
-CREATE TABLE `order` (
+CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `id_user` int(11) NOT NULL,
   `code` text NOT NULL,
-  `payment_method` int(11) NOT NULL,
+  `payment_method` text NOT NULL,
   `discount_coupon` int(11) NOT NULL,
-  `delivery_fee` int(11) NOT NULL,
+  `discount_product` int(11) NOT NULL,
   `order_time` date NOT NULL,
   `note` text NOT NULL,
   `point` int(11) NOT NULL,
+  `total` int(11) NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -852,8 +879,9 @@ CREATE TABLE `order` (
 --
 
 CREATE TABLE `order_detail` (
-  `id_oder` int(11) NOT NULL,
+  `id_order` int(11) NOT NULL,
   `id_product` int(11) NOT NULL,
+  `product_price` int(11) NOT NULL,
   `discount_price` int(11) NOT NULL,
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -876,6 +904,30 @@ CREATE TABLE `product` (
   `image` text NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `product`
+--
+
+INSERT INTO `product` (`id`, `id_category`, `id_unit`, `name`, `description`, `discount_percent`, `price`, `quantity`, `image`, `status`) VALUES
+(1, 5, 1, 'Bột LADOPHAR LADO CARE MARS hỗ trợ bổ thận, tráng dương và cải thiện sinh lý nam giới', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong></p><p>Trong 01 gói 15ml có chứa:</p><p>- Đảng sâm: 2g</p><p>- Cao đặc Dâm dương hoắc (tỉ lệ 1:3,5): 900mg</p><p>- Cao đặc Actiso: 500mg</p><p>(tương đương 17,5g lá tươi Actiso) (tỉ lệ 1:35)</p><p>- Cao Hồng sâm (tỉ lệ 1:8): 40mg</p><p>- Phụ liệu: nước tinh khiết</p><p></p><p><strong>Chống chỉ định</strong></p><p>Không sử dụng cho người mẫn cảm với bất cứ thành phần nào có trong sản phẩm.</p><p>Không sử dụng cho người dưới 18 tuổi, người mắc bệnh tim mạch, người huyết áp cao, người bị rối loạn tiêu hoá.</p><p>Không dùng chung với dược liệu Lê Lô (hoa hiên)</p><p></p><p><strong>Công dụng</strong></p><p>Hỗ trợ bổ thận, tráng dương, hỗ trợ cải thiện sinh lý nam giới. </p><p></p><p><strong>Đối tượng sử dụng:</strong> Dùng cho nam giới trưởng thành sinh lý yếu.</p><p></p><p><strong>Giới tính sử dụng:</strong> Nam giới  </p><p></p><p><strong>Độ tuổi sử dụng:</strong> Nam giới trưởng thành</p><p></p><p><strong>Cách sử dụng</strong></p><p>Dùng để pha nước: 1 gói cho 700 - 750 ml nước, sử dụng hết trong 24 giờ</p><p>Nam giới trưởng thành: dùng 1 gói/lần/ngày</p><p></p><p><strong>Khuyến cáo: </strong>Người đang dùng thuốc cần tham khảo ý kiến bác sĩ trước khi dùng</p><p></p><p><strong>Bảo quản: </strong>Nơi khô ráo, thoáng mát, tránh ánh sáng trực tiếp</p><p></p><p><strong>Hạn sử dụng: </strong>24 tháng</p><p></p><p><strong>Quy cách đóng gói:</strong> 10 gói x 15ML</p><p></p><p><strong>Thương hiệu:</strong> LADO CARE</p><p></p><p><strong>Nơi sản xuất</strong>: ĐÀ LẠT - VIỆT NAM</p><p></p><p><strong>Tên Nhà sản xuất:</strong>T LADOPHAR</p><p></p><p><strong>Công ty chịu trách nhiệm về SP: </strong>Công Ty Cổ Phần Dược Lâm Đồng (Ladophar)</p><p></p><p><strong>Công ty phân phối:</strong> Công Ty Cổ Phần Dược Lâm Đồng (Ladophar)</p><p></p><p><strong>Số Giấy Xác nhận nội dung quảng cáo:</strong> 1133/2023/XNQC-ATTP</p><p></p><p><strong>Số Giấy công bố:</strong> 2792/2022/ĐKSP</p><p></p><p><em>Thực phẩm này không phải là th', 5, 485, 20, 'https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/products/P26461_2.jpg', 1),
+(2, 5, 1, 'Bột PROANTIOBIOPLUS hỗ trợ làm giảm các triệu chứng rối loạn tiêu hóa', '<div class=\"pmc-content-html\"><h3>Giới thiệu về thực phẩm bảo vệ sức khỏe PROANTIOBIOPLUS</h3>\r\n<p>Ngày nay, diễn biến các bệnh về đường tiêu hóa có xu hướng gia tăng. Chính vì vậy, thực phẩm bảo vệ sức khỏe PROANTIOBIOPLUS đã ra đời. Đây là một sản phẩm chăm sóc sức khỏe được nghiên cứu và phát triển bởi các chuyên gia hàng đầu trong lĩnh vực dinh dưỡng và y tế. Với thành phần từ thiên nhiên và công nghệ tiên tiến, PROANTIOBIOPLUS mang lại những lợi ích to lớn cho sức khỏe của con người. Bài viết này sẽ giúp bạn hiểu rõ hơn về sản phẩm này thông qua 5 phần nội dung sau:</div>\r\n<div class=\"pmc-content-html\"><h3>Công dụng của PROANTIOBIOPLUS</h3>\r\n<p>PROANTIOBIOPLUS là một loại thực phẩm bảo vệ sức khỏe có tác dụng bổ sung các chất dinh dưỡng cần thiết cho cơ thể, giúp tăng cường hệ miễn dịch và bảo vệ cơ thể khỏi các bệnh tật. Sản phẩm này cũng có tác dụng hỗ trợ điều trị các bệnh liên quan đến đường tiêu hóa, tim mạch và tiểu đường. Lợi ích của PROANTIOBIOPLUS đối với sức khỏe</p>\r\n<ul>\r\n<li><strong>Tăng cường hệ miễn dịch: </strong>Các thành phần trong PROANTIOBIOPLUS có tác dụng kích thích sản xuất các tế bào miễn dịch, giúp tăng cường hệ miễn dịch và bảo vệ cơ thể khỏi các bệnh tật. Đặc biệt, tinh chất lúa mạch có khả năng kích thích sản xuất các tế bào B và T, giúp cơ thể có khả năng chống lại các tác nhân gây bệnh.</li>\r\n<li><strong>Hỗ trợ điều trị các bệnh liên quan đến đường tiêu hóa: </strong>Tinh dầu oregano trong PROANTIOBIOPLUS có tác dụng kháng khuẩn và kháng viêm, giúp làm giảm các triệu chứng đau bụng, tiêu chảy và viêm loét dạ dày. Đồng thời, quả việt quất cũng có tác dụng bảo vệ niêm mạc đường tiêu hóa và giúp phục hồi các tổn thương.</li>\r\n<li><strong>Bảo vệ tim mạch: </strong>Tinh dầu bạc hà trong PROANTIOBIOPLUS có tác dụng giảm cholesterol và huyết áp, giúp bảo vệ tim mạch khỏi các bệnh lý như đột quỵ và đau thắt ngực. Ngoài ra, tinh chất lúa mạch cũng có tác dụng giảm nguy cơ mắc các bệnh tim mạch.</li>\r\n</ul></div>\r\n<div class=\"pmc-content-htm', 10, 490, 20, 'https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/products/P17599.png', 1),
+(3, 5, 1, 'Bột sủi bọt Edoz DHG hỗ trợ giảm triệu chứng khó tiêu, đầy hơi', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 0, 30, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P04803_1N.jpg?v=041215', 1),
+(4, 5, 1, 'Bột uống Kolmar Condition Probio Cumin Hỗ trợ tiêu hóa', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 10, 204, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P21853_1.jpg', 1),
+(5, 5, 1, 'Bột uống BifiSanfo Plus bổ sung men vi sinh hỗ trợ hệ tiêu hóa', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 0, 80, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P25862_1.jpg', 1),
+(6, 5, 1, 'Bột uống Health Aid Bifina R bổ sung men vi sinh giảm rối loạn tiêu hóa, đại tràng', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 0, 100, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P13154_1_l.webp?v=041215', 1),
+(7, 5, 1, 'Bột uống Kolmar Condition Let’s C Family Bổ sung vitamin C', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 5, 485, 20, 'https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/products/P26461_2.jpg', 1),
+(8, 5, 6, 'Combo 2 chai xịt keo ong xanh vị bạc hà Tracybee Mint & Honey hỗ trợ giảm ho kéo dài (Chai 30ml)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 10, 270, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P27818_2.jpg', 1),
+(9, 5, 1, 'Cốm Natufib hỗ trợ tiêu hoá, ngăn ngừa táo bón cho bà bầu và trẻ nhỏ (Hộp 20 gói)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 5, 61, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P02792.png?v=041215', 1),
+(10, 5, 1, 'Dung dịch LIVESPO Clausy bổ sung men vi sinh giúp cân bằng hệ vi sinh đường ruột(Hộp 20 ống)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 10, 128, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P25055.png', 1),
+(11, 5, 1, 'Dung dịch LIVESPO Colon bổ sung men vi sinh hỗ trợ cải thiện viêm đại tràng, rối loạn tiêu hóa (Hộp 15 ống)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 5, 243, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P25128.png', 1),
+(12, 5, 1, 'Dung dịch LIVESPO Dia 30 bổ sung men vi sinh hỗ trợ giảm tiêu chảy cấp, rối loạn tiêu hóa (Hộp 10 ống)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 10, 270, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P25859.png', 1),
+(13, 5, 1, 'Dung dịch uống Dạ Dày Thiên Minh Phúc hỗ trợ giảm viên loét dày (Hộp 20 gói)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 5, 98, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P25861_1.jpg', 1),
+(14, 5, 1, 'Dung dịch uống Meracine Blactis bổ sung men vi sinh hỗ trợ hệ tiêu hóa (Hộp 20 ống)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 10, 120, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P26052_1.jpg', 1),
+(15, 5, 1, 'Kẹo ngậm Cozz Candy hỗ trợ giảm ho, thông họng (Hộp 100 viên)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 5, 50, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P13380.png?v=041215', 1),
+(16, 5, 1, 'Kẹo ngậm Eugica Candy làm dịu cơn ho và giảm đau rát họng (Hộp 100 viên)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 10, 68, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P00505.png?v=041215', 1),
+(17, 5, 1, 'Men vi sinh Health Aid Bifina R hỗ trợ hệ tiêu hóa, giúp giảm các triệu chứng rối loạn tiêu hóa, đại tràng (Hộp 20 gói x 1.2g)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 5, 360, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P13134_1_l.webp?v=041215', 1),
+(18, 5, 1, 'Men uống Max Biolife bổ sung men vi sinh, hỗ trợ tiêu hóa (Hộp 20 ống)', '<div class=\"pmc-content-html\"><p><strong>Thành phần</strong><br>Trong 10ml có chứa:<br><em>Bacillus clausii</em> 1,5 x 10^9 CFU,&nbsp;<em>Bacillus subtilis</em> 1,5 x 10^9, CFU Kẽm Gluconate 4500mcg<br>Phụ liệu: Nước tinh khiết</p><p><strong>Công dụng</strong><br>Giúp bổ sung lợi khuẩn, giúp cải thiện hệ vi sinh đường ruột.<br>Hỗ trợ hạn chế triệu chứng và giảm nguy cơ rối loạn tiêu hoá do loạn khuẩn đường ruột.</p><p><strong>Cách dùng</strong><br>• Trẻ 1-2 tuổi: 1 ống x 1 lần/ ngày<br>• Trẻ 2-6 tuổi: 1 ống x 2 lần/ ngày<br>• Trên 6 tuổi và người lớn: 1 ống x 2-3 lần/ ngày</p><p><strong>Đối tượng sử dụng</strong><br>Người tiêu hóa kém, ăn không tiêu, đi ngoài phân sống, tiêu chảy do loạn khuẩn đường ruột.<br>Người dùng kháng sinh liều cao hoặc kéo dài loạn khuẩn đường ruột.</p><p><strong>Bảo quản:</strong> Nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp</p><p><strong>Thận trọng:</strong> Không dùng cho người mẫn cảm với bất kì thành phần nào của sản phẩm</p><p><strong>Số tiếp nhận đăng ký công bố sản phẩm:</strong> 3550/2021/ĐKSP của Cục An Toàn Thực Phẩm – Bộ Y Tế.</p><p><strong>Cơ sở phân phối:</strong> CÔNG TY CỔ PHẦN FOBELIFE<br>Địa chỉ: Phòng L003 Số 59 Chế Lan Viên, Phường Tây Thạnh, Quận Tân Phú, HCM</p><p><strong>Sản xuất bởi:</strong> Công ty cổ phần Dược phẩm Vgas <br>Địa chỉ: Cụm công nghiệp Hà Bình Phương, Xã Hà Hồi, Huyện Thường Tín, Thành phố Hà Nội</p><p><em>Thực phẩm này không phải là thuốc, không có tác dụng thay thế thuốc chữa bệnh.</em></p></div>', 10, 132, 20, 'https://prod-cdn.pharmacity.io/e-com/images/ecommerce/P22204_1_l.webp', 1);
 
 -- --------------------------------------------------------
 
@@ -994,8 +1046,7 @@ CREATE TABLE `token` (
 --
 
 INSERT INTO `token` (`id_user`, `access_token`, `refresh_token`) VALUES
-(16, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjE2LFwiaWRSb2xlXCI6MSxcInBob25lXCI6XCIwMTkyOTIyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MDg1NDksImV4cCI6MTcxMjQ5NDk0OX0.LnPPnSNUFuqarvsjDHbqoXPGYuyf3K5wshpzwep2kFM', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjE2LFwiaWRSb2xlXCI6MSxcInBob25lXCI6XCIwMTkyOTIyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MDg1NDksImV4cCI6MTcxMzAxMzM0OX0.xBFKviHVf3rL6iYL8koRoOmO5MiNArzAQ3MeghLOzh4'),
-(12, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCJhXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MTUyOTksImV4cCI6MTcxMjUwMTY5OX0.muusu4788dOiuNtPJcu-J6tKfvdttTPRLV31L501BXk', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCJhXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjowLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI0MTUyOTksImV4cCI6MTcxMzAyMDA5OX0.Y_yA_UGsh1dbej-U7JWT_x4uGau6_vsvpdhmcMLWYU8');
+(12, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiQXByIDMsIDIwMjQsIDEyOjAwOjAw4oCvQU1cIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI5OTM1OTgsImV4cCI6MTcxMzA3OTk5OH0.CNLzKX14-ckdM0bm4iUnPf4NAUf6T9XJ92Kp5DkuI80', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiQXByIDMsIDIwMjQsIDEyOjAwOjAw4oCvQU1cIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTI5OTM1OTgsImV4cCI6MTcxMzU5ODM5OH0.bbYB9o-IovQJw4LBhWMXWsla4_7NdkWQowPG8S2xxG0');
 
 -- --------------------------------------------------------
 
@@ -1006,8 +1057,21 @@ INSERT INTO `token` (`id_user`, `access_token`, `refresh_token`) VALUES
 CREATE TABLE `unit` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `description` text NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `unit`
+--
+
+INSERT INTO `unit` (`id`, `name`, `description`, `status`) VALUES
+(1, 'Hộp', '(Hộp 10 gói)', 1),
+(2, 'Vĩ', '', 1),
+(3, 'Chai', '', 1),
+(4, 'Tuýp', '', 1),
+(5, 'Cái', '', 1),
+(6, 'Lốc', '', 1);
 
 -- --------------------------------------------------------
 
@@ -1035,7 +1099,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `id_role`, `phone`, `password`, `first_name`, `last_name`, `rank`, `point`, `birthday`, `gender`, `image`, `status`) VALUES
-(12, 2, 'a', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
+(12, 2, '0963012812', '1', 'Võ Văn', 'Huấn', 'Đồng', 125, '2024-04-03', 1, 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1539', 1),
 (14, 1, '019292', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
 (16, 1, '0192922', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1),
 (18, 1, '01929223', '1', NULL, NULL, 'Đồng', 0, NULL, NULL, NULL, 1);
@@ -11659,6 +11723,14 @@ ALTER TABLE `address`
   ADD KEY `id_address_user` (`id_user`);
 
 --
+-- Chỉ mục cho bảng `cart_detail`
+--
+ALTER TABLE `cart_detail`
+  ADD PRIMARY KEY (`id_user`,`id_product`),
+  ADD KEY `fk_cart_detail_product` (`id_product`),
+  ADD KEY `fk_cart_detail_user` (`id_user`) USING BTREE;
+
+--
 -- Chỉ mục cho bảng `category`
 --
 ALTER TABLE `category`
@@ -11687,9 +11759,9 @@ ALTER TABLE `district`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `order`
+-- Chỉ mục cho bảng `orders`
 --
-ALTER TABLE `order`
+ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `code` (`code`) USING HASH,
   ADD KEY `fk_order_user` (`id_user`);
@@ -11698,7 +11770,8 @@ ALTER TABLE `order`
 -- Chỉ mục cho bảng `order_detail`
 --
 ALTER TABLE `order_detail`
-  ADD KEY `fk_order_detail_order` (`id_oder`),
+  ADD PRIMARY KEY (`id_order`,`id_product`),
+  ADD KEY `fk_order_detail_order` (`id_order`),
   ADD KEY `fk_order_product` (`id_product`);
 
 --
@@ -11761,19 +11834,19 @@ ALTER TABLE `address`
 -- AUTO_INCREMENT cho bảng `category`
 --
 ALTER TABLE `category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `coupon`
 --
 ALTER TABLE `coupon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `coupon_detail`
 --
 ALTER TABLE `coupon_detail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `district`
@@ -11782,16 +11855,16 @@ ALTER TABLE `district`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=706;
 
 --
--- AUTO_INCREMENT cho bảng `order`
+-- AUTO_INCREMENT cho bảng `orders`
 --
-ALTER TABLE `order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `orders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT cho bảng `province`
@@ -11809,13 +11882,13 @@ ALTER TABLE `role`
 -- AUTO_INCREMENT cho bảng `unit`
 --
 ALTER TABLE `unit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT cho bảng `ward`
@@ -11834,24 +11907,31 @@ ALTER TABLE `address`
   ADD CONSTRAINT `id_address_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
+-- Các ràng buộc cho bảng `cart_detail`
+--
+ALTER TABLE `cart_detail`
+  ADD CONSTRAINT `fk_cart_detail_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`),
+  ADD CONSTRAINT `fk_cart_detail_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
+
+--
 -- Các ràng buộc cho bảng `coupon_detail`
 --
 ALTER TABLE `coupon_detail`
   ADD CONSTRAINT `fk_coupon_detail_coupon` FOREIGN KEY (`id_coupon`) REFERENCES `coupon` (`id`),
-  ADD CONSTRAINT `fk_coupon_detail_order` FOREIGN KEY (`id_oder`) REFERENCES `order` (`id`),
+  ADD CONSTRAINT `fk_coupon_detail_order` FOREIGN KEY (`id_oder`) REFERENCES `orders` (`id`),
   ADD CONSTRAINT `fk_coupon_detail_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
--- Các ràng buộc cho bảng `order`
+-- Các ràng buộc cho bảng `orders`
 --
-ALTER TABLE `order`
+ALTER TABLE `orders`
   ADD CONSTRAINT `fk_order_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
 -- Các ràng buộc cho bảng `order_detail`
 --
 ALTER TABLE `order_detail`
-  ADD CONSTRAINT `fk_order_detail_order` FOREIGN KEY (`id_oder`) REFERENCES `order` (`id`),
+  ADD CONSTRAINT `fk_order_detail_order` FOREIGN KEY (`id_order`) REFERENCES `orders` (`id`),
   ADD CONSTRAINT `fk_order_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`);
 
 --

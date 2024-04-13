@@ -15,11 +15,14 @@ public class CartDetail {
     @EmbeddedId
     private CartDetail.CartDetailId id;
 
-    @Column(name = "discount_price")
-    private Integer discountPrice;
 
     @Column(name = "quantity")
     private Integer quantity;
+
+    public CartDetail(CartDetailId id, Integer quantity) {
+        this.id  = id;
+        this.quantity = quantity;
+    }
 
     public Integer getQuantity() {
         return quantity;
@@ -49,7 +52,6 @@ public class CartDetail {
 
     public CartDetail(CartDetailId id, Integer discountPrice, Integer quantity) {
         this.id = id;
-        this.discountPrice = discountPrice;
         this.quantity = quantity;
     }
 
