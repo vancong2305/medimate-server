@@ -64,7 +64,24 @@ public class CartDetailController {
             return ResponseUtil.failed();
         }
     }
-
+    @GetMapping("/total_item")
+    public ResponseEntity<?> getTotalItem(HttpServletRequest request) throws JsonProcessingException {
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            TokenDto tokenDto = tokenService.findById(user.getId());
+            if (JwtProvider.gI().verifyToken(tokenInformation, tokenDto)) {
+                List<CartDetailDto> cartDetailList = cartDetailService.findByIdUser(user.getId());
+                String jsons = GsonUtil.gI().toJson(cartDetailList.size());
+                System.out.println("Loi o day" + cartDetailList.size());
+                return ResponseUtil.success(jsons);
+            }
+            return ResponseUtil.failed();
+        } catch (Exception ex) {
+            System.out.println("Lỗi ở đây " + ex.getMessage());
+            return ResponseUtil.failed();
+        }
+    }
     // Tăng số lượng lên 1 hoặc lưu cartDetail với số lượng sản phẩm là 1
     @PostMapping
     public ResponseEntity<?> saveCartDetail(HttpServletRequest request, @RequestBody CartDetailDto cartDetailDto) throws JsonProcessingException {
