@@ -20,6 +20,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.security.Key;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Properties;
 
@@ -30,6 +31,9 @@ public class JwtProvider {
     private long accessTime;
     @Value("${refreshTime}")
     private long refreshTime;
+    @Value("${secretKey}")
+    private String secretKey;
+
     private static JwtProvider jwtProvider;
     public static JwtProvider gI() {
         if (jwtProvider == null) {
@@ -40,22 +44,22 @@ public class JwtProvider {
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Sử dụng khóa mới tạo
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
     public String generateToken(String username) {
-        System.out.println("Access time là " + accessTime);
+        System.out.println(secretKey + " sc");
+        System.out.println(initializeKey() + " sm");
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTime)) // 1 day
-                .signWith(SignatureAlgorithm.HS256, key)
+                .signWith(SignatureAlgorithm.HS256, initializeKey())
                 .compact();
     }
 
     public String generateRefreshToken(String username) {
-        System.out.println("Access time là " + refreshTime);
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTime)) // 1 day
-                .signWith(SignatureAlgorithm.HS256, key)
+                .signWith(SignatureAlgorithm.HS256, initializeKey())
                 .compact();
     }
 
@@ -63,7 +67,7 @@ public class JwtProvider {
         String result = "";
         try {
             result = Jwts.parser()
-                    .setSigningKey(key)
+                    .setSigningKey(initializeKey())
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
@@ -75,7 +79,7 @@ public class JwtProvider {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(initializeKey()).parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
             MLogger.LOGGER.severe("Invalid JWT signature: {}" + ex.getMessage());
@@ -96,7 +100,7 @@ public class JwtProvider {
                 return false;
             }
             Claims claims = Jwts.parser()
-                    .setSigningKey(key)
+                    .setSigningKey(initializeKey())
                     .parseClaimsJws(accessToken)
                     .getBody();
 
@@ -130,7 +134,7 @@ public class JwtProvider {
                 return false;
             }
             Claims claims = Jwts.parser()
-                    .setSigningKey(key)
+                    .setSigningKey(initializeKey())
                     .parseClaimsJws(refreshToken)
                     .getBody();
 
@@ -157,4 +161,10 @@ public class JwtProvider {
             return false;
         }
     }
+
+    private Key initializeKey() {
+        byte[] decodedSecretKey = Base64.getDecoder().decode(secretKey);  // Decode base64-encoded secret
+        return Keys.hmacShaKeyFor(decodedSecretKey);  // Create secure Key object
+    }
+
 }

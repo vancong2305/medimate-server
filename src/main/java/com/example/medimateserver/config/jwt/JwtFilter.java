@@ -30,6 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         JwtProvider.gI().setAccessTime(jwtProvider.getAccessTime());
         JwtProvider.gI().setRefreshTime(jwtProvider.getRefreshTime());
+        JwtProvider.gI().setSecretKey(jwtProvider.getSecretKey());
         if (request.getServletPath().contains("/api/category")) {
             filterChain.doFilter(request, response);
             return;

@@ -48,7 +48,7 @@ public class CartDetailServiceImpl implements CartDetailService {
     @Override
     public void saveCartDetail(CartDetailDto cartDetailDto) {
 
-        CartDetail.CartDetailId id = new CartDetail.CartDetailId(cartDetailDto.getIdUser(), cartDetailDto.getIdProduct());
+        CartDetail.CartDetailId id = new CartDetail.CartDetailId(cartDetailDto.getUser().getId(), cartDetailDto.getProduct().getId());
 
         Optional<Product> productOptional = productRepository.findById(id.getIdProduct());
         Optional<User> userOptional = userRepository.findById(id.getIdUser()); // Sửa id.getIdUser()
@@ -84,7 +84,7 @@ public class CartDetailServiceImpl implements CartDetailService {
 
     @Override
     public void updateCartDetail(CartDetailDto cartDetailDto) {
-        CartDetail.CartDetailId id = new CartDetail.CartDetailId(cartDetailDto.getIdUser(), cartDetailDto.getIdProduct());
+        CartDetail.CartDetailId id = new CartDetail.CartDetailId(cartDetailDto.getUser().getId(), cartDetailDto.getUser().getId());
 
         Optional<Product> productOptional = productRepository.findById(id.getIdProduct());
         Optional<User> userOptional = userRepository.findById(id.getIdUser()); // Sửa id.getIdUser()
@@ -130,7 +130,7 @@ public class CartDetailServiceImpl implements CartDetailService {
     @Override
     public void deleteCartDetail(Integer idUser, List<CartDetailDto> cartDetailDto) {
         for (CartDetailDto cart: cartDetailDto) {
-            CartDetail.CartDetailId id = new CartDetail.CartDetailId(idUser, cart.getIdProduct());
+            CartDetail.CartDetailId id = new CartDetail.CartDetailId(idUser, cart.getProduct().getId());
             cartDetailRepository.deleteById(id);
         }
     }
@@ -138,8 +138,8 @@ public class CartDetailServiceImpl implements CartDetailService {
 
     public CartDetailDto toDto(CartDetail CartDetail) {
         CartDetailDto dto = new CartDetailDto();
-        dto.setIdUser(CartDetail.getId().getIdUser());
-        dto.setIdProduct(CartDetail.getId().getIdProduct());
+        dto.setUser(ConvertUtil.gI().toDto(CartDetail.getUser(), UserDto.class));
+        dto.setProduct(ConvertUtil.gI().toDto(CartDetail.getProduct(), ProductDto.class));
 //        dto.setDiscountPrice(CartDetail.getDiscountPrice());
         dto.setQuantity(CartDetail.getQuantity());
         dto.setProduct(ConvertUtil.gI().toDto(CartDetail.getProduct(), ProductDto.class));
@@ -148,7 +148,7 @@ public class CartDetailServiceImpl implements CartDetailService {
     }
 
     public CartDetail toEntity(CartDetailDto dto) {
-        CartDetail.CartDetailId id = new CartDetail.CartDetailId(dto.getIdUser(), dto.getIdProduct()); // Cách 2, sau khi thêm static
+        CartDetail.CartDetailId id = new CartDetail.CartDetailId(dto.getUser().getId(), dto.getProduct().getId()); // Cách 2, sau khi thêm static
         return new CartDetail(id, dto.getQuantity());
     }
 

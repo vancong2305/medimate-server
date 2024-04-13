@@ -32,6 +32,8 @@ public class Orders {
     private Integer point;
     @Column(name = "total")
     private Integer total;
+    @Column(name = "user_address")
+    private String userAddress;
     @Column(name = "status")
     private Integer status;
 }

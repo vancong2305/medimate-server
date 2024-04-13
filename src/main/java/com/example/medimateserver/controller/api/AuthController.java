@@ -104,9 +104,9 @@ public class AuthController {
                 tokenService.save(returnTokenDto);
                 return ResponseUtil.success(jsons);
             }
-             return ResponseUtil.failed();
+             return ResponseUtil.failedExpriration();
         } catch (Exception ex) {
-             return ResponseUtil.failed();
+             return ResponseUtil.failedExpriration();
         }
     }
 }

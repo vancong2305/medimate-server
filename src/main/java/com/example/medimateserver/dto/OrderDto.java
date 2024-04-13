@@ -20,5 +20,6 @@ public class OrderDto {
     private String note;
     private Integer point;
     private Integer total;
+    private String userAddress;
     private Integer status;
 }

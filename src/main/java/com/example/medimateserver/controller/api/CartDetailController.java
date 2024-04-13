@@ -88,7 +88,7 @@ public class CartDetailController {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
-            cartDetailDto.setIdUser(user.getId());
+            cartDetailDto.setUser(user);
             cartDetailService.saveCartDetail(cartDetailDto);
             return ResponseUtil.success();
         } catch (Exception ex) {
@@ -103,7 +103,7 @@ public class CartDetailController {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
-                cartDetailDto.setIdUser(user.getId());
+                cartDetailDto.setUser(user);
                 cartDetailService.updateCartDetail(cartDetailDto);
                 return ResponseUtil.success();
         } catch (Exception ex) {
