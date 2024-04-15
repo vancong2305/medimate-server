@@ -1,6 +1,7 @@
 package com.example.medimateserver.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,8 +36,13 @@ public class OrderDetail {
     private Product product;
 
 
-    public OrderDetail(OrderDetailId id, Integer discountPrice, Integer quantity) {
+    public OrderDetail(OrderDetailId id, Integer productPrice, Integer discountPrice, Integer quantity) {
+        this.id = id;
+        this.productPrice = productPrice;
+        this.discountPrice = discountPrice;
+        this.quantity = quantity;
     }
+
 
     // Lớp khóa chính kép (không thay đổi)
     @Embeddable

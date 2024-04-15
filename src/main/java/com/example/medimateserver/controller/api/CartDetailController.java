@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -114,7 +116,7 @@ public class CartDetailController {
 
     // Xoá sản phẩm ra khỏi cartDetail
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCartDetail(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
+    public ResponseEntity<?> deleteCartDetailA(HttpServletRequest request, @PathVariable Integer id) throws JsonProcessingException {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
@@ -127,8 +129,12 @@ public class CartDetailController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteCartDetail(HttpServletRequest request, @RequestBody List<CartDetailDto> cartDetailDto) throws JsonProcessingException {
+    public ResponseEntity<?> deleteCartDetailB(HttpServletRequest request, @RequestBody List<CartDetailDto> cartDetailDto) throws JsonProcessingException {
         try {
+            System.out.println("213");
+//            for (CartDetailDto cart: cartDetailDto) {
+//                cart.setUser(null);
+//            }
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             cartDetailService.deleteCartDetail(user.getId(), cartDetailDto);
@@ -138,6 +144,4 @@ public class CartDetailController {
             return ResponseUtil.failed();
         }
     }
-
-
 }

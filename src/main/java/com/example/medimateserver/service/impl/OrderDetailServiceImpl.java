@@ -46,7 +46,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     public OrderDetail toEntity(OrderDetailDto dto) {
         OrderDetail.OrderDetailId id = new OrderDetail.OrderDetailId(dto.getIdOrder(), dto.getIdProduct()); // Cách 2, sau khi thêm static
-        return new OrderDetail(id, dto.getDiscountPrice(), dto.getQuantity());
+        return new OrderDetail(id, dto.getProductPrice(), dto.getDiscountPrice(), dto.getQuantity());
     }
 
 }

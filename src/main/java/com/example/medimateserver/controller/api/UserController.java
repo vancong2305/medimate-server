@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -46,6 +48,7 @@ public class UserController {
     public ResponseEntity<?> createUser(@Valid @RequestBody UserDto userDto) {
         userDto.setIdRole(1);
         userDto.setStatus(1);
+        userDto.setRank("Đồng");
         userDto.setPoint(0);
         try {
             UserDto createdUser = userService.save(userDto);
@@ -56,9 +59,11 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody UserDto userDto) {
+    public ResponseEntity<?> updateUser(HttpServletRequest request, @RequestBody UserDto userDto) {
         try {
-            UserDto updatedUser = userService.update(id, userDto);
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            UserDto updatedUser = userService.update(user.getId(), userDto);
             if (updatedUser == null) {
                 return ResponseUtil.failed(403);
             }

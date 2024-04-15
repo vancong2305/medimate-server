@@ -66,14 +66,22 @@ public class CartDetailServiceImpl implements CartDetailService {
                 if (uProduct.getQuantity() - (uCartDetail.getQuantity() + cartDetailDto.getQuantity()) >= 0) {
                     uCartDetail.setQuantity(uCartDetail.getQuantity() + cartDetailDto.getQuantity());
                     cartDetailRepository.save(uCartDetail);
+                } else {
+                    throw new IllegalArgumentException("Không đủ số lượng sản phâẩm");
                 }
+
             } else {
                 // Nếu chi tiết giỏ hàng chưa tồn tại, lưu mới
                 CartDetail newCartDetail = new CartDetail(id, uProduct.getPrice() * uProduct.getDiscountPercent() / 100, 1);
                 newCartDetail.setProduct(uProduct);
                 newCartDetail.setUser(uUser);
                 newCartDetail.setId(id);
-                cartDetailRepository.save(newCartDetail);
+                if (uProduct.getQuantity() - cartDetailDto.getQuantity() >= 0 && cartDetailDto.getQuantity() > 0) {
+                    newCartDetail.setQuantity(cartDetailDto.getQuantity());
+                    cartDetailRepository.save(newCartDetail);
+                } else {
+                    throw new IllegalArgumentException("Không đủ số lượng sản phâẩm");
+                }
             }
         } else {
             // Xử lý trường hợp không tìm thấy product hoặc user

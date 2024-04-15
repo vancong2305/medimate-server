@@ -1,9 +1,6 @@
 package com.example.medimateserver.service.impl;
 
-import com.example.medimateserver.dto.OrderDetailDto;
-import com.example.medimateserver.dto.OrderDto;
-import com.example.medimateserver.dto.PaymentDto;
-import com.example.medimateserver.dto.ProductDto;
+import com.example.medimateserver.dto.*;
 import com.example.medimateserver.entity.*;
 import com.example.medimateserver.repository.*;
 import com.example.medimateserver.service.OrderService;
@@ -32,7 +29,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     CouponDetailRepository couponDetailRepository;
     @Autowired
-    UserRepository userRepository;
+    UserRepository userRepository; // Sử dụng private cho đúng nguyên tắc
+
     @Autowired
     CartDetailRepository cartDetailRepository;
 
@@ -53,131 +51,131 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public OrderDto save(PaymentDto paymentDto) {
-            Integer sum = 0;
+            Integer total = 0;
+            Integer discountProduct = 0;
+            Integer discountCoupon = 0;
+            Integer point = 0;
+
+            // Tạo order detail dựa trên cart item gửi lên
+            List<OrderDetail> orderDetailList = new ArrayList<>();
             List<CartDetail> cartDetailList = cartDetailRepository.findAll();
-            for (CartDetail cartDetail : cartDetailList) {
+            for (CartDetailDto cartDetail : paymentDto.getOrderDetailDtoList()) {
                 Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
-//                cartDetail.setDiscountPrice(Integer.parseInt(product.get().getPrice() * product.get().getDiscountPercent() / 100 + ""));
                 if (!product.isPresent() || cartDetail.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
                     throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
                 }
-//                sum += cartDetail.getQuantity() * product.get().getPrice() - cartDetail.getDiscountPrice();
+                // Sản phẩm gửi lên thoả mãn trong csdl thì bắt đầu tính tổng tiền, một khi khác là báo lỗi
+                if (cartDetail.getProduct().getId() == product.get().getId()) {
+                    Integer discountFromProduct = Integer.parseInt(((int)product.get().getPrice()*product.get().getDiscountPercent()/100)+"");
+                    OrderDetail.OrderDetailId newId = new OrderDetail.OrderDetailId(paymentDto.getIdUser(), product.get().getId());
+                    OrderDetail newOrder = new OrderDetail(newId, product.get().getPrice(), discountFromProduct, cartDetail.getQuantity());
+                    orderDetailList.add(newOrder);
+                    discountProduct += discountFromProduct;
+                    total += cartDetail.getQuantity() * product.get().getPrice() - discountFromProduct;
+                } else {
+                    throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
+                }
             }
-
-            Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetail().getId());
-            if (couponDetail.get().getIdUser() != paymentDto.getIdUser() || couponDetail.get().getStatus() == 0) {
-                throw new IllegalArgumentException("Khuyến mãi hết hạn hoặc không đúng!");
-            }
-            Date date = couponDetail.get().getEndTime();
+             System.out.println("Hello em");
             Date now = new Date();
-            boolean isAfter = date.after(now);
-            if (!isAfter) {
-                throw new IllegalArgumentException("Khuyến mãi hết hạn!");
+            Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetailDto().getId());
+            if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 0) {
+                Date date = couponDetail.get().getEndTime();
+                boolean isAfter = date.after(now);
+                if (!isAfter) {
+                    throw new IllegalArgumentException("Khuyến mãi hết hạn!");
+                }
+                discountCoupon = Integer.parseInt(((int)total * couponDetail.get().getCoupon().getDiscountPercent()/100)+"");
+                total -= discountCoupon;
+            } else {
+                throw new IllegalArgumentException("Khuyến mãi không đúng!");
             }
 
-           Integer discountCoupon = sum * couponDetail.get().getCoupon().getDiscountPercent() / 100;
-            sum -= discountCoupon;
-            Integer point = sum / 1000;
+            point = Integer.parseInt(((int)total*1/1000) + "");
 
-            Optional<User> user = userRepository.findById(paymentDto.getIdUser());
-            User savedUser = user.get();
+            Optional<User> userDb = userRepository.findById(paymentDto.getIdUser());
+            if (!userDb.isPresent()) {
+                throw new IllegalArgumentException("User lỗi!");
+            }
+            User savedUser = userDb.get();
 
             Orders order = new Orders();
             String code = savedUser.getId()+""+now.getTime();
             order.setCode("MDH"+code.hashCode()+"");
             order.setIdUser(paymentDto.getIdUser());
             order.setDiscountCoupon(discountCoupon);
+            order.setDiscountProduct(discountProduct);
             order.setOrderTime(now);
             order.setPoint(point);
-            order.setNote(paymentDto.getNote());
-//            order.setPaymentMethod(paymentDto.getPaymentMethod());
-            order.setStatus(1);
+            order.setNote(paymentDto.getOrder().getNote());
+            order.setTotal(total);
+            order.setPaymentMethod(paymentDto.getOrder().getPaymentMethod());
+            order.setUserAddress(paymentDto.getOrder().getUserAddress());
+            if (paymentDto.equals("COD")) {
+                order.setStatus(1);
+            } else if (paymentDto.equals("MOMO")) {
+                order.setStatus(2);
+            }
             order = orderRepository.save(order);
 
-            List<Product> productList = new ArrayList<>();
+            // Lưu lại cartdetail
+            for (CartDetailDto cartDetail : paymentDto.getOrderDetailDtoList()) {
+                Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
+                if (!product.isPresent() || cartDetail.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
+                    throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
+                }
+                // Xoá sản phẩm trong cart detail
+                if (cartDetail.getProduct().getId() == product.get().getId()) {
+                    CartDetail.CartDetailId newId = new CartDetail.CartDetailId(paymentDto.getIdUser(), product.get().getId());
+                    cartDetailRepository.deleteById(newId);
+                } else {
+                    throw new IllegalArgumentException("Sản phẩm không tồn tại " + GsonUtil.gI().toJson(product.get()));
+                }
+            }
 
+            // Lưu lại số lượng sản phẩm
+            List<Product> productList = new ArrayList<>();
             for (CartDetail cartDetail : cartDetailList) {
                 Optional<Product> product = productRepository.findById(cartDetail.getId().getIdProduct());
                 product.get().setQuantity(product.get().getQuantity() - cartDetail.getQuantity());
                 productList.add(product.get());
-//                orderDetailRepository.saveCustome(order.getId(), product.get().getId(), cartDetail.getDiscountPrice(), cartDetail.getQuantity());
             }
             productRepository.saveAll(productList);
 
-            CouponDetail savedCoupon = couponDetail.get();
-            savedCoupon.setIdOrder(order.getId());
-            savedCoupon.setStatus(0);
-            couponDetailRepository.save(savedCoupon);
-            
+            // Lưu lại trạng thái coupon
+            if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 0) {
+                CouponDetail savedCoupon = couponDetail.get();
+                savedCoupon.setIdOrder(order.getId());
+                savedCoupon.setStatus(0);
+                couponDetailRepository.save(savedCoupon);
+
+            }
+
+            // Lưu lại điểm người dùng
             savedUser.setPoint(savedUser.getPoint()+order.getPoint());
             userRepository.save(savedUser);
 
             return ConvertUtil.gI().toDto(order, OrderDto.class);
     }
-    @Transactional
-    @Override
-    public OrderDto saveWithOrderDetail(PaymentDto paymentDto) {
-        Integer sum = 0;
-        for (OrderDetailDto orderDetailDto : paymentDto.getOrderDetailDtoList()) {
-            Optional<Product> product = productRepository.findById(orderDetailDto.getIdProduct());
-            orderDetailDto.setIdOrder(null);
-            orderDetailDto.setDiscountPrice(Integer.parseInt(product.get().getPrice() * product.get().getDiscountPercent() / 100 + ""));
-            if (!product.isPresent() || orderDetailDto.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
-                throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
+
+
+    private List<OrderDetail> createOrderDetails(PaymentDto paymentDto, Integer discountProduct) {
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for (CartDetailDto cartDetail : paymentDto.getOrderDetailDtoList()) {
+            Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
+            if (!product.isPresent()) {
+                throw new IllegalArgumentException("Sản phẩm không tồn tại " + GsonUtil.gI().toJson(cartDetail.getProduct()));
             }
-            sum += orderDetailDto.getQuantity() * product.get().getPrice() - orderDetailDto.getDiscountPrice();
+            Integer discountFromProduct = Integer.parseInt(((int)product.get().getPrice()*product.get().getDiscountPercent()/100)+"");
+            OrderDetail.OrderDetailId newId = new OrderDetail.OrderDetailId(paymentDto.getIdUser(), product.get().getId());
+            OrderDetail newOrder = new OrderDetail(newId, product.get().getPrice(), discountFromProduct, cartDetail.getQuantity());
+            orderDetails.add(newOrder);
         }
-
-        Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetail().getId());
-        if (couponDetail.get().getIdUser() != paymentDto.getIdUser() || couponDetail.get().getStatus() == 0) {
-            throw new IllegalArgumentException("Khuyến mãi hết hạn hoặc không đúng!");
-        }
-        Date date = couponDetail.get().getEndTime();
-        Date now = new Date();
-        boolean isAfter = date.after(now);
-        if (!isAfter) {
-            throw new IllegalArgumentException("Khuyến mãi hết hạn!");
-        }
-
-        Integer discountCoupon = sum * couponDetail.get().getCoupon().getDiscountPercent() / 100;
-        sum -= discountCoupon;
-        Integer point = sum / 1000;
-
-        Optional<User> user = userRepository.findById(paymentDto.getIdUser());
-        User savedUser = user.get();
-
-        Orders order = new Orders();
-        String code = savedUser.getId()+now.getTime()+"";
-        order.setCode("MDH"+code.hashCode()+"");
-        order.setIdUser(paymentDto.getIdUser());
-        order.setDiscountCoupon(discountCoupon);
-        order.setOrderTime(now);
-        order.setPoint(point);
-        order.setNote(paymentDto.getNote());
-//        order.setPaymentMethod(paymentDto.getPaymentMethod());
-        order.setStatus(1);
-        order = orderRepository.save(order);
-
-        List<Product> productList = new ArrayList<>();
-
-        for (OrderDetailDto orderDetailDto : paymentDto.getOrderDetailDtoList()) {
-            Optional<Product> product = productRepository.findById(orderDetailDto.getIdProduct());
-            product.get().setQuantity(product.get().getQuantity() - orderDetailDto.getQuantity());
-            productList.add(product.get());
-            orderDetailRepository.saveCustome(order.getId(), product.get().getId(), orderDetailDto.getDiscountPrice(), orderDetailDto.getQuantity());
-        }
-        productRepository.saveAll(productList);
-
-        CouponDetail savedCoupon = couponDetail.get();
-        savedCoupon.setIdOrder(order.getId());
-        savedCoupon.setStatus(0);
-        couponDetailRepository.save(savedCoupon);
-
-        savedUser.setPoint(savedUser.getPoint()+order.getPoint());
-        userRepository.save(savedUser);
-
-        return ConvertUtil.gI().toDto(order, OrderDto.class);
+        return orderDetails;
     }
+
+
+
     @Override
     public List<OrderDto> findByIdUser(Integer id) {
         List<Orders> ordersList = orderRepository.findByIdUser(id);
@@ -186,6 +184,11 @@ public class OrderServiceImpl implements OrderService {
                 .filter(order -> order.getStatus() != 0) // Filter out orderes with status 0
                 .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDto saveWithOrderDetail(PaymentDto paymentDto) {
+        return null;
     }
 
 

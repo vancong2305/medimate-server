@@ -59,10 +59,11 @@ public class OrderController {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             paymentDto.setIdUser(user.getId());
-            if (paymentDto.getPaymentMethod() == 1) {
-
+            if (paymentDto.getOrder().getPaymentMethod().equalsIgnoreCase("COD")) {
+                OrderDto savedOrder = orderService.save(paymentDto);
+            } else if (paymentDto.getOrder().getPaymentMethod().equalsIgnoreCase("MOMO")) {
+                OrderDto savedOrder = orderService.save(paymentDto);
             }
-            OrderDto savedOrder = orderService.save(paymentDto);
             return ResponseUtil.success();
         } catch (Exception ex) {
             return ResponseUtil.failed();

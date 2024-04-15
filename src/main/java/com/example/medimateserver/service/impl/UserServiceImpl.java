@@ -47,7 +47,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(Integer id) {
-
         return userRepository.findById(id)
                 .map(user -> ConvertUtil.gI().toDto(user, UserDto.class))
                 .orElse(null);
@@ -72,11 +71,21 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Integer id, UserDto userDto) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-
-        existingUser.setPhone(userDto.getPhone());
-        existingUser.setStatus(userDto.getStatus());
-        existingUser.setPassword(userDto.getPassword());
-
+        if (userDto.getGender() != null) {
+            existingUser.setGender(userDto.getGender());
+        }
+        if (userDto.getBirthday() != null) {
+            existingUser.setBirthday(userDto.getBirthday());
+        }
+        if (userDto.getFirstName() != null) {
+            existingUser.setFirstName(userDto.getFirstName());
+        }
+        if (userDto.getLastName() != null) {
+            existingUser.setLastName(userDto.getLastName());
+        }
+        if (userDto.getImage() != null) {
+            existingUser.setImage(userDto.getImage());
+        }
         User updatedCategory = userRepository.save(existingUser);
         return ConvertUtil.gI().toDto(updatedCategory, UserDto.class);
     }
