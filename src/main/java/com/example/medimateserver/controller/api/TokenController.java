@@ -31,9 +31,9 @@ public class TokenController {
                 return new ResponseEntity<>(true, HttpStatus.OK);
             } else {
                 System.out.println("Vào đây");
-                return new ResponseEntity<>(false, HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(false, HttpStatus.UNAUTHORIZED);
             }
-        } catch (JwtException e) {
+        } catch (Exception ex) {
             // Xử lý lỗi token không hợp lệ
             return new ResponseEntity<>(false, HttpStatus.UNAUTHORIZED);
         }

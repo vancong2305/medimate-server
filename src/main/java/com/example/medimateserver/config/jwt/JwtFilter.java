@@ -51,6 +51,10 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (request.getServletPath().contains("/api/token/check")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             // Xác thực user
