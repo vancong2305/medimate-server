@@ -105,9 +105,9 @@ public class CartDetailController {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
-                cartDetailDto.setUser(user);
-                cartDetailService.updateCartDetail(cartDetailDto);
-                return ResponseUtil.success();
+            cartDetailDto.setUser(user);
+            cartDetailService.updateCartDetail(cartDetailDto);
+            return ResponseUtil.success();
         } catch (Exception ex) {
             System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();

@@ -92,7 +92,7 @@ public class CartDetailServiceImpl implements CartDetailService {
 
     @Override
     public void updateCartDetail(CartDetailDto cartDetailDto) {
-        CartDetail.CartDetailId id = new CartDetail.CartDetailId(cartDetailDto.getUser().getId(), cartDetailDto.getUser().getId());
+        CartDetail.CartDetailId id = new CartDetail.CartDetailId(cartDetailDto.getUser().getId(), cartDetailDto.getProduct().getId());
 
         Optional<Product> productOptional = productRepository.findById(id.getIdProduct());
         Optional<User> userOptional = userRepository.findById(id.getIdUser()); // Sửa id.getIdUser()
@@ -105,6 +105,7 @@ public class CartDetailServiceImpl implements CartDetailService {
             Optional<CartDetail> cartDetailOptional = cartDetailRepository.findById(id);
 
             // Nếu chi tiết giỏ hàng đã tồn tại, cập nhật số lượng
+            System.out.println("123");
             if (cartDetailOptional.isPresent()) {
                 // Nếu số lượng <= 0 xoá luôn
                 if (cartDetailDto.getQuantity() <= 0) {
@@ -122,8 +123,10 @@ public class CartDetailServiceImpl implements CartDetailService {
                     cartDetailRepository.save(uCartDetail);
                     return;
                 }
+                System.out.println("321");
+            } else {
+                throw new IllegalArgumentException("Sai lỗi 1");
             }
-            throw new IllegalArgumentException("Sai lỗi 1");
         } else {
             throw new IllegalArgumentException("Sai lỗi 2");
         }
