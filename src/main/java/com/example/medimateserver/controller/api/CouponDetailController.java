@@ -43,8 +43,7 @@ public class CouponDetailController {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
-            OrderDto order = new OrderDto();
-            couponDetailDto.setIdOrder(null);
+            couponDetailDto.setIdUser(user.getId());
             couponDetailService.save(couponDetailDto);
             return ResponseUtil.success();
         } catch (Exception ex) {

@@ -14,7 +14,7 @@ import java.util.Date;
 public class CouponDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCoupon;
+    private Integer id;
     @Column(name = "id_user")
     private Integer idUser;
     @Column(name = "id_oder")

@@ -56,16 +56,15 @@ public class CouponDetailServiceImpl implements CouponDetailService {
     @Transactional // Important for consistency
     public CouponDetailDto save(CouponDetailDto couponDetailDto) {
         Optional<User> userDto = userRepository.findById(couponDetailDto.getIdUser());
-
-        if (userDto.isEmpty()) {
+        if (!userDto.isPresent()) {
             throw new IllegalArgumentException("Người dùng không hợp lệ");
         }
 
         Optional<Coupon> couponDto = couponRepository.findById(couponDetailDto.getCoupon().getId());
-        if (couponDto == null) {
+        if (!couponDto.isPresent()) {
             throw new IllegalArgumentException("Không tìm thấy phiếu giảm giá này");
         }
-
+        Coupon coupon = couponDto.get(); // Unwrap User
         User user = userDto.get(); // Unwrap User
 
         // Ensure sufficient points
@@ -79,7 +78,7 @@ public class CouponDetailServiceImpl implements CouponDetailService {
 
         // Create CouponDetail
         CouponDetail couponDetail = ConvertUtil.gI().toEntity(couponDetailDto, CouponDetail.class);
-        couponDetail.setIdCoupon(couponDto.get().getId()); // Ensure ID is set
+        couponDetail.setCoupon(coupon); // Ensure ID is set
         couponDetail = couponDetailRepository.save(couponDetail);
 
         Date nowDate = new Date();
