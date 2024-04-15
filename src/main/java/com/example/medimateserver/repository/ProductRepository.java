@@ -56,8 +56,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "WHERE (:idCategory IS NULL OR p.category.id = :idCategory) " +
             "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
-            "AND ( (:keySearch IS NULL OR p.name LIKE CONCAT('%', :keySearch, '%')) " +
-            "OR (:keySearch IS NOT NULL OR p.category.name LIKE CONCAT('%', :keySearch, '%')) )"
+            "AND (:keySearch IS NULL OR p.name LIKE CONCAT('%', :keySearch, '%')) "
     )
     List<Product> findWithFilterTraditional(
             @Param("idCategory") Integer idCategory,
