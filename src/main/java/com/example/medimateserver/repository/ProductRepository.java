@@ -13,17 +13,18 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    @Query("SELECT p FROM Product p WHERE " +
-            "(:idCategory IS NULL OR p.category.id = :idCategory) AND " +
-            "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
-            "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
-            "(:keySearch IS NULL OR p.name LIKE CONCAT('%', :keySearch, '%'))")
-    Page<Product> findWithFilter(
-            @Param("idCategory") Integer idCategory,
-            @Param("minPrice") Integer minPrice,
-            @Param("maxPrice")Integer maxPrice,
-            @Param("keySearch") String keySearch,
-            Pageable pageable);
+//    @Query("SELECT p FROM Product p WHERE " +
+//            "(:idCategory IS NULL OR p.category.id = :idCategory) AND " +
+//            "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
+//            "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
+//            "(:keySearch IS NULL OR (p.name LIKE CONCAT('%', :keySearch, '%')))"
+//    )
+//    Page<Product> findWithFilter(
+//            @Param("idCategory") Integer idCategory,
+//            @Param("minPrice") Integer minPrice,
+//            @Param("maxPrice")Integer maxPrice,
+//            @Param("keySearch") String keySearch,
+//            Pageable pageable);
 
 //    @Query("SELECT p FROM Product p " +
 //            "WHERE ((:idCategory IS NULL OR p.category.id = :idCategory) " +
@@ -43,14 +44,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 //            @Param("pageSize") Integer pageSize,
 //            @Param("offset") Integer offset);
 
-    @Query("SELECT p FROM Product p " +
-            "WHERE ((:idCategory IS NULL OR p.category.id = :idCategory) " +
+    @Query("SELECT DISTINCT p FROM Product p " +
+            "WHERE (:idCategory IS NULL OR p.category.id = :idCategory) " +
             "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
-            "AND (:keySearch IS NULL OR p.name LIKE CONCAT('%', :keySearch, '%'))) " +
-            "OR ((:keySearch IS NULL OR p.category.name LIKE CONCAT('%', :keySearch, '%')) " +
-            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
-            "AND (:maxPrice IS NULL OR p.price <= :maxPrice)) ")
+            "AND ( (:keySearch IS NULL OR p.name LIKE CONCAT('%', :keySearch, '%')) " +
+            "OR (:keySearch IS NOT NULL AND CAST(:keySearch AS int) IS NOT NULL AND p.category.id = CAST(:keySearch AS int)) )"
+    )
     List<Product> findWithFilterTraditional(
             @Param("idCategory") Integer idCategory,
             @Param("minPrice") Integer minPrice,

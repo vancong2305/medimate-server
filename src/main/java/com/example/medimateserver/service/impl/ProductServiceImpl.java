@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDto> findWithFilter(ProductFilter productFilter) {
         Pageable pageable = PageRequest.of(productFilter.getCurrentPage()-1, 10);
-        Page<Product> productList = productRepository.findWithFilter(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch(), pageable);
+        List<Product> productList = productRepository.findWithFilterTraditional(productFilter.getIdCategory(),productFilter.getMinPrice(), productFilter.getMaxPrice(), productFilter.getKeySearch());
         return productList.stream()
                 .map(product -> ConvertUtil.gI().toDto(product, ProductDto.class))
                 .collect(Collectors.toList());
