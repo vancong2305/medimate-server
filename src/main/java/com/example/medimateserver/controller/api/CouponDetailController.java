@@ -1,11 +1,9 @@
 package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
-import com.example.medimateserver.dto.CouponDetailDto;
-import com.example.medimateserver.dto.CouponDto;
-import com.example.medimateserver.dto.TokenDto;
-import com.example.medimateserver.dto.UserDto;
+import com.example.medimateserver.dto.*;
 import com.example.medimateserver.entity.CouponDetail;
+import com.example.medimateserver.entity.Orders;
 import com.example.medimateserver.service.CouponDetailService;
 import com.example.medimateserver.service.TokenService;
 import com.example.medimateserver.util.GsonUtil;
@@ -45,6 +43,7 @@ public class CouponDetailController {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            OrderDto order = new OrderDto();
             couponDetailDto.setIdOrder(null);
             couponDetailService.save(couponDetailDto);
             return ResponseUtil.success();

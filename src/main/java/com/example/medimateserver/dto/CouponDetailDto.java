@@ -9,12 +9,9 @@ import java.util.Date;
 public class CouponDetailDto {
     private Integer id;
     private Integer idUser;
-    private Integer idCoupon;
     private Integer idOrder;
     private Date startTime;
     private Date endTime;
     private Integer status;
     private CouponDto coupon;
-    private OrderDto order;
-    private UserDto user;
 }

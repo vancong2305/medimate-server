@@ -59,7 +59,7 @@ public class CouponDetailServiceImpl implements CouponDetailService {
             throw new IllegalArgumentException("Người dùng không hợp lệ");
         }
 
-        Optional<Coupon> couponDto = couponRepository.findById(couponDetailDto.getIdCoupon());
+        Optional<Coupon> couponDto = couponRepository.findById(couponDetailDto.getCoupon().getId());
         if (couponDto == null) {
             throw new IllegalArgumentException("Không tìm thấy phiếu giảm giá này");
         }

@@ -14,8 +14,6 @@ import java.util.Date;
 public class CouponDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @Column(name = "id_coupon")
     private Integer idCoupon;
     @Column(name = "id_user")
     private Integer idUser;
@@ -30,7 +28,4 @@ public class CouponDetail {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "id_coupon", referencedColumnName = "id", insertable = false, updatable = false)
     private Coupon coupon;
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id_user", referencedColumnName = "id", insertable = false, updatable = false)
-    private User user;
 }
