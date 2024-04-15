@@ -15,6 +15,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,6 +81,27 @@ public class CouponDetailServiceImpl implements CouponDetailService {
         CouponDetail couponDetail = ConvertUtil.gI().toEntity(couponDetailDto, CouponDetail.class);
         couponDetail.setIdCoupon(couponDto.get().getId()); // Ensure ID is set
         couponDetail = couponDetailRepository.save(couponDetail);
+
+        Date nowDate = new Date();
+        couponDetail.setStartTime(nowDate);
+
+        // Get the expiration time in days
+        Integer dayExpire = couponDto.get().getExpirationTime();
+
+        // Create a Calendar instance to manipulate dates
+        Calendar calendar = Calendar.getInstance();
+
+        // Set the calendar to the start date (nowDate)
+        calendar.setTime(nowDate);
+
+        // Add the specified number of days (dayExpire) to the calendar
+        calendar.add(Calendar.DAY_OF_MONTH, dayExpire);
+
+        // Get the date after adding the expiration days
+        Date expirationDate = calendar.getTime();
+
+        // Set the endTime of couponDetail to the calculated expiration date
+        couponDetail.setEndTime(expirationDate);
 
         return ConvertUtil.gI().toDto(couponDetail, CouponDetailDto.class);
     }
