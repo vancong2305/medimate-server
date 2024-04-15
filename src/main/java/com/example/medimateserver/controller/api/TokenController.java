@@ -24,13 +24,13 @@ public class TokenController {
     @PostMapping("/check")
     public ResponseEntity<Boolean> checkToken(@RequestBody TokenDto token) {
         try {
-            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(token.getAccessToken()), UserDto.class);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(token.getRefreshToken()), UserDto.class);
             TokenDto tokenDto = tokenService.findById(user.getId());
-            boolean check = JwtProvider.gI().verifyToken(token.getAccessToken(), tokenDto);
-
+            boolean check = JwtProvider.gI().verifyRefreshToken(token.getRefreshToken(), tokenDto);
             if (check) {
                 return new ResponseEntity<>(true, HttpStatus.OK);
             } else {
+                System.out.println("Vào đây");
                 return new ResponseEntity<>(false, HttpStatus.FORBIDDEN);
             }
         } catch (JwtException e) {
