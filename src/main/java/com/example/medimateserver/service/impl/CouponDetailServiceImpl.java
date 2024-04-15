@@ -68,18 +68,17 @@ public class CouponDetailServiceImpl implements CouponDetailService {
         User user = userDto.get(); // Unwrap User
 
         // Ensure sufficient points
-        if (user.getPoint() < couponDto.get().getPoint()) {
+        if (user.getPoint() - coupon.getPoint() < 0) {
             throw new IllegalArgumentException("Điểm người dùng không đủ");
         }
 
         // Deduct points
-        user.setPoint(user.getPoint() - couponDto.get().getPoint());
+        user.setPoint(user.getPoint() - coupon.getPoint());
         userRepository.save(user); // Update user's points
 
         // Create CouponDetail
         CouponDetail couponDetail = ConvertUtil.gI().toEntity(couponDetailDto, CouponDetail.class);
         couponDetail.setCoupon(coupon); // Ensure ID is set
-        couponDetail = couponDetailRepository.save(couponDetail);
 
         Date nowDate = new Date();
         couponDetail.setStartTime(nowDate);
@@ -101,7 +100,8 @@ public class CouponDetailServiceImpl implements CouponDetailService {
 
         // Set the endTime of couponDetail to the calculated expiration date
         couponDetail.setEndTime(expirationDate);
-
+        couponDetail.setStatus(1);
+        couponDetail = couponDetailRepository.save(couponDetail);
         return ConvertUtil.gI().toDto(couponDetail, CouponDetailDto.class);
     }
 

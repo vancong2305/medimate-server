@@ -26,6 +26,6 @@ public class CouponDetail {
     @Column(name = "status")
     private Integer status;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id_coupon", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "id_coupon", referencedColumnName = "id")
     private Coupon coupon;
 }
