@@ -58,6 +58,7 @@ public class OrderServiceImpl implements OrderService {
 
             // Tinh toan va kiem tra du lieu gui len
             List<CartDetail> cartDetailList = cartDetailRepository.findAll();
+
             for (CartDetailDto cartDetail : paymentDto.getCartDetailDtoList()) {
                 Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
                 CartDetail.CartDetailId newId = new CartDetail.CartDetailId(paymentDto.getIdUser(), product.get().getId());
@@ -66,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
                     throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
                 }
                 // Sản phẩm gửi lên thoả mãn trong csdl thì bắt đầu tính tổng tiền, một khi khác là báo lỗi
-                if (cartDetail.getProduct().getId() == product.get().getId()) {
+                if (cartDetail.getProduct().getId().toString().equals(product.get().getId().toString())) {
                     Integer discountFromProduct = Integer.parseInt(((int) product.get().getPrice()*product.get().getDiscountPercent()/100)+"");
                     discountProduct += discountFromProduct;
                     total += cartDetail.getQuantity() * product.get().getPrice() - discountFromProduct;
@@ -77,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
 
             // Neu co khuyen mai thi tinh tien giam tu khuyen mai k thi thoi
             Date now = new Date();
-            if (paymentDto.getCouponDetailId() !=null) {
+            if (paymentDto.getCouponDetailId() != null) {
                 Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetailId());
                 if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 1) {
                     Date date = couponDetail.get().getEndTime();
@@ -124,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
                     throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
                 }
                 // Xoá sản phẩm trong cart detail và tạo orderDetail
-                if (cartDetail.getProduct().getId() == product.get().getId()) {
+                if (cartDetail.getProduct().getId().toString().equals(product.get().getId().toString())) {
                     CartDetail.CartDetailId newId = new CartDetail.CartDetailId(paymentDto.getIdUser(), product.get().getId());
                     cartDetailRepository.deleteById(newId);
                     Integer discountFromProduct = Integer.parseInt(((int) product.get().getPrice()*product.get().getDiscountPercent()/100)+"");
