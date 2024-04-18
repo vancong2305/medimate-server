@@ -56,30 +56,28 @@ public class OrderServiceImpl implements OrderService {
             Integer discountCoupon = 0;
             Integer point = 0;
 
-            // Tạo order detail dựa trên cart item gửi lên
-            List<OrderDetail> orderDetailList = new ArrayList<>();
+            // Tinh toan va kiem tra du lieu gui len
             List<CartDetail> cartDetailList = cartDetailRepository.findAll();
-            for (CartDetailDto cartDetail : paymentDto.getOrderDetailDtoList()) {
+            for (CartDetailDto cartDetail : paymentDto.getCartDetailDtoList()) {
                 Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
-                if (!product.isPresent() || cartDetail.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
+                CartDetail.CartDetailId newId = new CartDetail.CartDetailId(paymentDto.getIdUser(), product.get().getId());
+                Optional<CartDetail> cartDetail1 = cartDetailRepository.findById(newId);
+                if (!cartDetail1.isPresent() || !product.isPresent() || cartDetail.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
                     throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
                 }
                 // Sản phẩm gửi lên thoả mãn trong csdl thì bắt đầu tính tổng tiền, một khi khác là báo lỗi
                 if (cartDetail.getProduct().getId() == product.get().getId()) {
                     Integer discountFromProduct = Integer.parseInt(((int) product.get().getPrice()*product.get().getDiscountPercent()/100)+"");
-                    OrderDetail.OrderDetailId newId = new OrderDetail.OrderDetailId(paymentDto.getIdUser(), product.get().getId());
-                    OrderDetail newOrder = new OrderDetail(newId, product.get().getPrice(), discountFromProduct, cartDetail.getQuantity());
-                    orderDetailList.add(newOrder);
                     discountProduct += discountFromProduct;
                     total += cartDetail.getQuantity() * product.get().getPrice() - discountFromProduct;
                 } else {
                     throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
                 }
             }
-             System.out.println("Hello em");
-// Neu co khuyen mai thi tinh tien giam tu khuyen mai k thi thoi
+
+            // Neu co khuyen mai thi tinh tien giam tu khuyen mai k thi thoi
             Date now = new Date();
-            Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetailDto().getId());
+            Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetailId());
             if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 1) {
                 Date date = couponDetail.get().getEndTime();
                 // Kiểm tra xem ngày hiện tại có sau ngày hết hạn k, nếu sau, trả về true, lỗi
@@ -118,18 +116,23 @@ public class OrderServiceImpl implements OrderService {
             }
             order = orderRepository.save(order);
 
+
             // Lưu lại cartdetail
-            for (CartDetailDto cartDetail : paymentDto.getOrderDetailDtoList()) {
+            for (CartDetailDto cartDetail : paymentDto.getCartDetailDtoList()) {
                 Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
                 if (!product.isPresent() || cartDetail.getQuantity() > product.get().getQuantity() && product.get().getStatus() == 0) {
                     throw new IllegalArgumentException("Sản phẩm không đủ hoặc không bán nữa " + GsonUtil.gI().toJson(product.get()));
                 }
-                // Xoá sản phẩm trong cart detail
+                // Xoá sản phẩm trong cart detail và tạo orderDetail
                 if (cartDetail.getProduct().getId() == product.get().getId()) {
                     CartDetail.CartDetailId newId = new CartDetail.CartDetailId(paymentDto.getIdUser(), product.get().getId());
                     cartDetailRepository.deleteById(newId);
-                } else {
-                    throw new IllegalArgumentException("Sản phẩm không tồn tại " + GsonUtil.gI().toJson(product.get()));
+                    Integer discountFromProduct = Integer.parseInt(((int) product.get().getPrice()*product.get().getDiscountPercent()/100)+"");
+                    OrderDetail.OrderDetailId newOrderDetailId = new OrderDetail.OrderDetailId(order.getId(), product.get().getId());
+                    OrderDetail newOrder = new OrderDetail(newOrderDetailId, product.get().getPrice(), discountFromProduct, cartDetail.getQuantity());
+                    newOrder.setOrders(order);
+                    newOrder.setProduct(product.get());
+                    orderDetailRepository.save(newOrder);
                 }
             }
 
@@ -143,7 +146,7 @@ public class OrderServiceImpl implements OrderService {
             productRepository.saveAll(productList);
 
             // Lưu lại trạng thái coupon
-            if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 0) {
+            if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 1) {
                 CouponDetail savedCoupon = couponDetail.get();
                 savedCoupon.setIdOrder(order.getId());
                 savedCoupon.setStatus(0);
@@ -160,7 +163,7 @@ public class OrderServiceImpl implements OrderService {
 
     private List<OrderDetail> createOrderDetails(PaymentDto paymentDto, Integer discountProduct) {
         List<OrderDetail> orderDetails = new ArrayList<>();
-        for (CartDetailDto cartDetail : paymentDto.getOrderDetailDtoList()) {
+        for (CartDetailDto cartDetail : paymentDto.getCartDetailDtoList()) {
             Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
             if (!product.isPresent()) {
                 throw new IllegalArgumentException("Sản phẩm không tồn tại " + GsonUtil.gI().toJson(cartDetail.getProduct()));

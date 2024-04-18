@@ -55,6 +55,8 @@ public class OrderDetail {
         private Integer idProduct;
 
         public OrderDetailId(Integer idOrder, Integer idProduct) {
+            this.idOrder = idOrder;
+            this.idProduct = idProduct;
         }
 
         public Integer getIdOrder() {
