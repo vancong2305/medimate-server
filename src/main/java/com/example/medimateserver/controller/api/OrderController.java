@@ -64,8 +64,8 @@ public class OrderController {
                 OrderDto savedOrder = orderService.save(paymentDto);
             } else if (paymentDto.getOrder().getPaymentMethod().contains("MOMO")) {
                 OrderDto savedOrder = orderService.save(paymentDto);
-                MomoCreateResponse momoCreateResponse = GsonUtil.gI().fromJson(getPayUrl(savedOrder), MomoCreateResponse.class);
-                return ResponseUtil.success(momoCreateResponse.getPayUrl());
+                System.out.println(getPayUrl(savedOrder));
+                return ResponseUtil.successLink(getPayUrl(savedOrder));
             }
             return ResponseUtil.success();
         } catch (Exception ex) {
@@ -76,9 +76,9 @@ public class OrderController {
     public String getPayUrl(OrderDto orderDto) throws Exception {
         MomoCreateRequest.getInstance().setAmount(orderDto.getTotal());
         MomoCreateRequest.getInstance().setRequestId(String.valueOf(System.currentTimeMillis()));
-        MomoCreateRequest.getInstance().setOrderId(orderDto.getId().toString());
+        MomoCreateRequest.getInstance().setOrderId(String.valueOf(System.currentTimeMillis()));
         MomoCreateRequest.getInstance().setStartTime(System.currentTimeMillis());
-        MomoCreateRequest.getInstance().setOrderInfo(orderDto.getCode() + "");
+        MomoCreateRequest.getInstance().setOrderInfo(orderDto.getId() + "");
         String requestRawData = new StringBuilder()
                 .append(Parameter.ACCESS_KEY).append("=").append(Parameter.DEV_ACCESS_KEY).append("&")
                 .append(Parameter.AMOUNT).append("=").append(Long.toString(MomoCreateRequest.getInstance().getAmount())).append("&")
@@ -94,7 +94,8 @@ public class OrderController {
         String signRequest = Encoder.signHmacSHA256(requestRawData, Parameter.DEV_SECRET_KEY);
         MomoCreateRequest.getInstance().setSignature(signRequest);
         String payload = GsonUtil.gI().toJson(MomoCreateRequest.getInstance());
-        return sendRequest(payload);
+        MomoCreateResponse momoCreateResponse = GsonUtil.gI().fromJson(sendRequest(payload), MomoCreateResponse.class);
+        return momoCreateResponse.getPayUrl();
     }
 
     public static String sendRequest(String payload) throws IOException {

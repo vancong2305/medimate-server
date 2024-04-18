@@ -1,9 +1,13 @@
 package com.example.medimateserver.util;
 
 import com.example.medimateserver.dto.ResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResponseUtil {
 
@@ -14,6 +18,13 @@ public class ResponseUtil {
     }
     public static ResponseEntity<?> success(String mess) {
         return new ResponseEntity<>(mess, HttpStatus.OK);
+    }
+
+    public static ResponseEntity<?> successLink(String mess) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> jsonData = new HashMap<>();
+        jsonData.put("urlPayment", mess); // Thay thế bằng URL thực tế
+        return new ResponseEntity<>(jsonData, HttpStatus.OK);
     }
 
     public static ResponseEntity<?> failed() {
