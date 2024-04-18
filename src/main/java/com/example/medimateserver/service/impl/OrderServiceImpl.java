@@ -140,8 +140,8 @@ public class OrderServiceImpl implements OrderService {
 
             // Lưu lại số lượng sản phẩm
             List<Product> productList = new ArrayList<>();
-            for (CartDetail cartDetail : cartDetailList) {
-                Optional<Product> product = productRepository.findById(cartDetail.getId().getIdProduct());
+            for (CartDetailDto cartDetail : paymentDto.getCartDetailDtoList()) {
+                Optional<Product> product = productRepository.findById(cartDetail.getProduct().getId());
                 product.get().setQuantity(product.get().getQuantity() - cartDetail.getQuantity());
                 productList.add(product.get());
             }
