@@ -77,16 +77,18 @@ public class OrderServiceImpl implements OrderService {
 
             // Neu co khuyen mai thi tinh tien giam tu khuyen mai k thi thoi
             Date now = new Date();
-            Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetailId());
-            if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 1) {
-                Date date = couponDetail.get().getEndTime();
-                // Kiểm tra xem ngày hiện tại có sau ngày hết hạn k, nếu sau, trả về true, lỗi
-                boolean isAfter = now.after(date);
-                if (isAfter) {
-                    throw new IllegalArgumentException("Khuyến mãi hết hạn!");
+            if (paymentDto.getCouponDetailId() !=null) {
+                Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetailId());
+                if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 1) {
+                    Date date = couponDetail.get().getEndTime();
+                    // Kiểm tra xem ngày hiện tại có sau ngày hết hạn k, nếu sau, trả về true, lỗi
+                    boolean isAfter = now.after(date);
+                    if (isAfter) {
+                        throw new IllegalArgumentException("Khuyến mãi hết hạn!");
+                    }
+                    discountCoupon = Integer.parseInt(((int)total * couponDetail.get().getCoupon().getDiscountPercent()/100)+"");
+                    total -= discountCoupon;
                 }
-                discountCoupon = Integer.parseInt(((int)total * couponDetail.get().getCoupon().getDiscountPercent()/100)+"");
-                total -= discountCoupon;
             }
 
             point = Integer.parseInt(((int)total*1/1000) + "");
@@ -109,9 +111,9 @@ public class OrderServiceImpl implements OrderService {
             order.setTotal(total);
             order.setPaymentMethod(paymentDto.getOrder().getPaymentMethod());
             order.setUserAddress(paymentDto.getOrder().getUserAddress());
-            if (paymentDto.getOrder().getPaymentMethod().equals("COD")) {
+            if (paymentDto.getOrder().getPaymentMethod().contains("COD")) {
                 order.setStatus(1);
-            } else if (paymentDto.getOrder().getPaymentMethod().equals("MOMO")) {
+            } else if (paymentDto.getOrder().getPaymentMethod().contains("MOMO")) {
                 order.setStatus(2);
             }
             order = orderRepository.save(order);
@@ -146,11 +148,14 @@ public class OrderServiceImpl implements OrderService {
             productRepository.saveAll(productList);
 
             // Lưu lại trạng thái coupon
-            if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 1) {
-                CouponDetail savedCoupon = couponDetail.get();
-                savedCoupon.setIdOrder(order.getId());
-                savedCoupon.setStatus(0);
-                couponDetailRepository.save(savedCoupon);
+            if (paymentDto.getCouponDetailId() !=null) {
+                Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetailId());
+                if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 1) {
+                    CouponDetail savedCoupon = couponDetail.get();
+                    savedCoupon.setIdOrder(order.getId());
+                    savedCoupon.setStatus(0);
+                    couponDetailRepository.save(savedCoupon);
+                }
             }
 
             // Lưu lại điểm người dùng
