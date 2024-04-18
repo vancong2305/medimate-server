@@ -2,6 +2,7 @@ package com.example.medimateserver.controller.api;
 
 import com.example.medimateserver.config.jwt.JwtProvider;
 import com.example.medimateserver.config.payment.momo.model.MomoCreateRequest;
+import com.example.medimateserver.config.payment.momo.model.MomoCreateResponse;
 import com.example.medimateserver.config.payment.momo.shared.Encoder;
 import com.example.medimateserver.config.payment.momo.shared.Parameter;
 import com.example.medimateserver.dto.*;
@@ -59,12 +60,12 @@ public class OrderController {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             paymentDto.setIdUser(user.getId());
-            if (paymentDto.getOrder().getPaymentMethod().equalsIgnoreCase("COD")) {
+            if (paymentDto.getOrder().getPaymentMethod().contains("COD")) {
                 OrderDto savedOrder = orderService.save(paymentDto);
-            } else if (paymentDto.getOrder().getPaymentMethod().equalsIgnoreCase("MOMO")) {
+            } else if (paymentDto.getOrder().getPaymentMethod().contains("MOMO")) {
                 OrderDto savedOrder = orderService.save(paymentDto);
-                String returnUser = getPayUrl(savedOrder);
-                return ResponseUtil.success(returnUser);
+                MomoCreateResponse momoCreateResponse = GsonUtil.gI().fromJson(getPayUrl(savedOrder), MomoCreateResponse.class);
+                return ResponseUtil.success(momoCreateResponse.getPayUrl());
             }
             return ResponseUtil.success();
         } catch (Exception ex) {
