@@ -63,6 +63,8 @@ public class OrderController {
                 OrderDto savedOrder = orderService.save(paymentDto);
             } else if (paymentDto.getOrder().getPaymentMethod().equalsIgnoreCase("MOMO")) {
                 OrderDto savedOrder = orderService.save(paymentDto);
+                String returnUser = getPayUrl(savedOrder);
+                return ResponseUtil.success(returnUser);
             }
             return ResponseUtil.success();
         } catch (Exception ex) {
@@ -70,11 +72,12 @@ public class OrderController {
         }
     }
 
-    public String getPayUrl(MomoCreateRequest createReq) throws Exception {
-        MomoCreateRequest.getInstance().setAmount(100000);
+    public String getPayUrl(OrderDto orderDto) throws Exception {
+        MomoCreateRequest.getInstance().setAmount(orderDto.getTotal());
         MomoCreateRequest.getInstance().setRequestId(String.valueOf(System.currentTimeMillis()));
-        MomoCreateRequest.getInstance().setOrderId(String.valueOf(System.currentTimeMillis()));
+        MomoCreateRequest.getInstance().setOrderId(orderDto.getId().toString());
         MomoCreateRequest.getInstance().setStartTime(System.currentTimeMillis());
+        MomoCreateRequest.getInstance().setOrderInfo(orderDto.getCode() + "");
         String requestRawData = new StringBuilder()
                 .append(Parameter.ACCESS_KEY).append("=").append(Parameter.DEV_ACCESS_KEY).append("&")
                 .append(Parameter.AMOUNT).append("=").append(Long.toString(MomoCreateRequest.getInstance().getAmount())).append("&")
@@ -92,6 +95,7 @@ public class OrderController {
         String payload = GsonUtil.gI().toJson(MomoCreateRequest.getInstance());
         return sendRequest(payload);
     }
+
     public static String sendRequest(String payload) throws IOException {
         URL url = new URL("https://test-payment.momo.vn/v2/gateway/api/create");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -114,7 +118,6 @@ public class OrderController {
                 responseBody += input;
             }
         }
-
         return responseBody;
     }
 

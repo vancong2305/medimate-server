@@ -66,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
                 }
                 // Sản phẩm gửi lên thoả mãn trong csdl thì bắt đầu tính tổng tiền, một khi khác là báo lỗi
                 if (cartDetail.getProduct().getId() == product.get().getId()) {
-                    Integer discountFromProduct = Integer.parseInt(((int)product.get().getPrice()*product.get().getDiscountPercent()/100)+"");
+                    Integer discountFromProduct = Integer.parseInt(((int) product.get().getPrice()*product.get().getDiscountPercent()/100)+"");
                     OrderDetail.OrderDetailId newId = new OrderDetail.OrderDetailId(paymentDto.getIdUser(), product.get().getId());
                     OrderDetail newOrder = new OrderDetail(newId, product.get().getPrice(), discountFromProduct, cartDetail.getQuantity());
                     orderDetailList.add(newOrder);
@@ -77,18 +77,18 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
              System.out.println("Hello em");
+// Neu co khuyen mai thi tinh tien giam tu khuyen mai k thi thoi
             Date now = new Date();
             Optional<CouponDetail> couponDetail = couponDetailRepository.findById(paymentDto.getCouponDetailDto().getId());
-            if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 0) {
+            if (couponDetail.isPresent() && couponDetail.get().getIdUser() == paymentDto.getIdUser() && couponDetail.get().getStatus() == 1) {
                 Date date = couponDetail.get().getEndTime();
-                boolean isAfter = date.after(now);
-                if (!isAfter) {
+                // Kiểm tra xem ngày hiện tại có sau ngày hết hạn k, nếu sau, trả về true, lỗi
+                boolean isAfter = now.after(date);
+                if (isAfter) {
                     throw new IllegalArgumentException("Khuyến mãi hết hạn!");
                 }
                 discountCoupon = Integer.parseInt(((int)total * couponDetail.get().getCoupon().getDiscountPercent()/100)+"");
                 total -= discountCoupon;
-            } else {
-                throw new IllegalArgumentException("Khuyến mãi không đúng!");
             }
 
             point = Integer.parseInt(((int)total*1/1000) + "");
@@ -111,9 +111,9 @@ public class OrderServiceImpl implements OrderService {
             order.setTotal(total);
             order.setPaymentMethod(paymentDto.getOrder().getPaymentMethod());
             order.setUserAddress(paymentDto.getOrder().getUserAddress());
-            if (paymentDto.equals("COD")) {
+            if (paymentDto.getOrder().getPaymentMethod().equals("COD")) {
                 order.setStatus(1);
-            } else if (paymentDto.equals("MOMO")) {
+            } else if (paymentDto.getOrder().getPaymentMethod().equals("MOMO")) {
                 order.setStatus(2);
             }
             order = orderRepository.save(order);
@@ -148,7 +148,6 @@ public class OrderServiceImpl implements OrderService {
                 savedCoupon.setIdOrder(order.getId());
                 savedCoupon.setStatus(0);
                 couponDetailRepository.save(savedCoupon);
-
             }
 
             // Lưu lại điểm người dùng
