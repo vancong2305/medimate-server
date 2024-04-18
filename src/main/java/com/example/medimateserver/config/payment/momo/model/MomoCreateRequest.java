@@ -30,7 +30,7 @@ public class MomoCreateRequest {
             momoCreateRequest.setOrderInfo("Pay for Medimate orders");
             momoCreateRequest.setPartnerName("test MoMo");
             momoCreateRequest.setRequestType("captureWallet");
-            momoCreateRequest.setRedirectUrl("https://google.com.vn");
+            momoCreateRequest.setRedirectUrl("myapp://payment-completed");
             momoCreateRequest.setIpnUrl("https://google.com.vn");
             momoCreateRequest.setStoreId("Medimateserver");
             momoCreateRequest.setExtraData("");
