@@ -112,7 +112,7 @@ public class OrderServiceImpl implements OrderService {
             order.setPaymentMethod(paymentDto.getOrder().getPaymentMethod());
             order.setUserAddress(paymentDto.getOrder().getUserAddress());
             if (paymentDto.getOrder().getPaymentMethod().contains("COD")) {
-                order.setStatus(1);
+                order.setStatus(2);
             } else if (paymentDto.getOrder().getPaymentMethod().contains("MOMO")) {
                 order.setStatus(2);
             }
