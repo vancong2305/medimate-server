@@ -88,6 +88,8 @@ public class OrderServiceImpl implements OrderService {
                     }
                     discountCoupon = Integer.parseInt(((int)total * couponDetail.get().getCoupon().getDiscountPercent()/100)+"");
                     total -= discountCoupon;
+                } else {
+                    throw new IllegalArgumentException("Khuyến mãi đã sử dụng hoặc khng đng!");
                 }
             }
 
@@ -111,11 +113,7 @@ public class OrderServiceImpl implements OrderService {
             order.setTotal(total);
             order.setPaymentMethod(paymentDto.getOrder().getPaymentMethod());
             order.setUserAddress(paymentDto.getOrder().getUserAddress());
-            if (paymentDto.getOrder().getPaymentMethod().contains("COD")) {
-                order.setStatus(2);
-            } else if (paymentDto.getOrder().getPaymentMethod().contains("MOMO")) {
-                order.setStatus(2);
-            }
+            order.setStatus(2);
             order = orderRepository.save(order);
 
 

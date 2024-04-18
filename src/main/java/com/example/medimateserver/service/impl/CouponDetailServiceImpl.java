@@ -47,6 +47,7 @@ public class CouponDetailServiceImpl implements CouponDetailService {
     public List<CouponDetailDto> findByUserId(Integer id) {
         List<CouponDetail> couponDetailList = couponDetailRepository.findByIdUser(id);
         return couponDetailList.stream()
+                .filter(couponDetail -> couponDetail.getStatus() != 0)
                 .map(couponDetail -> ConvertUtil.gI().toDto(couponDetail, CouponDetailDto.class))
                 .collect(Collectors.toList());
     }
