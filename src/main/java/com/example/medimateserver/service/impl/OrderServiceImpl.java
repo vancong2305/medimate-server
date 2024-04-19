@@ -43,7 +43,6 @@ public class OrderServiceImpl implements OrderService {
     }
     @Override
     public OrderDto findById(Integer id) {
-
         return orderRepository.findById(id)
                 .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))
                 .orElse(null);
@@ -184,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> findByIdUser(Integer id) {
         List<Orders> ordersList = orderRepository.findByIdUser(id);
         return ordersList
-                .stream() // Filter out orderes with status 0
+                .stream()
                 .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))
                 .collect(Collectors.toList());
     }
