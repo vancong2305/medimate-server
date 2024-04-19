@@ -184,8 +184,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> findByIdUser(Integer id) {
         List<Orders> ordersList = orderRepository.findByIdUser(id);
         return ordersList
-                .stream()
-                .filter(order -> order.getStatus() != 0) // Filter out orderes with status 0
+                .stream() // Filter out orderes with status 0
                 .map(order -> ConvertUtil.gI().toDto(order, OrderDto.class))
                 .collect(Collectors.toList());
     }
