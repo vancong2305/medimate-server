@@ -49,11 +49,13 @@ public class CouponDetailController {
         }
     }
     @PostMapping
-    public ResponseEntity<?> saveCouponDetail(HttpServletRequest request, @RequestBody CouponDetailDto couponDetailDto) {
+    public ResponseEntity<?> saveCouponDetail(HttpServletRequest request, @RequestBody CouponDto couponDto) {
         try {
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            CouponDetailDto couponDetailDto = new CouponDetailDto();
+            couponDetailDto.setCoupon(couponDto);
             couponDetailDto.setIdUser(user.getId());
             couponDetailService.save(couponDetailDto);
             return ResponseUtil.success();
