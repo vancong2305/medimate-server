@@ -52,6 +52,14 @@ public class CouponDetailServiceImpl implements CouponDetailService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<CouponDetailDto> findByUserIdSatus0(Integer id) {
+        List<CouponDetail> couponDetailList = couponDetailRepository.findByIdUser(id);
+        return couponDetailList.stream()
+                .map(couponDetail -> ConvertUtil.gI().toDto(couponDetail, CouponDetailDto.class))
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     @Transactional // Important for consistency

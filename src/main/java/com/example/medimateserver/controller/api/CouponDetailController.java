@@ -24,7 +24,6 @@ public class CouponDetailController {
     private CouponDetailService couponDetailService;
     @Autowired
     private TokenService tokenService;
-
     @GetMapping
     public ResponseEntity<?> getAllCouponDetail(HttpServletRequest request) {
         try {
@@ -32,6 +31,18 @@ public class CouponDetailController {
             tokenInformation = tokenInformation.substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             String jsons = GsonUtil.gI().toJson(couponDetailService.findByUserId(user.getId()));
+            return ResponseUtil.success(jsons);
+        } catch (Exception ex) {
+            return ResponseUtil.failed();
+        }
+    }
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllCouponDetailSatus0(HttpServletRequest request) {
+        try {
+            String tokenInformation = request.getHeader("Authorization");
+            tokenInformation = tokenInformation.substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            String jsons = GsonUtil.gI().toJson(couponDetailService.findByUserIdSatus0(user.getId()));
             return ResponseUtil.success(jsons);
         } catch (Exception ex) {
             return ResponseUtil.failed();

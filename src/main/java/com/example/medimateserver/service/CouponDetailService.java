@@ -9,11 +9,9 @@ import java.util.List;
 public interface CouponDetailService {
 
     List<CouponDetail> findAll();
-
     CouponDetail findById(Integer id);
     List<CouponDetailDto> findByUserId(Integer id);
-
-
+    List<CouponDetailDto> findByUserIdSatus0(Integer id);
     CouponDetailDto save(CouponDetailDto couponDetail);
 
     CouponDetailDto update(Integer id, CouponDetailDto couponDetail);
