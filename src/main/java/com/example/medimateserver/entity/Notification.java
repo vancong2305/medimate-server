@@ -23,6 +23,8 @@ public class Notification {
     private String content;
     @Column(name="create_time")
     private Date createTime;
+    @Column(name="image")
+    private String image;
     @Column(name = "status")
     private Integer status;
 }

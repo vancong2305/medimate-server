@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 20, 2024 lúc 02:25 PM
+-- Thời gian đã tạo: Th4 20, 2024 lúc 03:41 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.1.25
 
@@ -908,8 +908,17 @@ CREATE TABLE `notification` (
   `title` text NOT NULL,
   `content` text NOT NULL,
   `create_time` date NOT NULL,
+  `image` text NOT NULL,
   `status` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `notification`
+--
+
+INSERT INTO `notification` (`id`, `id_user`, `title`, `content`, `create_time`, `image`, `status`) VALUES
+(1, 12, 'xin chafo', '12323', '2024-04-09', '123123', 1),
+(2, 12, '12323', '213123', '2024-04-23', '12323', 1);
 
 -- --------------------------------------------------------
 
@@ -1286,7 +1295,7 @@ CREATE TABLE `token` (
 --
 
 INSERT INTO `token` (`id_user`, `access_token`, `refresh_token`) VALUES
-(12, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiMjAyNC0wNC0wM1QwMDowMDowMC4wMDArMDdcIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTMyMTAxNzAsImV4cCI6MTcxMzI5NjU3MH0.9nPlvFJcQG0TKnRr_svWo7IWWNdloYoqQBwt1-YfKzA', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiMjAyNC0wNC0wM1QwMDowMDowMC4wMDArMDdcIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTMyMTAxNzAsImV4cCI6MTcxMzgxNDk3MH0.HfD5eN03YQICnUlOn4B7tDS7XG6gDWInJkoL6nRbUWU');
+(12, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiMjAyNC0wNC0wM1QwMDowMDowMC4wMDArMDdcIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTM2MjAzMjAsImV4cCI6MTcxMzcwNjcyMH0.MpN11_ocKbZMPmA15PDYMKIpZYNA9yFp-iDObzd3ojQ', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiMjAyNC0wNC0wM1QwMDowMDowMC4wMDArMDdcIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTM2MjAzMjAsImV4cCI6MTcxNDIyNTEyMH0.aswBFwUYEDm6oRehaM8CHg9xO2cBGNLYTjVcDq2DRR8');
 
 -- --------------------------------------------------------
 
@@ -12116,7 +12125,7 @@ ALTER TABLE `district`
 -- AUTO_INCREMENT cho bảng `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `orders`

@@ -13,5 +13,6 @@ public class NotificationDto {
     private String title;
     private String content;
     private Date createTime;
+    private String image;
     private Integer status;
 }
