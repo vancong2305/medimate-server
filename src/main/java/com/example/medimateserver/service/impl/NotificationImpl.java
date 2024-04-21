@@ -37,6 +37,13 @@ public class NotificationImpl implements NotificationService {
     }
 
     @Override
+    public NotificationDto add(NotificationDto notificationDto) {
+        notificationDto.setStatus(2);
+        Notification notificationSaved = notificationRepository.save(ConvertUtil.gI().toEntity(notificationDto, Notification.class));
+        return ConvertUtil.gI().toEntity(notificationSaved, NotificationDto.class);
+    }
+
+    @Override
     public NotificationDto findById(Integer id) {
         Notification notification = notificationRepository.findById(id).get();
         return ConvertUtil.gI().toEntity(notification, NotificationDto.class);

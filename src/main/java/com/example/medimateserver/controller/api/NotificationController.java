@@ -32,13 +32,26 @@ public class NotificationController {
             return ResponseUtil.failed();
         }
     }
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateNotification(HttpServletRequest request, @PathVariable Integer id) {
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             NotificationDto notificationDto = notificationService.findById(id);
             NotificationDto notificationDtos = notificationService.save(notificationDto);
+            String jsons = GsonUtil.gI().toJson(notificationDtos);
+            return ResponseUtil.success(jsons);
+        } catch (Exception ex) {
+            return ResponseUtil.failed();
+        }
+    }
+    @PostMapping
+    public ResponseEntity<?> addNotification(HttpServletRequest request, @RequestBody NotificationDto notificationDto) {
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            notificationDto.setIdUser(user.getId());
+            NotificationDto notificationDtos = notificationService.add(notificationDto);
             String jsons = GsonUtil.gI().toJson(notificationDtos);
             return ResponseUtil.success(jsons);
         } catch (Exception ex) {
