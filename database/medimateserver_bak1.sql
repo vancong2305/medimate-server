@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Apr 16, 2024 at 07:43 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.0.28
+-- Máy chủ: 127.0.0.1
+-- Thời gian đã tạo: Th4 20, 2024 lúc 03:41 PM
+-- Phiên bản máy phục vụ: 10.4.32-MariaDB
+-- Phiên bản PHP: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `medimateserver`
+-- Cơ sở dữ liệu: `medimateserver`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `address`
+-- Cấu trúc bảng cho bảng `address`
 --
 
 CREATE TABLE `address` (
@@ -42,7 +42,7 @@ CREATE TABLE `address` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `address`
+-- Đang đổ dữ liệu cho bảng `address`
 --
 
 INSERT INTO `address` (`id`, `id_user`, `full_name`, `phone`, `ward`, `district`, `province`, `type`, `is_default`, `specific_address`, `status`) VALUES
@@ -59,7 +59,7 @@ INSERT INTO `address` (`id`, `id_user`, `full_name`, `phone`, `ward`, `district`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cart_detail`
+-- Cấu trúc bảng cho bảng `cart_detail`
 --
 
 CREATE TABLE `cart_detail` (
@@ -69,7 +69,7 @@ CREATE TABLE `cart_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `cart_detail`
+-- Đang đổ dữ liệu cho bảng `cart_detail`
 --
 
 INSERT INTO `cart_detail` (`id_user`, `id_product`, `quantity`) VALUES
@@ -83,7 +83,7 @@ INSERT INTO `cart_detail` (`id_user`, `id_product`, `quantity`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `category`
+-- Cấu trúc bảng cho bảng `category`
 --
 
 CREATE TABLE `category` (
@@ -93,7 +93,7 @@ CREATE TABLE `category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `category`
+-- Đang đổ dữ liệu cho bảng `category`
 --
 
 INSERT INTO `category` (`id`, `name`, `status`) VALUES
@@ -109,7 +109,7 @@ INSERT INTO `category` (`id`, `name`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `coupon`
+-- Cấu trúc bảng cho bảng `coupon`
 --
 
 CREATE TABLE `coupon` (
@@ -124,7 +124,7 @@ CREATE TABLE `coupon` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `coupon`
+-- Đang đổ dữ liệu cho bảng `coupon`
 --
 
 INSERT INTO `coupon` (`id`, `code`, `description`, `point`, `discount_percent`, `expiration_time`, `image`, `status`) VALUES
@@ -134,7 +134,7 @@ INSERT INTO `coupon` (`id`, `code`, `description`, `point`, `discount_percent`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `coupon_detail`
+-- Cấu trúc bảng cho bảng `coupon_detail`
 --
 
 CREATE TABLE `coupon_detail` (
@@ -148,7 +148,7 @@ CREATE TABLE `coupon_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `coupon_detail`
+-- Đang đổ dữ liệu cho bảng `coupon_detail`
 --
 
 INSERT INTO `coupon_detail` (`id`, `id_coupon`, `id_user`, `id_oder`, `start_time`, `end_time`, `status`) VALUES
@@ -164,7 +164,19 @@ INSERT INTO `coupon_detail` (`id`, `id_coupon`, `id_user`, `id_oder`, `start_tim
 -- --------------------------------------------------------
 
 --
--- Table structure for table `district`
+-- Cấu trúc bảng cho bảng `device`
+--
+
+CREATE TABLE `device` (
+  `id_user` int(11) NOT NULL,
+  `token` text NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `district`
 --
 
 CREATE TABLE `district` (
@@ -174,7 +186,7 @@ CREATE TABLE `district` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Quận huyện';
 
 --
--- Dumping data for table `district`
+-- Đang đổ dữ liệu cho bảng `district`
 --
 
 INSERT INTO `district` (`id`, `id_province`, `name`) VALUES
@@ -887,7 +899,31 @@ INSERT INTO `district` (`id`, `id_province`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `orders`
+-- Cấu trúc bảng cho bảng `notification`
+--
+
+CREATE TABLE `notification` (
+  `id` int(11) NOT NULL,
+  `id_user` int(11) DEFAULT NULL,
+  `title` text NOT NULL,
+  `content` text NOT NULL,
+  `create_time` date NOT NULL,
+  `image` text NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `notification`
+--
+
+INSERT INTO `notification` (`id`, `id_user`, `title`, `content`, `create_time`, `image`, `status`) VALUES
+(1, 12, 'xin chafo', '12323', '2024-04-09', '123123', 1),
+(2, 12, '12323', '213123', '2024-04-23', '12323', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `orders`
 --
 
 CREATE TABLE `orders` (
@@ -906,7 +942,7 @@ CREATE TABLE `orders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `orders`
+-- Đang đổ dữ liệu cho bảng `orders`
 --
 
 INSERT INTO `orders` (`id`, `id_user`, `code`, `payment_method`, `discount_coupon`, `discount_product`, `order_time`, `note`, `point`, `total`, `status`, `user_address`) VALUES
@@ -915,7 +951,7 @@ INSERT INTO `orders` (`id`, `id_user`, `code`, `payment_method`, `discount_coupo
 -- --------------------------------------------------------
 
 --
--- Table structure for table `order_detail`
+-- Cấu trúc bảng cho bảng `order_detail`
 --
 
 CREATE TABLE `order_detail` (
@@ -927,7 +963,7 @@ CREATE TABLE `order_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `order_detail`
+-- Đang đổ dữ liệu cho bảng `order_detail`
 --
 
 INSERT INTO `order_detail` (`id_order`, `id_product`, `product_price`, `discount_price`, `quantity`) VALUES
@@ -939,7 +975,7 @@ INSERT INTO `order_detail` (`id_order`, `id_product`, `product_price`, `discount
 -- --------------------------------------------------------
 
 --
--- Table structure for table `product`
+-- Cấu trúc bảng cho bảng `product`
 --
 
 CREATE TABLE `product` (
@@ -956,7 +992,7 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `product`
+-- Đang đổ dữ liệu cho bảng `product`
 --
 
 INSERT INTO `product` (`id`, `id_category`, `id_unit`, `name`, `description`, `discount_percent`, `price`, `quantity`, `image`, `status`) VALUES
@@ -1145,7 +1181,7 @@ INSERT INTO `product` (`id`, `id_category`, `id_unit`, `name`, `description`, `d
 -- --------------------------------------------------------
 
 --
--- Table structure for table `province`
+-- Cấu trúc bảng cho bảng `province`
 --
 
 CREATE TABLE `province` (
@@ -1154,7 +1190,7 @@ CREATE TABLE `province` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Tỉnh thành';
 
 --
--- Dumping data for table `province`
+-- Đang đổ dữ liệu cho bảng `province`
 --
 
 INSERT INTO `province` (`id`, `name`) VALUES
@@ -1225,7 +1261,7 @@ INSERT INTO `province` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `role`
+-- Cấu trúc bảng cho bảng `role`
 --
 
 CREATE TABLE `role` (
@@ -1235,7 +1271,7 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `role`
+-- Đang đổ dữ liệu cho bảng `role`
 --
 
 INSERT INTO `role` (`id`, `name`, `status`) VALUES
@@ -1245,7 +1281,7 @@ INSERT INTO `role` (`id`, `name`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `token`
+-- Cấu trúc bảng cho bảng `token`
 --
 
 CREATE TABLE `token` (
@@ -1255,16 +1291,16 @@ CREATE TABLE `token` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `token`
+-- Đang đổ dữ liệu cho bảng `token`
 --
 
 INSERT INTO `token` (`id_user`, `access_token`, `refresh_token`) VALUES
-(12, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiMjAyNC0wNC0wM1QwMDowMDowMC4wMDArMDdcIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTMyMTAxNzAsImV4cCI6MTcxMzI5NjU3MH0.9nPlvFJcQG0TKnRr_svWo7IWWNdloYoqQBwt1-YfKzA', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiMjAyNC0wNC0wM1QwMDowMDowMC4wMDArMDdcIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTMyMTAxNzAsImV4cCI6MTcxMzgxNDk3MH0.HfD5eN03YQICnUlOn4B7tDS7XG6gDWInJkoL6nRbUWU');
+(12, 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiMjAyNC0wNC0wM1QwMDowMDowMC4wMDArMDdcIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTM2MjAzMjAsImV4cCI6MTcxMzcwNjcyMH0.MpN11_ocKbZMPmA15PDYMKIpZYNA9yFp-iDObzd3ojQ', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJpZFwiOjEyLFwiaWRSb2xlXCI6MixcInBob25lXCI6XCIwOTYzMDEyODEyXCIsXCJwYXNzd29yZFwiOlwiMVwiLFwiZmlyc3ROYW1lXCI6XCJWw7UgVsSDblwiLFwibGFzdE5hbWVcIjpcIkh14bqlblwiLFwicmFua1wiOlwixJDhu5NuZ1wiLFwicG9pbnRcIjoxMjUsXCJiaXJ0aGRheVwiOlwiMjAyNC0wNC0wM1QwMDowMDowMC4wMDArMDdcIixcImdlbmRlclwiOjEsXCJpbWFnZVwiOlwiaHR0cHM6Ly93YWMtY2RuLmF0bGFzc2lhbi5jb20vZGFtL2pjcjpiYTAzYTIxNS0yZjQ1LTQwZjUtODU0MC1iMjAxNTIyM2M5MTgvTWF4LVJfSGVhZHNob3QlMjAoMSkuanBnP2NkblZlcnNpb25cXHUwMDNkMTUzOVwiLFwic3RhdHVzXCI6MX0iLCJpYXQiOjE3MTM2MjAzMjAsImV4cCI6MTcxNDIyNTEyMH0.aswBFwUYEDm6oRehaM8CHg9xO2cBGNLYTjVcDq2DRR8');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `unit`
+-- Cấu trúc bảng cho bảng `unit`
 --
 
 CREATE TABLE `unit` (
@@ -1275,7 +1311,7 @@ CREATE TABLE `unit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `unit`
+-- Đang đổ dữ liệu cho bảng `unit`
 --
 
 INSERT INTO `unit` (`id`, `name`, `description`, `status`) VALUES
@@ -1294,7 +1330,7 @@ INSERT INTO `unit` (`id`, `name`, `description`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Cấu trúc bảng cho bảng `user`
 --
 
 CREATE TABLE `user` (
@@ -1313,7 +1349,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `user`
+-- Đang đổ dữ liệu cho bảng `user`
 --
 
 INSERT INTO `user` (`id`, `id_role`, `phone`, `password`, `first_name`, `last_name`, `rank`, `point`, `birthday`, `gender`, `image`, `status`) VALUES
@@ -1325,7 +1361,7 @@ INSERT INTO `user` (`id`, `id_role`, `phone`, `password`, `first_name`, `last_na
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ward`
+-- Cấu trúc bảng cho bảng `ward`
 --
 
 CREATE TABLE `ward` (
@@ -1335,7 +1371,7 @@ CREATE TABLE `ward` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Xã Phường';
 
 --
--- Dumping data for table `ward`
+-- Đang đổ dữ liệu cho bảng `ward`
 --
 
 INSERT INTO `ward` (`id`, `id_district`, `name`) VALUES
@@ -11930,18 +11966,18 @@ INSERT INTO `ward` (`id`, `id_district`, `name`) VALUES
 (10584, 705, 'Xã Đất Mũi');
 
 --
--- Indexes for dumped tables
+-- Chỉ mục cho các bảng đã đổ
 --
 
 --
--- Indexes for table `address`
+-- Chỉ mục cho bảng `address`
 --
 ALTER TABLE `address`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_address_user` (`id_user`);
 
 --
--- Indexes for table `cart_detail`
+-- Chỉ mục cho bảng `cart_detail`
 --
 ALTER TABLE `cart_detail`
   ADD PRIMARY KEY (`id_user`,`id_product`),
@@ -11949,20 +11985,20 @@ ALTER TABLE `cart_detail`
   ADD KEY `fk_cart_detail_user` (`id_user`) USING BTREE;
 
 --
--- Indexes for table `category`
+-- Chỉ mục cho bảng `category`
 --
 ALTER TABLE `category`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `coupon`
+-- Chỉ mục cho bảng `coupon`
 --
 ALTER TABLE `coupon`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `code` (`code`);
 
 --
--- Indexes for table `coupon_detail`
+-- Chỉ mục cho bảng `coupon_detail`
 --
 ALTER TABLE `coupon_detail`
   ADD PRIMARY KEY (`id`),
@@ -11971,13 +12007,26 @@ ALTER TABLE `coupon_detail`
   ADD KEY `fk_coupon_detail_order` (`id_oder`);
 
 --
--- Indexes for table `district`
+-- Chỉ mục cho bảng `device`
+--
+ALTER TABLE `device`
+  ADD KEY `fk_device_user` (`id_user`);
+
+--
+-- Chỉ mục cho bảng `district`
 --
 ALTER TABLE `district`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `orders`
+-- Chỉ mục cho bảng `notification`
+--
+ALTER TABLE `notification`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_notification` (`id_user`);
+
+--
+-- Chỉ mục cho bảng `orders`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`id`),
@@ -11985,7 +12034,7 @@ ALTER TABLE `orders`
   ADD KEY `fk_order_user` (`id_user`);
 
 --
--- Indexes for table `order_detail`
+-- Chỉ mục cho bảng `order_detail`
 --
 ALTER TABLE `order_detail`
   ADD PRIMARY KEY (`id_order`,`id_product`),
@@ -11993,7 +12042,7 @@ ALTER TABLE `order_detail`
   ADD KEY `fk_order_product` (`id_product`);
 
 --
--- Indexes for table `product`
+-- Chỉ mục cho bảng `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`id`),
@@ -12001,31 +12050,31 @@ ALTER TABLE `product`
   ADD KEY `fk_product_unit` (`id_unit`);
 
 --
--- Indexes for table `province`
+-- Chỉ mục cho bảng `province`
 --
 ALTER TABLE `province`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `role`
+-- Chỉ mục cho bảng `role`
 --
 ALTER TABLE `role`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `token`
+-- Chỉ mục cho bảng `token`
 --
 ALTER TABLE `token`
   ADD KEY `fk_token_user` (`id_user`);
 
 --
--- Indexes for table `unit`
+-- Chỉ mục cho bảng `unit`
 --
 ALTER TABLE `unit`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `user`
+-- Chỉ mục cho bảng `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
@@ -12033,106 +12082,112 @@ ALTER TABLE `user`
   ADD KEY `fk_user_role` (`id_role`);
 
 --
--- Indexes for table `ward`
+-- Chỉ mục cho bảng `ward`
 --
 ALTER TABLE `ward`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT cho các bảng đã đổ
 --
 
 --
--- AUTO_INCREMENT for table `address`
+-- AUTO_INCREMENT cho bảng `address`
 --
 ALTER TABLE `address`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `category`
+-- AUTO_INCREMENT cho bảng `category`
 --
 ALTER TABLE `category`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `coupon`
+-- AUTO_INCREMENT cho bảng `coupon`
 --
 ALTER TABLE `coupon`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `coupon_detail`
+-- AUTO_INCREMENT cho bảng `coupon_detail`
 --
 ALTER TABLE `coupon_detail`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `district`
+-- AUTO_INCREMENT cho bảng `district`
 --
 ALTER TABLE `district`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=706;
 
 --
--- AUTO_INCREMENT for table `orders`
+-- AUTO_INCREMENT cho bảng `notification`
+--
+ALTER TABLE `notification`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `product`
+-- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=177;
 
 --
--- AUTO_INCREMENT for table `province`
+-- AUTO_INCREMENT cho bảng `province`
 --
 ALTER TABLE `province`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
--- AUTO_INCREMENT for table `role`
+-- AUTO_INCREMENT cho bảng `role`
 --
 ALTER TABLE `role`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `unit`
+-- AUTO_INCREMENT cho bảng `unit`
 --
 ALTER TABLE `unit`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT for table `ward`
+-- AUTO_INCREMENT cho bảng `ward`
 --
 ALTER TABLE `ward`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10585;
 
 --
--- Constraints for dumped tables
+-- Các ràng buộc cho các bảng đã đổ
 --
 
 --
--- Constraints for table `address`
+-- Các ràng buộc cho bảng `address`
 --
 ALTER TABLE `address`
   ADD CONSTRAINT `id_address_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
--- Constraints for table `cart_detail`
+-- Các ràng buộc cho bảng `cart_detail`
 --
 ALTER TABLE `cart_detail`
   ADD CONSTRAINT `fk_cart_detail_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`),
   ADD CONSTRAINT `fk_cart_detail_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
--- Constraints for table `coupon_detail`
+-- Các ràng buộc cho bảng `coupon_detail`
 --
 ALTER TABLE `coupon_detail`
   ADD CONSTRAINT `fk_coupon_detail_coupon` FOREIGN KEY (`id_coupon`) REFERENCES `coupon` (`id`),
@@ -12140,33 +12195,45 @@ ALTER TABLE `coupon_detail`
   ADD CONSTRAINT `fk_coupon_detail_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
--- Constraints for table `orders`
+-- Các ràng buộc cho bảng `device`
+--
+ALTER TABLE `device`
+  ADD CONSTRAINT `fk_device_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
+
+--
+-- Các ràng buộc cho bảng `notification`
+--
+ALTER TABLE `notification`
+  ADD CONSTRAINT `fk_notification` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
+
+--
+-- Các ràng buộc cho bảng `orders`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `fk_order_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
--- Constraints for table `order_detail`
+-- Các ràng buộc cho bảng `order_detail`
 --
 ALTER TABLE `order_detail`
   ADD CONSTRAINT `fk_order_detail_order` FOREIGN KEY (`id_order`) REFERENCES `orders` (`id`),
   ADD CONSTRAINT `fk_order_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`);
 
 --
--- Constraints for table `product`
+-- Các ràng buộc cho bảng `product`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `fk_product_category` FOREIGN KEY (`id_category`) REFERENCES `category` (`id`),
   ADD CONSTRAINT `fk_product_unit` FOREIGN KEY (`id_unit`) REFERENCES `unit` (`id`);
 
 --
--- Constraints for table `token`
+-- Các ràng buộc cho bảng `token`
 --
 ALTER TABLE `token`
   ADD CONSTRAINT `fk_token_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`);
 
 --
--- Constraints for table `user`
+-- Các ràng buộc cho bảng `user`
 --
 ALTER TABLE `user`
   ADD CONSTRAINT `fk_user_role` FOREIGN KEY (`id_role`) REFERENCES `role` (`id`);

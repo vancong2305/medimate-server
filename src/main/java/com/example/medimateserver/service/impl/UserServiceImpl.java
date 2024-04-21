@@ -61,6 +61,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(user -> ConvertUtil.gI().toDto(user, UserDto.class))
+                .orElse(null); // Trả về null nếu không tìm thấy optional
+    }
+
+    @Override
     public UserDto save(UserDto userDto) {
         User user = ConvertUtil.gI().toEntity(userDto, User.class);
         user = userRepository.save(user);
@@ -77,11 +84,8 @@ public class UserServiceImpl implements UserService {
         if (userDto.getBirthday() != null) {
             existingUser.setBirthday(userDto.getBirthday());
         }
-        if (userDto.getFirstName() != null) {
-            existingUser.setFirstName(userDto.getFirstName());
-        }
-        if (userDto.getLastName() != null) {
-            existingUser.setLastName(userDto.getLastName());
+        if (userDto.getUsername() != null) {
+            existingUser.setUsername(userDto.getUsername());
         }
         if (userDto.getPhone() != null) {
             existingUser.setPhone(userDto.getPhone());

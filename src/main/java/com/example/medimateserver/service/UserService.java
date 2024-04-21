@@ -14,6 +14,7 @@ public interface UserService {
     List<UserDto> findWithPageAndSize(int page, int size);
     UserDto findById(Integer id);
     UserDto findByPhone(String phone);
+    UserDto findByEmail(String email);
     UserDto save(UserDto UserDto);
     UserDto update(Integer id, UserDto UserDto);
     void deleteById(Integer id);

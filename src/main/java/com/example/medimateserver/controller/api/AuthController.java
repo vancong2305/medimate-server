@@ -32,6 +32,32 @@ public class AuthController {
     @Autowired
     TokenService tokenService;
 
+    @PostMapping("/loginWithGoogle")
+    public ResponseEntity<?> loginWithGoogle(@RequestBody UserDto userDto) throws JsonProcessingException {
+        try {
+            UserDto user = userService.findByEmail(userDto.getPhone());
+            if (user == null) {
+                userService.save(user);
+                return ResponseUtil.failed(401);
+            }
+            if (userDto.getPassword().toString().compareTo(user.getPassword().toString()) == 0 && userDto.getPhone().toString().compareTo(user.getPhone().toString()) == 0) {
+                String token = JwtProvider.gI().generateToken(GsonUtil.gI().toJson(user));
+                String refreshToken = JwtProvider.gI().generateRefreshToken(GsonUtil.gI().toJson(user));
+                TokenDto tokenDto = new TokenDto();
+                tokenDto.setAccessToken(token);
+                tokenDto.setRefreshToken(refreshToken);
+                String jsons = GsonUtil.gI().toJson(tokenDto);
+                tokenDto.setIdUser(user.getId());
+                tokenService.save(tokenDto);
+                return ResponseUtil.success(jsons);
+            } else {
+                return ResponseUtil.failed(401);
+            }
+        } catch (Exception ex) {
+            return ResponseUtil.failed();
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDto userDto) throws JsonProcessingException {
         try {
