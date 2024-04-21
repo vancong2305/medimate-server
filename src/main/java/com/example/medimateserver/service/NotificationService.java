@@ -10,5 +10,6 @@ import java.util.List;
 public interface NotificationService {
     List<NotificationDto> findByIdUser(Integer id);
     NotificationDto save(NotificationDto notificationDto);
+    NotificationDto findById(Integer id);
     boolean changeAllStatus(Integer id);
 }

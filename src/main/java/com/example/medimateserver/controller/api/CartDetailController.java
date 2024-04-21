@@ -75,12 +75,10 @@ public class CartDetailController {
             if (JwtProvider.gI().verifyToken(tokenInformation, tokenDto)) {
                 List<CartDetailDto> cartDetailList = cartDetailService.findByIdUser(user.getId());
                 String jsons = GsonUtil.gI().toJson(cartDetailList.size());
-                System.out.println("Loi o day" + cartDetailList.size());
                 return ResponseUtil.success(jsons);
             }
             return ResponseUtil.failed();
         } catch (Exception ex) {
-            System.out.println("Lỗi ở đây " + ex.getMessage());
             return ResponseUtil.failed();
         }
     }

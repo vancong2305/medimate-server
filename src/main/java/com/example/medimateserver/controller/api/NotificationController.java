@@ -11,10 +11,7 @@ import com.example.medimateserver.util.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,19 +27,37 @@ public class NotificationController {
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             List<NotificationDto> notificationDtos = notificationService.findByIdUser(user.getId());
             String jsons = GsonUtil.gI().toJson(notificationDtos);
-            System.out.println(jsons);
             return ResponseUtil.success(jsons);
         } catch (Exception ex) {
             return ResponseUtil.failed();
         }
     }
-    @PostMapping
-    public ResponseEntity<?> updateNotification(HttpServletRequest request) {
+    @PostMapping("/{id}")
+    public ResponseEntity<?> updateNotification(HttpServletRequest request, @PathVariable Integer id) {
         try {
-
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            NotificationDto notificationDto = notificationService.findById(id);
+            NotificationDto notificationDtos = notificationService.save(notificationDto);
+            String jsons = GsonUtil.gI().toJson(notificationDtos);
+            return ResponseUtil.success(jsons);
         } catch (Exception ex) {
             return ResponseUtil.failed();
         }
-        return ResponseUtil.success();
+    }
+    @PostMapping("/all")
+    public ResponseEntity<?> updateAllNotification(HttpServletRequest request) {
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            boolean check = notificationService.changeAllStatus(user.getId());
+            if (check) {
+                return ResponseUtil.success();
+            } else {
+                return ResponseUtil.failed();
+            }
+        } catch (Exception ex) {
+            return ResponseUtil.failed();
+        }
     }
 }

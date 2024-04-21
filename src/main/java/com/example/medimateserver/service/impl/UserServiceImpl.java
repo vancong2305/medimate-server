@@ -83,6 +83,9 @@ public class UserServiceImpl implements UserService {
         if (userDto.getLastName() != null) {
             existingUser.setLastName(userDto.getLastName());
         }
+        if (userDto.getPhone() != null) {
+            existingUser.setPhone(userDto.getPhone());
+        }
         if (userDto.getImage() != null) {
             existingUser.setImage(userDto.getImage());
         }
