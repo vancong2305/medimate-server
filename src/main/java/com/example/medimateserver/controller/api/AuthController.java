@@ -86,7 +86,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserDto userPL) {
         try {
-            userPL.setIdRole(1);
+            userPL.setIdRole(2);
             userPL.setStatus(1);
             userPL.setRank("Đồng");
             userPL.setPoint(0);
