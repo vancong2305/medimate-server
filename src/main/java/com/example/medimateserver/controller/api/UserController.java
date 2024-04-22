@@ -34,7 +34,7 @@ public class UserController {
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             UserDto userFromToken = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
             UserDto userFromDatabase = userService.findById(userFromToken.getId());
-            userFromDatabase.setPassword(HashUtil.gI().encode(userFromDatabase.getPassword()));
+            userFromDatabase.setPassword("********");
             if (user == null) {
                 return ResponseUtil.failed(403);
             }

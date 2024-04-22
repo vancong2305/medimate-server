@@ -70,6 +70,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 response.getWriter().write(HttpStatus.UNAUTHORIZED.value());
                 return;
             }
+            if (user.getEmail() != null) {
+                TokenDto tokenDto = tokenService.findById(user.getId());
+                if (JwtProvider.gI().verifyToken(tokenInformation, tokenDto)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
             if (userDto.getPassword().toString().compareTo(user.getPassword().toString()) != 0 || userDto.getPhone().toString().compareTo(user.getPhone().toString()) != 0) {
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.getWriter().write(HttpStatus.UNAUTHORIZED.value());
