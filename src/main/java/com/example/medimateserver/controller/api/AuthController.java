@@ -62,13 +62,12 @@ public class AuthController {
     @PostMapping("/login_with_google")
     public ResponseEntity<?> login(@RequestBody LoginWithGoogle loginWithGoogle) throws JsonProcessingException {
         try {
-            System.out.println(loginWithGoogle.getToken());
             GoogleIdToken.Payload payload = GoogleTokenParser.parseToken(loginWithGoogle.getToken());
-            System.out.println("Email"+payload.getEmail());
             UserDto user = userService.findByEmail(payload.getEmail());
             if (user == null) {
                 user = new UserDto();
                 user.setEmail(payload.getEmail());
+                user.setUsername(payload.get("name").toString());
                 user.setIdRole(2);
                 user.setStatus(1);
                 user.setRank("Đồng");
@@ -81,7 +80,7 @@ public class AuthController {
                 tokenDto.setAccessToken(token);
                 tokenDto.setRefreshToken(refreshToken);
                 String jsons = GsonUtil.gI().toJson(tokenDto);
-                tokenDto.setIdUser(user.getId());
+                tokenDto.setIdUser(userSaved.getId());
                 tokenService.save(tokenDto);
                 return ResponseUtil.success(jsons);
             } else {
@@ -92,11 +91,12 @@ public class AuthController {
                 tokenDto.setAccessToken(token);
                 tokenDto.setRefreshToken(refreshToken);
                 String jsons = GsonUtil.gI().toJson(tokenDto);
-                tokenDto.setIdUser(user.getId());
+                tokenDto.setIdUser(userSaved.getId());
                 tokenService.save(tokenDto);
                 return ResponseUtil.success(jsons);
             }
         } catch (Exception ex) {
+            System.out.println("Looix" + ex.getMessage());
             return ResponseUtil.failed();
         }
     }
