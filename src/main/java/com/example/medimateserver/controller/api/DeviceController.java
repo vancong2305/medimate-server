@@ -19,6 +19,7 @@ public class DeviceController {
     @PostMapping
     public ResponseEntity<?> getAllDevice(HttpServletRequest request, @RequestBody DeviceDto deviceDto) {
         try {
+            System.out.println(deviceDto.getToken());
             String tokenInformation = request.getHeader("Authorization");
             tokenInformation = tokenInformation.substring(7);
             UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);

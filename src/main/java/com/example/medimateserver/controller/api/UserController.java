@@ -46,7 +46,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UserDto userDto) {
-        userDto.setIdRole(1);
+        userDto.setIdRole(2);
         userDto.setStatus(1);
         userDto.setRank("Đồng");
         userDto.setPoint(0);

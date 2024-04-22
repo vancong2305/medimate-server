@@ -47,6 +47,10 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (request.getServletPath().contains("/api/auth/login_with_google")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (request.getServletPath().contains("/api/auth/refresh")) {
             filterChain.doFilter(request, response);
             return;
