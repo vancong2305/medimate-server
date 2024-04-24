@@ -12,6 +12,6 @@ import java.util.Set;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
-    @Query("SELECT n FROM Notification n WHERE n.idUser IS NULL OR n.idUser = :userId")
+    @Query("SELECT n FROM Notification n WHERE n.idUser IS NULL OR n.idUser = :userId ORDER BY n.createTime DESC")
     List<Notification> findAllByIdUser(@Param("userId") Integer userId);
 }
