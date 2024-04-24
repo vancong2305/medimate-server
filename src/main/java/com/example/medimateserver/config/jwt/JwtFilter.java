@@ -59,6 +59,14 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (request.getServletPath().contains("/sendSMS")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (request.getServletPath().contains("/api/auth/register_with_otp")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         try {
             String tokenInformation = request.getHeader("Authorization").substring(7);
             // Xác thực user
