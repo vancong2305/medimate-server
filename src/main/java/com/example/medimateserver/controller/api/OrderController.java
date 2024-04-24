@@ -1,5 +1,8 @@
 package com.example.medimateserver.controller.api;
 
+import com.example.medimateserver.config.fcm.FcmMessage;
+import com.example.medimateserver.config.fcm.Generate;
+import com.example.medimateserver.config.fcm.Notification;
 import com.example.medimateserver.config.jwt.JwtProvider;
 import com.example.medimateserver.config.payment.momo.model.MomoCreateRequest;
 import com.example.medimateserver.config.payment.momo.model.MomoCreateResponse;
@@ -8,9 +11,7 @@ import com.example.medimateserver.config.payment.momo.shared.Parameter;
 import com.example.medimateserver.dto.*;
 import com.example.medimateserver.entity.OrderDetail;
 import com.example.medimateserver.entity.Orders;
-import com.example.medimateserver.service.OrderService;
-import com.example.medimateserver.service.TokenService;
-import com.example.medimateserver.service.UnitService;
+import com.example.medimateserver.service.*;
 import com.example.medimateserver.util.GsonUtil;
 import com.example.medimateserver.util.ResponseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,12 +22,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -36,6 +36,10 @@ public class OrderController {
     OrderService orderService;
     @Autowired
     private UnitService userService;
+    @Autowired
+    private DeviceService deviceService;
+    @Autowired
+    private NotificationService notificationService;
     @Autowired
     private TokenService tokenService;
     @GetMapping
@@ -66,6 +70,67 @@ public class OrderController {
                 OrderDto savedOrder = orderService.save(paymentDto);
                 System.out.println(getPayUrl(savedOrder));
                 return ResponseUtil.successLink(getPayUrl(savedOrder));
+            }
+            return ResponseUtil.success();
+        } catch (Exception ex) {
+            return ResponseUtil.failed();
+        }
+    }
+    @PostMapping("/{id}")
+    public ResponseEntity<?> createOrder(HttpServletRequest request, @PathVariable Integer id)  throws JsonProcessingException {
+        try {
+            String tokenInformation = request.getHeader("Authorization").substring(7);
+            UserDto user = GsonUtil.gI().fromJson(JwtProvider.gI().getUsernameFromToken(tokenInformation), UserDto.class);
+            if(user.getIdRole().toString().equals("1")) {
+                Generate generate = new Generate();
+                OrderDto orderDto = orderService.confirmOrder(id);
+                DeviceDto deviceDto = deviceService.findById(orderDto.getIdUser());
+                URL url = new URL("https://fcm.googleapis.com/v1/projects/clientsellingmedicine/messages:send");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestProperty("Authorization", "Bearer " + generate.getAccessToken());
+                httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
+
+                FcmMessage message = new FcmMessage();
+                message.setNotification(new Notification(
+                        "Thông báo từ hệ thống Medimate",
+                        "Bạn đã đặt thành công đơn hàng có mã " + orderDto.getCode() + " vào lúc " + orderDto.getOrderTime().toString()));
+                message.setToken(deviceDto.getToken());
+                System.out.println(generate.getAccessToken());
+                String mess = "{" +
+                        "\"message\":{" +
+                        "\"token\":\""+ message.getToken() + "\"," +
+                        "\"notification\":{" +
+                        "\"body\":\""+ message.getNotification().getBody() +"\"," +
+                        "\"title\":\""+message.getNotification().getTitle()+"\"" +
+                        "}" +
+                        "}" +
+                        "}";
+                System.out.println(mess);
+                String jsonMessage = GsonUtil.gI().toJson(mess);
+
+                // Set request body
+                httpURLConnection.setDoOutput(true); // Allow writing to output stream
+                try (OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream(), StandardCharsets.UTF_8)) {
+                    writer.write(mess);
+                    writer.flush();
+                }
+
+                // Send request and handle response
+                int responseCode = httpURLConnection.getResponseCode();
+                if (responseCode != HttpURLConnection.HTTP_OK) {
+                    throw new IOException("FCM request failed with code: " + responseCode);
+                } else {
+
+                    NotificationDto notificationDto = new NotificationDto();
+                    notificationDto.setStatus(2);
+                    notificationDto.setIdUser(orderDto.getIdUser());
+                    notificationDto.setContent("Bạn đã đặt thành công đơn hàng có mã " + orderDto.getCode() + " vào lúc " + orderDto.getOrderTime().toString());
+                    notificationDto.setCreateTime(new Date());
+                    notificationDto.setTitle("Thông báo từ hệ thống Medimate");
+                    notificationDto.setImage("1");
+                    notificationService.add(notificationDto);
+                    System.out.println("FCM message sent successfully!");
+                }
             }
             return ResponseUtil.success();
         } catch (Exception ex) {
