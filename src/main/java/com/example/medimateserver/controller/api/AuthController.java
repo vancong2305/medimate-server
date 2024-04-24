@@ -114,6 +114,23 @@ public class AuthController {
             return ResponseUtil.failed();
         }
     }
+    @PostMapping("/register_with_otp")
+    public ResponseEntity<?> registerWithOtp(@RequestBody UserDto userPL) {
+        try {
+            if (userPL.getPhone() == null) {
+                return ResponseUtil.failed();
+            }
+            userPL.setIdRole(2);
+            userPL.setStatus(1);
+            userPL.setRank("Đồng");
+            userPL.setPoint(0);
+            userPL.setPhone("0"+userPL.getPhone());
+            userService.save(userPL);
+            return ResponseUtil.success();
+        } catch (Exception ex) {
+            return ResponseUtil.failed();
+        }
+    }
     @GetMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         try {
