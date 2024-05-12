@@ -11,9 +11,4 @@ Participating members:</br>
 + Phạm Đăng Khoa </br>
 
 Current problem (We will resolve in the future):</br>
-+ New tokens are created when logging in and old tokens can still be used.</br>
-+ No caching is used to improve performance.</br>
-+ Online payment function has not been completed.</br>
-+ No forgot password.</br>
-+ Send and receive mail</br>
-
++ Don't auto update coupon status when expired (We intend to use cron job or maybe things same as to resolve this problem or check date instead of status)
