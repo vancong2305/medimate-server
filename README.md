@@ -12,6 +12,10 @@ Medimate Server is a project developed for drug stores, designed and implemented
 ### Auto Update Coupon Status
 One of the current challenges is that the system does not automatically update the status of coupons when they expire. We plan to address this by implementing a cron job or a similar mechanism to check the expiration dates and update the statuses accordingly.
 
+## Client UI
+- Link: https://github.com/phamdangkhoagh/ClientSellingMedicine
+- The client ui described, guided and wrote by phamdangkhoagh
+
 ## Getting Started
 To get a copy of the project up and running on your local machine, follow these steps.
 
@@ -19,7 +23,7 @@ To get a copy of the project up and running on your local machine, follow these 
 - Java Development Kit (JDK) 8 or higher
 - Maven
 - MySQL
-
+- 
 ### Installation
 
 1. **Clone the Repository**
