@@ -23,7 +23,7 @@ To get a copy of the project up and running on your local machine, follow these 
 - Java Development Kit (JDK) 8 or higher
 - Maven
 - MySQL
-- 
+
 ### Installation
 
 1. **Clone the Repository**
